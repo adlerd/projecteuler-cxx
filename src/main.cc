@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "util.hh"
+#include "set0.hh"
 #include "atkin.hh"
 
 using namespace euler;
@@ -45,7 +46,7 @@ void print_in_order(std::vector<ulong> const& order){
 }
 template <class Function>
 void for_problems(Function f){
-    //std::for_each(set0.cbegin(), set0.cend(), f);
+    std::for_each(set0.cbegin(), set0.cend(), f);
 }
 int main(int argc, char* argv[]){
     std::list<std::thread*> threads;
