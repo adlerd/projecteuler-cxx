@@ -4,6 +4,7 @@
 #include <string>
 #include <queue>
 #include <list>
+#include <utility>
 
 namespace euler {
 typedef unsigned long ulong;
@@ -13,6 +14,8 @@ typedef std::pair<ulong, std::string> answer;
 extern problem_fun NYI_problem;
 
 std::vector<ulong> factors(ulong x);
+std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x);
+ulong divisor_ct(ulong x);
 
 class problem {
     ulong number;
