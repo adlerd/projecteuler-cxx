@@ -88,7 +88,7 @@ namespace euler {
 	    ++pi;
 	return std::to_string(*pi);
     }
-    std::array<unsigned char, 1005> constexpr input8 {{0,0,0,0,0,
+    std::array<unsigned char, 1000> constexpr input8 {{
 	7,3,1,6,7,1,7,6,5,3,1,3,3,0,6,2,4,9,1,9,2,2,5,1,1,9,6,7,4,4,2,6,5,7,4,
 	7,4,2,3,5,5,3,4,9,1,9,4,9,3,4,9,6,9,8,3,5,2,0,3,1,2,7,7,4,5,0,6,3,2,6,
 	2,3,9,5,7,8,3,1,8,0,1,6,9,8,4,8,0,1,8,6,9,4,7,8,8,5,1,8,4,3,8,5,8,6,1,
@@ -119,27 +119,7 @@ namespace euler {
 	2,9,7,2,5,7,1,6,3,6,2,6,9,5,6,1,8,8,2,6,7,0,4,2,8,2,5,2,4,8,3,6,0,0,8,
 	2,3,2,5,7,5,3,0,4,2,0,7,5,2,9,6,3,4,5,0}};
     std::string problem8(){
-	ulong zct = 5;
-	auto left = input8.cbegin();
-	auto right = left + 5;
-	auto const end = input8.cend();
-	ulong prod = 1;
-	ulong high = 0;
-	while(right != end){
-	    ulong const p = *right++;
-	    ulong const d = *left++;
-	    if(d != 0)
-		prod /= d;
-	    else
-		--zct;
-	    if(p != 0)
-		prod *= p;
-	    else
-		++zct;
-	    if(zct == 0 && prod > high)
-		high = prod;
-	}
-	return std::to_string(high);
+	return std::to_string(high_subseq_prod(input8.cbegin(), input8.cend(), 5));
     }
     std::string problem9(){
 	for(ulong b = 1; b < 1000; ++b){
