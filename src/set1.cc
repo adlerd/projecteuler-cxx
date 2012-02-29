@@ -221,7 +221,35 @@ namespace euler {
 	auto out = sum.get_str();
 	return out.substr(0,10);
     }
+    ulong collatz_find(std::vector<ulong>& map, ulong n, ulong add = 0){
+	if(n >= map.size())
+	    return collatz_find(map, n % 2 == 0 ? n / 2 : 3 * n + 1, add + 1);
+	ulong val = map[n];
+	if(val == 0){
+	    if(n == 1)
+		return add;
+	    val = collatz_find(map, n % 2 == 0 ? n / 2 : 3 * n + 1, 1);
+	    map[n] = val;
+	    return add + val;
+	} else {
+	    return add + val;
+	}
+    }
+    std::string problem14(){
+	std::vector<ulong> collatz_map(1000000);
+	collatz_map[1] = 0;
+	ulong max = 0;
+	ulong ans = 0;
+	for(ulong i = 1; i < 1000000; ++i){
+	    ulong const len = collatz_find(collatz_map, i);
+	    if(len > max){
+		max = len;
+		ans = i;
+	    }
+	}
+	return std::to_string(ans);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set1
-    {{P(10),P(11), P(12), P(13)}};
+    {{P(10),P(11), P(12), P(13), P(14)}};
 }
