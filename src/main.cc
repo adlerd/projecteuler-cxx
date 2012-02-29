@@ -6,10 +6,12 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <cassert>
 
 #include "util.hh"
-#include "set0.hh"
 #include "atkin.hh"
+#include "set0.hh"
+#include "set1.hh"
 
 #define THREAD_COUNT 5
 
@@ -49,6 +51,7 @@ void print_in_order(std::vector<ulong> const& order){
 template <class Function>
 void for_problems(Function f){
     std::for_each(set0.cbegin(), set0.cend(), f);
+    std::for_each(set1.cbegin(), set1.cend(), f);
 }
 int main(int argc, char* argv[]){
     std::list<std::thread*> threads;
