@@ -11,6 +11,8 @@
 #include "set0.hh"
 #include "atkin.hh"
 
+#define THREAD_COUNT 5
+
 using namespace euler;
 
 void queue_problem(problem const& fun);
@@ -50,7 +52,7 @@ void for_problems(Function f){
 }
 int main(int argc, char* argv[]){
     std::list<std::thread*> threads;
-    for(int i = 0; i < 5; ++i)
+    for(int i = 0; i < THREAD_COUNT; ++i)
 	threads.push_back(new std::thread(&problems_runner));
     std::vector<ulong> order;
     if(argc == 1){
