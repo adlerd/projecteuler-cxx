@@ -266,7 +266,27 @@ namespace euler {
 	    sum += mpz_fdiv_q_ui(b.get_mpz_t(), b.get_mpz_t(), 10);
 	return std::to_string(sum);
     }
+    std::string problem17(){
+	static ulong constexpr ones[10] = {0, 3, 3, 5, 4, 4, 3, 5, 5, 4};
+	static ulong constexpr tens[10] = {0, 3, 6, 6, 5, 5, 5, 7, 6, 6};
+	static ulong constexpr hundred = 7;
+	static ulong constexpr thousand = 8;
+	static ulong constexpr and_ct = 3;
+	ulong sum = thousand + ones[1];
+	for(int i = 1; i < 1000; ++i){
+	    sum += ones[i % 10];
+	    sum += tens[(i / 10) % 10];
+	    switch(i % 100) case 14: case 16: case 17: case 19: sum += 1;
+	    if(i >= 100){
+		sum += hundred;
+		if(i % 100 != 0)
+		    sum += and_ct;
+		sum += ones[i / 100];
+	    }
+	}
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set1
-    {{P(10),P(11), P(12), P(13), P(14), P(15), P(16)}};
+    {{P(10),P(11), P(12), P(13), P(14), P(15), P(16), P(17)}};
 }
