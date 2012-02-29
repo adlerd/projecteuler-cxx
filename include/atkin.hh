@@ -36,6 +36,7 @@ class prime_iterator {
     delta_iterator delta_iter;
     ulong k;
     b_vec::const_iterator vec_iter;
+    void advance();
     void check_advance();
     prime_iterator(unsigned char const d, ulong k0, b_vec::const_iterator const& vi)
 	: delta_iter(d), k(k0), vec_iter(vi) {}
@@ -48,17 +49,12 @@ public:
 	return k * 60 + *delta_iter;
     }
     prime_iterator& operator++(){
-	assert(*vec_iter);
-	do {
-	    ++vec_iter;
-	    if(*++delta_iter == 1)
-		check_advance();
-	} while(!*vec_iter);
+	advance();
 	return *this;
     }
     prime_iterator operator++(int){
 	prime_iterator tmp(*this);
-	operator++();
+	advance();
 	return tmp;
     }
 };

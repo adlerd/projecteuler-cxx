@@ -217,6 +217,14 @@ done:
     }
     prime_iterator::b_vec prime_iterator::pre_primes = { true, true, true };
     std::vector<prime_iterator::b_vec> prime_iterator::primes;
+    void prime_iterator::advance() {
+	assert(*vec_iter);
+	do {
+	    ++vec_iter;
+	    if(*++delta_iter == 1)
+		check_advance();
+	} while(!*vec_iter);
+    }
     void prime_iterator::check_advance() {
 	static std::mutex read_mutex;
 	static std::condition_variable *extension_condition;
