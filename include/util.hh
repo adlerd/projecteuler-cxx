@@ -20,6 +20,8 @@ std::vector<ulong> factors(ulong x);
 std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x);
 ulong divisor_ct(ulong x);
 
+ulong digit_sum(bigint b);
+
 class problem {
     ulong number;
     problem_fun fun;

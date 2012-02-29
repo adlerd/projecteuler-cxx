@@ -54,4 +54,10 @@ ulong divisor_ct(ulong x){
 	ct *= (p.second + 1);
     return ct;
 }
+ulong digit_sum(bigint b){
+    ulong sum = 0;
+    while(b > 0)
+	sum += mpz_fdiv_q_ui(b.get_mpz_t(), b.get_mpz_t(), 10);
+    return sum;
+}
 }

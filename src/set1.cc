@@ -261,10 +261,7 @@ namespace euler {
     std::string problem16(){
 	bigint b;
 	mpz_ui_pow_ui(b.get_mpz_t(), 2, 1000);
-	ulong sum = 0;
-	while(b > 0)
-	    sum += mpz_fdiv_q_ui(b.get_mpz_t(), b.get_mpz_t(), 10);
-	return std::to_string(sum);
+	return std::to_string(digit_sum(b));
     }
     std::string problem17(){
 	static ulong constexpr ones[10] = {0, 3, 3, 5, 4, 4, 3, 5, 5, 4};
