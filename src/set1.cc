@@ -321,7 +321,62 @@ namespace euler {
     std::string problem18(){
 	return std::to_string(triangle_collapse(&input18[0], &input18[120]));
     }
+    std::string problem19(){
+	static ulong constexpr lookup[] = {31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	class month_len_iterator{
+	    ulong month;
+	    ulong year;
+	public:
+	    month_len_iterator(ulong m, ulong y) : month(m), year(y) {
+		assert(m < 12);
+	    }
+	    month_len_iterator& operator++(){
+		if(++month == 12){
+		    month = 0;
+		    ++year;
+		}
+		return *this;
+	    }
+	    month_len_iterator operator++(int){
+		month_len_iterator tmp(*this);
+		operator++();
+		return tmp;
+	    }
+	    ulong operator*() const {
+		ulong const l = lookup[month];
+		if(l != 0)
+		    return l;
+		if(year % 4 == 0)
+		    switch(year % 400){
+		    case 100: case 200: case 300:
+			break;
+		    default:
+			return 29;
+		    }
+		return 28;
+	    }
+	    bool operator==(month_len_iterator const& mln) const {
+		return month == mln.month && year == mln.year;
+	    }
+	    bool operator!=(month_len_iterator const& mln) const {
+		return !operator==(mln);
+	    }
+	};
+	ulong day = 1;
+	ulong ct = 0;
+	month_len_iterator const end(0, 2001);
+	month_len_iterator begin(0, 1900);
+	month_len_iterator const century(0, 1901);
+	while(begin != century)
+	    day = (day + *begin++) % 7;
+	while(begin != end){
+	    if(day == 0)
+		++ct;
+	    day = (day + *begin++) % 7;
+	}
+	return std::to_string(ct);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set1
-    {{P(10),P(11), P(12), P(13), P(14), P(15), P(16), P(17), P(18)}};
+    {{P(10),P(11), P(12), P(13), P(14), P(15), P(16), P(17), P(18), P(19)}};
 }
