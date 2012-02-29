@@ -286,7 +286,42 @@ namespace euler {
 	}
 	return std::to_string(sum);
     }
+    ulong triangle_collapse(ulong const *start, ulong const *const end){
+	if(start == end)
+	    return 0;
+	std::vector<std::vector<ulong>> outer;
+	ulong ct = 1;
+	do {
+	    outer.emplace_back(ct);
+	    std::vector<ulong>& inner = outer.back();
+	    for(ulong i = 0; i < ct; ++i){
+		if(start == end)
+		    throw std::domain_error("Not a triangle");
+		inner[i] = *start++;
+	    }
+	    ++ct;
+	} while(start != end);
+	while(outer.size() != 1){
+	    auto& last = outer.back();
+	    std::transform(last.cbegin() + 1, last.cend(), last.cbegin(), last.begin(),
+		    [] (ulong a, ulong b) { return std::max(a,b); });
+	    auto& next = outer[outer.size() - 2];
+	    std::transform(next.cbegin(), next.cend(), last.cbegin(), next.begin(),
+		    [] (ulong a, ulong b) { return a + b; });
+	    outer.pop_back();
+	}
+	return outer[0][0];
+    }
+    std::array<ulong const, 120> input18
+    {{75,95,64,17,47,82,18,35,87,10,20,4,82,47,65,19,1,23,75,3,34,88,2,77,73,7,
+	 63,67,99,65,4,28,6,16,70,92,41,41,26,56,83,40,80,70,33,41,48,72,33,47,
+	 32,37,16,94,29,53,71,44,65,25,43,91,52,97,51,14,70,11,33,28,77,73,17,
+	 78,39,68,17,57,91,71,52,38,17,14,91,43,58,50,27,29,48,63,66,4,68,89,
+	 53,67,30,73,16,69,87,40,31,4,62,98,27,23,9,70,98,73,93,38,53,60,4,23}};
+    std::string problem18(){
+	return std::to_string(triangle_collapse(&input18[0], &input18[120]));
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set1
-    {{P(10),P(11), P(12), P(13), P(14), P(15), P(16), P(17)}};
+    {{P(10),P(11), P(12), P(13), P(14), P(15), P(16), P(17), P(18)}};
 }
