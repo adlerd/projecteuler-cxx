@@ -249,7 +249,24 @@ namespace euler {
 	}
 	return std::to_string(ans);
     }
+    std::string problem15(){
+	// 40 choose 20
+	bigint v = 1;
+	for(ulong i = 40; i > 20; --i)
+	    v *= i;
+	for(ulong i = 20; i > 0; --i)
+	    v /= i;
+	return v.get_str();
+    }
+    std::string problem16(){
+	bigint b;
+	mpz_ui_pow_ui(b.get_mpz_t(), 2, 1000);
+	ulong sum = 0;
+	while(b > 0)
+	    sum += mpz_fdiv_q_ui(b.get_mpz_t(), b.get_mpz_t(), 10);
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set1
-    {{P(10),P(11), P(12), P(13), P(14)}};
+    {{P(10),P(11), P(12), P(13), P(14), P(15), P(16)}};
 }
