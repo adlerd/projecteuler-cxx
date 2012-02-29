@@ -6,8 +6,11 @@
 #include <list>
 #include <utility>
 
+#include <gmpxx.h>
+
 namespace euler {
 typedef unsigned long ulong;
+typedef mpz_class bigint;
 typedef std::string (*problem_fun)();
 typedef std::pair<ulong, std::string> answer;
 

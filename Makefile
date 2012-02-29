@@ -1,6 +1,6 @@
 CC=/usr/bin/gcc-4.6.2 --std=c++0x -pthread
 CXX=/usr/bin/g++-4.6.2 --std=c++0x -pthread
-LDLIBS=
+LDLIBS=-lgmp -lgmpxx
 ALL_CPPFLAGS=-I./include/ -Wall $(CPPFLAGS)
 OBJDUMP_FLAGS=-dCSr
 
