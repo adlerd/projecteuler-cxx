@@ -4,6 +4,8 @@
 #include <cassert>
 
 #include "set2.hh"
+#include "util.hh"
+#include "atkin.hh"
 
 namespace euler {
     std::string problem20(){
@@ -115,7 +117,33 @@ namespace euler {
 	}
 	return std::to_string(v);
     }
+    std::string problem27(){
+	long max = 0;
+	long val = 0;
+	prime_iterator b_iter;
+	for(long b = *b_iter++; b < 1000; b = *b_iter++){
+	    for(long a = -999; a < 1000; ++a){
+		long n = 1; // case n=0 is implied by b being prime
+		long quad = 1 + a + b;
+		while(quad > 0 && factors((ulong)quad).size() == 1)
+		    quad += a + 2*n++ + 1;
+		if(n > max){
+		    max = n; //actually one more than satisfying conditions
+		    val = a*b;
+		}
+	    }
+	}
+	return std::to_string(val);
+    }
+    std::string problem28(){
+	ulong sum = 0;
+	for(int n = 1; n <= 500; ++n)
+	    sum += 4*n*n+n+1;
+	sum *= 4;
+	sum += 1;
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set2
-    {{P(20), P(21), P(22), P(23), P(24), P(25), P(26)}};
+    {{P(20), P(21), P(22), P(23), P(24), P(25), P(26), P(27), P(28)}};
 }
