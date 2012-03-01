@@ -25,6 +25,8 @@ ulong divisor_sum(ulong x);
 
 ulong digit_sum(bigint b);
 
+ulong gcd(ulong a, ulong b);
+
 class problem {
     ulong number;
     problem_fun fun;
