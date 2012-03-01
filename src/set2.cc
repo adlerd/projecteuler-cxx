@@ -1,6 +1,7 @@
 #include <array>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 
 #include "set2.hh"
 
@@ -62,7 +63,15 @@ namespace euler {
 		sum += i;
 	return std::to_string(sum);
     }
+    std::string problem24(){
+	std::array<unsigned char, 10> arr {{'0','1','2','3','4','5','6','7','8','9'}};
+	for(int i = 1; i < 1000000; ++i){
+	    bool const ret = std::next_permutation(arr.begin(), arr.end());
+	    assert(ret);
+	}
+	return { arr.begin(), arr.end() };
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set2
-    {{P(20), P(21), P(22), P(23)}};
+    {{P(20), P(21), P(22), P(23), P(24)}};
 }
