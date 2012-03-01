@@ -1,6 +1,9 @@
+#include <array>
+#include <vector>
+#include <algorithm>
+
 #include "set2.hh"
 
-#include <iostream>
 namespace euler {
     std::string problem20(){
 	bigint fac;
@@ -20,7 +23,23 @@ namespace euler {
 	}
 	return std::to_string(sum);
     }
+    std::array<char const *const, 5163> input22 {{
+#include "names.include"
+    }};
+    std::string problem22(){
+	ulong sum = 0;
+	ulong pos = 0;
+	std::vector<std::string> names(input22.cbegin(), input22.cend());
+	std::sort(names.begin(), names.end());
+	for(auto str : names){
+	    ulong psum = 0;
+	    for(char ch : str)
+		psum += ch + 1 - 'A';
+	    sum += psum * ++pos;
+	}
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set2
-    {{P(20), P(21)}};
+    {{P(20), P(21), P(22)}};
 }
