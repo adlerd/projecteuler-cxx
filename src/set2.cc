@@ -71,7 +71,51 @@ namespace euler {
 	}
 	return { arr.begin(), arr.end() };
     }
+    std::string problem25(){
+	bigint a = 0;
+	bigint b = 1;
+	bigint target;
+	mpz_ui_pow_ui(target.get_mpz_t(), 10, 999);
+	ulong i;
+	for(i = 0; a < target; ++i){
+	    mpz_swap(a.get_mpz_t(), b.get_mpz_t());
+	    b += a;
+	}
+	return std::to_string(i);
+    }
+    ulong rec_rep(ulong x){
+	//remove 2s and 5s
+	while(x % 2 == 0)
+	    x /= 2;
+	while(x % 5 == 0)
+	    x /= 5;
+	if(x == 1)
+	    return 0;
+	ulong start = 1;
+	ulong const n = x;
+	while(start < x)
+	    start *= 10;
+	x = start;
+	ulong i = 0;
+	do {
+	    ++i;
+	    x = (x % n) * 10;
+	} while(x != start);
+	return i;
+    }
+    std::string problem26(){
+	ulong max = 0;
+	ulong v = 0;
+	for(ulong i = 2; i < 1000; ++i){
+	    ulong const rr = rec_rep(i);
+	    if(rr > max){
+		max = rr;
+		v = i;
+	    }
+	}
+	return std::to_string(v);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set2
-    {{P(20), P(21), P(22), P(23), P(24)}};
+    {{P(20), P(21), P(22), P(23), P(24), P(25), P(26)}};
 }
