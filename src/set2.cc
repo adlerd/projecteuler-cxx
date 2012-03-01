@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include <set>
+
 #include "set2.hh"
 #include "util.hh"
 #include "atkin.hh"
@@ -143,7 +145,22 @@ namespace euler {
 	sum += 1;
 	return std::to_string(sum);
     }
+    std::string problem29(){
+	ulong ct = 0;
+	std::set<bigint> set;
+	bigint p;
+	for(ulong a = 2; a <= 100; ++a)
+	    for(ulong b = 2; b <= 100; ++b){
+		mpz_ui_pow_ui(p.get_mpz_t(), a, b);
+		auto iter = set.find(p);
+		if(iter == set.cend()){
+		    ++ct;
+		    set.insert(p);
+		}
+	    }
+	return std::to_string(ct);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set2
-    {{P(20), P(21), P(22), P(23), P(24), P(25), P(26), P(27), P(28)}};
+    {{P(20), P(21), P(22), P(23), P(24), P(25), P(26), P(27), P(28), P(29)}};
 }
