@@ -39,7 +39,30 @@ namespace euler {
 	}
 	return std::to_string(sum);
     }
+    std::string problem23(){
+	static ulong constexpr limit = 28124;
+	std::vector<ulong> abundant;
+	for(ulong i = 1; i < limit; ++i)
+	    if(divisor_sum(i) - i > i)
+		abundant.push_back(i);
+	std::vector<bool> isSum(limit, false);
+	auto outer = abundant.cbegin();
+	while(outer != abundant.cend()){
+	    auto inner = outer;
+	    do {
+		ulong const v = *inner + *outer;
+		if(v < limit)
+		    isSum[v] = true;
+	    } while(++inner != abundant.cend());
+	    ++outer;
+	}
+	ulong sum = 0;
+	for(ulong i = 0; i < limit; ++i)
+	    if(!isSum[i])
+		sum += i;
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set2
-    {{P(20), P(21), P(22)}};
+    {{P(20), P(21), P(22), P(23)}};
 }
