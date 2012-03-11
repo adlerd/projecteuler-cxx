@@ -22,7 +22,28 @@ namespace euler {
 	}
 	return std::to_string(sum);
     }
+    template <ulong coin_value, class L>
+	struct coin_loop {
+	    L inner;
+	    coin_loop(L&& i)
+		: inner(i) {}
+	    void operator()(ulong total) const {
+		while(total <= 200){
+		    inner(total);
+		    total += coin_value;
+		}
+	    }
+	};
+    std::string problem31(){
+	ulong ct = 0;
+	auto const lambda = [&](ulong total){++ct;};
+	coin_loop<200,coin_loop<100,coin_loop<50,coin_loop<20,coin_loop<10,
+	    coin_loop<5,coin_loop<2,decltype(lambda)>>>>>>> const
+		cl {{{{{{{std::move(lambda)}}}}}}};
+	cl(0);
+	return std::to_string(ct);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set3
-    {{P(30)}};
+    {{P(30),P(31)}};
 }
