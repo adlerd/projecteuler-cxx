@@ -23,7 +23,38 @@ ulong divisor_ct(ulong x);
 std::vector<ulong> divisors(ulong x);
 ulong divisor_sum(ulong x);
 
-ulong digit_sum(bigint b);
+class digit_iterator : public std::iterator<std::input_iterator_tag, unsigned char> {
+    bigint source;
+    unsigned char current;
+public:
+    digit_iterator() : source(0), current(0) {}
+    explicit digit_iterator(bigint const& s) : source(s) {
+	operator++();
+    }
+    unsigned char operator*() const {
+	return current;
+    }
+    digit_iterator& operator++() noexcept {
+	current = mpz_fdiv_q_ui(source.get_mpz_t(), source.get_mpz_t(), 10);
+	return *this;
+    }
+    digit_iterator operator++(int){
+	digit_iterator tmp(*this);
+	operator++();
+	return tmp;
+    }
+    bool operator==(digit_iterator const& o) const {
+	return current == o.current && source == o.source;
+    }
+    bool operator!=(digit_iterator const& o) const {
+	return !operator==(o);
+    }
+};
+
+extern digit_iterator const digit_iterator_end;
+
+
+ulong digit_sum(bigint const& b) noexcept;
 
 ulong gcd(ulong a, ulong b);
 

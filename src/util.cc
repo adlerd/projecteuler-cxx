@@ -75,10 +75,15 @@ div_ret divisors(ulong x){
     return cont;
 }
 
-ulong digit_sum(bigint b){
+digit_iterator const digit_iterator_end;
+
+ulong digit_sum(bigint const& b) noexcept {
     ulong sum = 0;
-    while(b > 0)
-	sum += mpz_fdiv_q_ui(b.get_mpz_t(), b.get_mpz_t(), 10);
+    digit_iterator iter(b);
+    while(iter != digit_iterator_end){
+	sum += *iter;
+	++iter;
+    }
     return sum;
 }
 
