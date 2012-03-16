@@ -28,9 +28,9 @@ bool is_prime(ulong x){
     }
 }
 std::vector<ulong> factors(ulong x){
-    prime_iterator iter;
     if(x < 1)
 	throw std::domain_error("factors(0)");
+    prime_iterator iter;
     std::vector<ulong> factors;
     while(true){
 	ulong p = *iter++;
@@ -46,9 +46,9 @@ std::vector<ulong> factors(ulong x){
     return factors;
 }
 std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x){
-    prime_iterator iter;
     if(x < 1)
-	throw std::domain_error("factors(0)");
+	throw std::domain_error("ct_factors(0)");
+    prime_iterator iter;
     decltype(ct_factors(x)) factors;
     while(true){
 	ulong p = *iter++;
