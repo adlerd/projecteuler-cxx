@@ -4,6 +4,7 @@
 
 #include "set3.hh"
 #include "util.hh"
+#include "atkin.hh"
 
 namespace euler {
     std::array<ulong, 10> constexpr five_dig
@@ -101,7 +102,24 @@ namespace euler {
 	}
 	return std::to_string(sum);
     }
+    std::string problem35(){
+	ulong ct = 0;
+	std::deque<unsigned char> rev_digits;
+	for(prime_iterator pi; *pi < 1000000; ++pi){
+	    rev_digits.assign(digit_iterator(*pi), digit_iterator());
+	    ulong const size = rev_digits.size();
+	    for(unsigned int i = 1; i < size; ++i){
+		rev_digits.push_front(rev_digits.back());
+		rev_digits.pop_back();
+		if(!is_prime(from_digits(rev_digits.crbegin(), rev_digits.crend())))
+		    goto dead;
+	    }
+	    ++ct;
+	    dead:;
+	}
+	return std::to_string(ct);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set3
-    {{P(30),P(31),P(32),P(33),P(34)}};
+    {{P(30),P(31),P(32),P(33),P(34),P(35)}};
 }
