@@ -89,7 +89,19 @@ namespace euler {
 		}
 	return std::to_string(product.second);
     }
+    std::array<ulong, 10> dfact = {{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880}};
+    std::string problem34(){
+	ulong sum = 0;
+	for(ulong i = 10; i < 50000; ++i){
+	    ulong ds = 0;;
+	    for(digit_iterator di(i); ds <= i &&  di != digit_iterator_end; ++di)
+		ds += dfact[*di];
+	    if(i == ds)
+		sum += i;
+	}
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set3
-    {{P(30),P(31),P(32),P(33)}};
+    {{P(30),P(31),P(32),P(33),P(34)}};
 }
