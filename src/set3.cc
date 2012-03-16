@@ -71,7 +71,25 @@ namespace euler {
 	    s += p;
 	return std::to_string(s);
     }
+    template <class N>
+	inline std::pair<N, N> lowest_terms(N n, N d){
+	    ulong const g = gcd(n,d);
+	    return {n / g, d / g};
+	}
+    std::string problem33(){
+	std::pair<ulong,ulong> product({1,1});
+	for(unsigned char a = 1; a < 10; ++a)
+	    for(unsigned char b = 1; b < 10; ++b)
+		for(unsigned char c = 1; c < 10; ++c){
+		    auto simple = lowest_terms(a,b);
+		    for(unsigned char n : {10*a+c, 10*c+a})
+			for(unsigned char d : {10*b+c, 10*c+b})
+			    if(n < d && simple == lowest_terms(n,d))
+				product = lowest_terms(product.first * n, product.second * d);
+		}
+	return std::to_string(product.second);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set3
-    {{P(30),P(31),P(32)}};
+    {{P(30),P(31),P(32),P(33)}};
 }
