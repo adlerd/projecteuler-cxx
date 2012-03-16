@@ -119,7 +119,39 @@ namespace euler {
 	}
 	return std::to_string(ct);
     }
+    std::string problem36(){
+	ulong sum = 0;
+	for(ulong i = 1; i < 1000000; ++i)
+	    if(is_palindrome(std::to_string(i))){
+		std::string bin;
+		for(ulong j = i; j > 0; j >>= 1)
+		    bin += j & 1 ? '1' : '0';
+		if(is_palindrome(bin))
+		    sum += i;
+	    }
+	return std::to_string(sum);
+    }
+    std::string problem37(){
+	prime_iterator iter;
+	ulong ct = 0;
+	ulong sum = 0;
+	while(*iter < 10) ++iter;
+	std::vector<unsigned char> rev_digits;
+	while(ct < 11){
+	    ulong const p = *iter++;
+	    rev_digits.assign(digit_iterator(p), digit_iterator_end);
+	    for(unsigned int i = 1; i < rev_digits.size(); ++i){
+		if(!is_prime(from_digits(rev_digits.crbegin()+i, rev_digits.crend()))
+			|| !is_prime(from_digits(rev_digits.crbegin(), rev_digits.crend()-i)))
+		    goto bad;
+	    }
+	    ++ct;
+	    sum += p;
+	    bad:;
+	}
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set3
-    {{P(30),P(31),P(32),P(33),P(34),P(35)}};
+    {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37)}};
 }
