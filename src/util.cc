@@ -8,6 +8,25 @@ std::string NYI_fun(){
     return "NYI";
 }
 problem_fun NYI_problem = &NYI_fun;
+bool is_prime(ulong x){
+    switch(x){
+    case 0:
+    case 1:
+	return false;
+    case 2:
+	return true;
+    }
+    if(x % 2 == 0) //common case fast
+	return false;
+    prime_iterator pi;
+    while(true){
+	ulong p = *++pi;
+	if(p * p > x)
+	    return true;
+	if(x % p == 0)
+	    return false;
+    }
+}
 std::vector<ulong> factors(ulong x){
     prime_iterator iter;
     if(x < 1)
