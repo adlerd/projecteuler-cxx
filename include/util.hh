@@ -16,6 +16,8 @@ typedef std::pair<ulong, std::string> answer;
 
 extern problem_fun NYI_problem;
 
+bool is_palindrome(std::string const& str);
+
 bool is_prime(ulong x);
 std::vector<ulong> factors(ulong x);
 std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x);

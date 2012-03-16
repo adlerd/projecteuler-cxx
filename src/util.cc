@@ -4,6 +4,10 @@
 #include "atkin.hh"
 
 namespace euler {
+bool is_palindrome(std::string const& str){
+    auto middle = str.cbegin() + str.size() / 2;
+    return std::mismatch(str.cbegin(), middle, str.crbegin()).first == middle;
+}
 std::string NYI_fun(){
     return "NYI";
 }

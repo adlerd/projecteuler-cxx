@@ -30,10 +30,6 @@ namespace euler {
     std::string problem3(){
 	return std::to_string(factors(600851475143).back());
     }
-    bool is_palindrome(std::string const& str){
-	auto middle = str.cbegin() + str.size() / 2;
-	return std::mismatch(str.cbegin(), middle, str.crbegin()).first == middle;
-    }
     std::string problem4(){
 	ulong high = 0;
 	for(ulong i = 999; i < 1000; --i)
