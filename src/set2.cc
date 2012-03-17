@@ -68,7 +68,7 @@ namespace euler {
 	return std::to_string(sum);
     }
     std::string problem24(){
-	std::array<unsigned char, 10> arr {{'0','1','2','3','4','5','6','7','8','9'}};
+	std::array<char, 10> arr {{'0','1','2','3','4','5','6','7','8','9'}};
 	for(int i = 1; i < 1000000; ++i){
 	    bool const ret = std::next_permutation(arr.begin(), arr.end());
 	    assert(ret);
@@ -139,7 +139,7 @@ namespace euler {
     }
     std::string problem28(){
 	ulong sum = 0;
-	for(int n = 1; n <= 500; ++n)
+	for(uint n = 1; n <= 500; ++n)
 	    sum += 4*n*n+n+1;
 	sum *= 4;
 	sum += 1;

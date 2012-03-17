@@ -57,11 +57,11 @@ namespace euler {
 	    return s;
 	}
     std::string problem32(){
-	std::array<unsigned char, 9> digits = {{1, 2, 3, 4, 5, 6, 7, 8, 9}};
+	std::array<uchar, 9> digits = {{1, 2, 3, 4, 5, 6, 7, 8, 9}};
 	std::set<ulong> products;
 	do {
 	    ulong back = from_digits(digits.cbegin() + 5, digits.cend());
-	    for(unsigned int const split : {1,2}){
+	    for(uint const split : {1,2}){
 		ulong p = from_digits(digits.cbegin(), digits.cbegin()+split)
 		    * from_digits(digits.cbegin()+split, digits.cbegin() + 5);
 		if(p == back)
@@ -80,12 +80,12 @@ namespace euler {
 	}
     std::string problem33(){
 	std::pair<ulong,ulong> product({1,1});
-	for(unsigned char a = 1; a < 10; ++a)
-	    for(unsigned char b = 1; b < 10; ++b)
-		for(unsigned char c = 1; c < 10; ++c){
+	for(uchar a = 1; a < 10; ++a)
+	    for(uchar b = 1; b < 10; ++b)
+		for(uchar c = 1; c < 10; ++c){
 		    auto simple = lowest_terms(a,b);
-		    for(unsigned char n : {10*a+c, 10*c+a})
-			for(unsigned char d : {10*b+c, 10*c+b})
+		    for(uchar n : {10*a+c, 10*c+a})
+			for(uchar d : {10*b+c, 10*c+b})
 			    if(n < d && simple == lowest_terms(n,d))
 				product = lowest_terms(product.first * n, product.second * d);
 		}
@@ -105,11 +105,11 @@ namespace euler {
     }
     std::string problem35(){
 	ulong ct = 0;
-	std::deque<unsigned char> rev_digits;
+	std::deque<uchar> rev_digits;
 	for(prime_iterator pi; *pi < 1000000; ++pi){
 	    rev_digits.assign(digit_iterator(*pi), digit_iterator());
 	    ulong const size = rev_digits.size();
-	    for(unsigned int i = 1; i < size; ++i){
+	    for(uint i = 1; i < size; ++i){
 		rev_digits.push_front(rev_digits.back());
 		rev_digits.pop_back();
 		if(!is_prime(from_digits(rev_digits.crbegin(), rev_digits.crend())))
@@ -137,11 +137,11 @@ namespace euler {
 	ulong ct = 0;
 	ulong sum = 0;
 	while(*iter < 10) ++iter;
-	std::vector<unsigned char> rev_digits;
+	std::vector<uchar> rev_digits;
 	while(ct < 11){
 	    ulong const p = *iter++;
 	    rev_digits.assign(digit_iterator(p), digit_iterator_end);
-	    for(unsigned int i = 1; i < rev_digits.size(); ++i){
+	    for(uint i = 1; i < rev_digits.size(); ++i){
 		if(!is_prime(from_digits(rev_digits.crbegin()+i, rev_digits.crend()))
 			|| !is_prime(from_digits(rev_digits.crbegin(), rev_digits.crend()-i)))
 		    goto bad;
@@ -152,12 +152,12 @@ namespace euler {
 	}
 	return std::to_string(sum);
     }
-    std::array<unsigned int, 6> ten_lookup = {{1, 10, 100, 1000, 10000, 100000}};
+    std::array<uint, 6> ten_lookup = {{1, 10, 100, 1000, 10000, 100000}};
     std::string problem38(){
 	ulong max = 0;
-	std::array<unsigned char, 9> concat;
+	std::array<uchar, 9> concat;
 	std::array<ulong, 6> starts = {{1, 10, 100, 1000, 10000, 100000}};
-	for(int dct = 1; dct < 7; ++dct){
+	for(uint dct = 1; dct < 7; ++dct){
 	    for(ulong i = starts[dct-1]; i < ten_lookup[dct]; ++i){
 		std::bitset<9> ds = 0;
 		auto at = concat.begin();
@@ -167,7 +167,7 @@ namespace euler {
 		    while(di != digit_iterator_end){
 			if(at == concat.end())
 			    goto bad;
-			unsigned char c = *di++;
+			uchar c = *di++;
 			if(c == 0 || ds[c-1])
 			    goto bad;
 			ds[c-1] = true;
@@ -179,7 +179,7 @@ namespace euler {
 		    ulong n = from_digits(concat.cbegin(), concat.cend());
 		    if(n > max){
 			max = n;
-			for(int i = dct; i < 7; ++i)
+			for(uint i = dct; i < 7; ++i)
 			    starts[i - i] = from_digits(concat.cbegin(), concat.cbegin() + i);
 		    }
 		}
@@ -189,7 +189,7 @@ bad:;
 	return std::to_string(max);
     }
     std::string problem39(){
-	std::vector<unsigned char> arr(500,0);
+	std::vector<uchar> arr(500,0);
 	for(ulong m = 2; m * m * 2 < 1000; ++m){
 	    for(ulong n = m % 2 + 1; n < m; n += 2){
 		ulong const sp = m * (m + n);

@@ -5,11 +5,14 @@
 #include <queue>
 #include <list>
 #include <utility>
+#include <stdint.h>
 
 #include <gmpxx.h>
 
 namespace euler {
-typedef unsigned long ulong;
+typedef uint8_t uchar;
+typedef uint32_t uint;
+typedef uint64_t ulong;
 typedef mpz_class bigint;
 typedef std::string (*problem_fun)();
 typedef std::pair<ulong, std::string> answer;
