@@ -1,6 +1,7 @@
 #include <array>
 #include <algorithm>
 #include <set>
+#include <bitset>
 
 #include "set3.hh"
 #include "util.hh"
@@ -151,7 +152,43 @@ namespace euler {
 	}
 	return std::to_string(sum);
     }
+    std::array<unsigned int, 6> ten_lookup = {{1, 10, 100, 1000, 10000, 100000}};
+    std::string problem38(){
+	ulong max = 0;
+	std::array<unsigned char, 9> concat;
+	std::array<ulong, 6> starts = {{1, 10, 100, 1000, 10000, 100000}};
+	for(int dct = 1; dct < 7; ++dct){
+	    for(ulong i = starts[dct-1]; i < ten_lookup[dct]; ++i){
+		std::bitset<9> ds = 0;
+		auto at = concat.begin();
+		for(ulong m = 1; !ds.all(); ++m){
+		    auto beg = at;
+		    digit_iterator di(m*i);
+		    while(di != digit_iterator_end){
+			if(at == concat.end())
+			    goto bad;
+			unsigned char c = *di++;
+			if(c == 0 || ds[c-1])
+			    goto bad;
+			ds[c-1] = true;
+			*at++ = c;
+		    }
+		    std::reverse(beg, at);
+		}
+		{
+		    ulong n = from_digits(concat.cbegin(), concat.cend());
+		    if(n > max){
+			max = n;
+			for(int i = dct; i < 7; ++i)
+			    starts[i - i] = from_digits(concat.cbegin(), concat.cbegin() + i);
+		    }
+		}
+bad:;
+	    }
+	}
+	return std::to_string(max);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set3
-    {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37)}};
+    {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37),P(38)}};
 }
