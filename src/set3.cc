@@ -188,7 +188,22 @@ bad:;
 	}
 	return std::to_string(max);
     }
+    std::string problem39(){
+	std::vector<unsigned char> arr(500,0);
+	for(ulong m = 2; m * m * 2 < 1000; ++m){
+	    for(ulong n = m % 2 + 1; n < m; n += 2){
+		ulong const sp = m * (m + n);
+		if(sp >= 500)
+		    break;
+		if(gcd(m,n) == 1)
+		    for(ulong i = 1; i * sp < 500; ++i)
+			++arr[i * sp];
+	    }
+	}
+	auto iter = std::max_element(arr.cbegin(), arr.cend());
+	return std::to_string(2 * (iter - arr.cbegin()));
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set3
-    {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37),P(38)}};
+    {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37),P(38),P(39)}};
 }
