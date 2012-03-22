@@ -218,7 +218,6 @@ done:
     prime_iterator::b_vec prime_iterator::pre_primes = { true, true, true };
     std::vector<prime_iterator::b_vec> prime_iterator::primes;
     void prime_iterator::advance() {
-	assert(*vec_iter);
 	do {
 	    ++vec_iter;
 	    if(*++delta_iter == 1){

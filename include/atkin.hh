@@ -49,10 +49,12 @@ public:
 	return k * 60 + *delta_iter;
     }
     prime_iterator& operator++(){
+	assert(*vec_iter);
 	advance();
 	return *this;
     }
     prime_iterator operator++(int){
+	assert(*vec_iter);
 	prime_iterator tmp(*this);
 	advance();
 	return tmp;
