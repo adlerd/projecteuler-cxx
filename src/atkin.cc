@@ -262,4 +262,27 @@ done:
 	assert(primes[x].size() == ks_per_cycle * 16);
 	return primes[x].cbegin();
     }
+    void prime_iterator::assign(ulong lower){
+	if(lower <= 5){
+	    *this = prime_iterator();
+	    if(lower > 2){
+		++vec_iter;
+		++delta_iter;
+		if(lower > 3){
+		    ++vec_iter;
+		    ++delta_iter;
+		}
+	    }
+	} else {
+	    ulong l_d = lower % 60;
+	    while(delta_iterator::delta_index_table[l_d] ==
+		    delta_iterator::bad_delta)
+		++l_d;
+	    delta_iter = delta_iterator(l_d);
+	    k = lower / 60;
+	    vec_iter = get_vec_iter(k/ks_per_cycle) + k % ks_per_cycle;
+	    if(!*vec_iter)
+		advance();
+	}
+    }
 }

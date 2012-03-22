@@ -44,6 +44,7 @@ class prime_iterator {
 	: delta_iter(d), k(k0), vec_iter(vi) {}
 public:
     prime_iterator() : delta_iter(), k(0), vec_iter(pre_primes.cbegin()) {}
+    void assign(ulong lower);
     ulong operator*() const {
 	assert(*vec_iter);
 	return k * 60 + *delta_iter;
