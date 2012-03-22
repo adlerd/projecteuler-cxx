@@ -14,6 +14,7 @@
 #include "set1.hh"
 #include "set2.hh"
 #include "set3.hh"
+#include "set4.hh"
 
 #define THREAD_COUNT 5
 
@@ -56,6 +57,7 @@ void for_problems(Function f){
     std::for_each(set1.cbegin(), set1.cend(), f);
     std::for_each(set2.cbegin(), set2.cend(), f);
     std::for_each(set3.cbegin(), set3.cend(), f);
+    std::for_each(set4.cbegin(), set4.cend(), f);
 }
 int main(int argc, char* argv[]){
     std::list<std::thread*> threads;
