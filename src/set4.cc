@@ -36,6 +36,29 @@ namespace euler {
 		return std::to_string(n);
 	}
     }
+    bool is_tri(ulong t){
+	ulong n = 1 + 8 * t;
+	if(n % 2 == 0)
+	    return false;
+	for(auto p : ct_factors(n))
+	    if(p.second % 2 != 0)
+		return false;
+	return true;
+    }
+    std::array<char const *const, 1786> words = {{
+#include "words.include"
+	    }};
+    std::string problem42(){
+	ulong ct = 0;
+	for(std::string str : words){
+	    ulong csum = 0;
+	    for(char c : str)
+		csum += c + 1 - 'A';
+	    if(is_tri(csum))
+		++ct;
+	}
+	return std::to_string(ct);
+    }
     std::string problem43(){
 	// use 1, 0, 2... to skip 0, 1, 2 through 0, 9, 8
 	std::array<uchar, 10> digs = {{1, 0, 2, 3, 4, 5, 6, 7, 8, 9}};
@@ -67,5 +90,5 @@ next:;
     }
 #define P(x) {x, &problem ## x}
     std::list<problem> set4
-    {{P(40),P(41),P(43)}};
+    {{P(40),P(41),P(42),P(43)}};
 }
