@@ -221,8 +221,16 @@ done:
 	assert(*vec_iter);
 	do {
 	    ++vec_iter;
-	    if(*++delta_iter == 1)
-		check_advance();
+	    if(*++delta_iter == 1){
+		if(k == 0){ //handle special case for k==0 meaning two different things
+		    if(vec_iter == pre_primes.cend())
+			vec_iter = get_vec_iter(0);
+		    else
+			k = 1;
+		} else if(++k % ks_per_cycle == 0){
+		    vec_iter = get_vec_iter(k / ks_per_cycle);
+		}
+	    }
 	} while(!*vec_iter);
     }
     auto prime_iterator::get_vec_iter(ulong x) -> b_vec::const_iterator {
@@ -254,21 +262,5 @@ done:
 	}
 	assert(primes[x].size() == ks_per_cycle * 16);
 	return primes[x].cbegin();
-    }
-    void prime_iterator::check_advance() {
-	assert(*delta_iter == 1);
-	ulong x;
-	if(k == 0){ //handle special case for k==0 meaning two different things
-	    if(vec_iter != pre_primes.cend()){
-		++k;
-		return;
-	    }
-	    x = 0;
-	} else if(++k % ks_per_cycle != 0){
-	    return;
-	} else {
-	    x = k / ks_per_cycle;
-	}
-	vec_iter = get_vec_iter(x);
     }
 }

@@ -38,7 +38,6 @@ class prime_iterator {
     ulong k;
     b_vec::const_iterator vec_iter;
     void advance();
-    void check_advance();
     prime_iterator(unsigned char const d, ulong k0, b_vec::const_iterator const& vi)
 	: delta_iter(d), k(k0), vec_iter(vi) {}
     prime_iterator(unsigned char const d, ulong k0, b_vec::const_iterator && vi)
