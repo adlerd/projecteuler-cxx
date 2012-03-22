@@ -1,3 +1,6 @@
+#include <array>
+#include <algorithm>
+
 #include "set4.hh"
 #include "util.hh"
 
@@ -22,7 +25,18 @@ namespace euler {
 	}
 	return std::to_string(p);
     }
+    std::string problem41(){
+	std::array<uchar, 9> digs = {{ 9, 8, 7, 6, 5, 4, 3, 2, 1 }};
+	ulong r_ct = 0;
+	while(true){
+	    if(!std::prev_permutation(digs.begin() + r_ct, digs.end()))
+		++r_ct;
+	    ulong n = from_digits(digs.begin() + r_ct, digs.end());
+	    if(is_prime(n))
+		return std::to_string(n);
+	}
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set4
-    {{P(40)}};
+    {{P(40),P(41)}};
 }
