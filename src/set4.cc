@@ -36,7 +36,36 @@ namespace euler {
 		return std::to_string(n);
 	}
     }
+    std::string problem43(){
+	// use 1, 0, 2... to skip 0, 1, 2 through 0, 9, 8
+	std::array<uchar, 10> digs = {{1, 0, 2, 3, 4, 5, 6, 7, 8, 9}};
+	ulong sum = 0;
+	do {
+	    ulong rsum;
+	    if(digs[3] % 2 != 0)
+		goto next;
+	    if((digs[2] + digs[3] + digs[4]) % 3 != 0)
+		goto next;
+	    if(digs[5] % 5 != 0)
+		goto next;
+	    rsum = digs[4] * 100 + digs[5] * 10 + digs[6];
+	    if(rsum % 7 != 0)
+		goto next;
+	    rsum = (rsum % 100) * 10 + digs[7];
+	    if(rsum % 11 != 0)
+		goto next;
+	    rsum = (rsum % 100) * 10 + digs[8];
+	    if(rsum % 13 != 0)
+		goto next;
+	    rsum = (rsum % 100) * 10 + digs[9];
+	    if(rsum % 17 != 0)
+		goto next;
+	    sum += from_digits(digs.cbegin(), digs.cend());
+next:;
+	} while(std::next_permutation(digs.begin(), digs.end()));
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set4
-    {{P(40),P(41)}};
+    {{P(40),P(41),P(43)}};
 }
