@@ -225,10 +225,37 @@ done:
 		check_advance();
 	} while(!*vec_iter);
     }
-    void prime_iterator::check_advance() {
+    auto prime_iterator::get_vec_iter(ulong x) -> b_vec::const_iterator {
+	typedef std::unique_lock<std::mutex> lock_t;
 	static std::mutex read_mutex;
 	static std::condition_variable *extension_condition;
-	typedef std::unique_lock<decltype(read_mutex)> lock_t;
+	lock_t lock(read_mutex);
+	while(x >= primes.size()){
+	    if(extension_condition == nullptr){
+		std::condition_variable& excon = *new std::condition_variable;
+		extension_condition = &excon;
+		lock.unlock();
+		/* extend_primes can safely read primes (but not modify it) because
+		 * only reads will occur so long as extension_condition != nullptr
+		 * (except by this thread, below)
+		 */
+		b_vec vec = extend_primes();
+		if(primes.size() == 0)
+		    vec[0] = false;
+		lock.lock();
+		primes.push_back(std::move(vec));
+		extension_condition = nullptr;
+		excon.notify_all();
+		delete &excon;
+	    } else {
+		extension_condition->wait(lock);
+	    }
+	    assert(lock.owns_lock());
+	}
+	assert(primes[x].size() == ks_per_cycle * 16);
+	return primes[x].cbegin();
+    }
+    void prime_iterator::check_advance() {
 	assert(*delta_iter == 1);
 	ulong x;
 	if(k == 0){ //handle special case for k==0 meaning two different things
@@ -242,31 +269,6 @@ done:
 	} else {
 	    x = k / ks_per_cycle;
 	}
-	lock_t lock(read_mutex);
-	assert(x == 0 || vec_iter == primes[x - 1].cend());
-	while(x >= primes.size()){
-	    if(extension_condition == nullptr){
-		std::condition_variable& excon = *new std::condition_variable;
-		extension_condition = &excon;
-		lock.unlock();
-		/* extend_primes can safely read primes (but not modify it) because
-		 * only reads will occur so long as extension_condition != nullptr
-		 * (except by this thread, below)
-		 */
-		b_vec vec = extend_primes();
-		if(k == 0)
-		    vec[0] = false;
-		lock.lock();
-		primes.push_back(std::move(vec));
-		extension_condition = nullptr;
-		excon.notify_all();
-		delete &excon;
-	    } else {
-		extension_condition->wait(lock);
-	    }
-	    assert(lock.owns_lock());
-	}
-	vec_iter = primes[x].cbegin();
-	assert(primes[x].size() == ks_per_cycle * 16);
+	vec_iter = get_vec_iter(x);
     }
 }

@@ -33,6 +33,7 @@ class prime_iterator {
     static std::vector<b_vec> primes;
     static ulong constexpr ks_per_cycle = 32;
     static b_vec extend_primes();
+    static b_vec::const_iterator get_vec_iter(ulong x);
     delta_iterator delta_iter;
     ulong k;
     b_vec::const_iterator vec_iter;
