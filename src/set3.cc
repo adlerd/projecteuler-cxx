@@ -47,15 +47,6 @@ namespace euler {
 	cl(0);
 	return std::to_string(ct);
     }
-    template <class Iter>
-	ulong from_digits(Iter begin, Iter end){
-	    ulong s = 0;
-	    while(begin != end){
-		s *= 10;
-		s += *begin++;
-	    }
-	    return s;
-	}
     std::string problem32(){
 	std::array<uchar, 9> digits = {{1, 2, 3, 4, 5, 6, 7, 8, 9}};
 	std::set<ulong> products;

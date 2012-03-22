@@ -59,8 +59,17 @@ public:
 
 extern digit_iterator const digit_iterator_end;
 
-
 ulong digit_sum(bigint const& b) noexcept;
+
+template <class Iter>
+    ulong from_digits(Iter begin, Iter end){
+	ulong s = 0;
+	while(begin != end){
+	    s *= 10;
+	    s += *begin++;
+	}
+	return s;
+    }
 
 ulong gcd(ulong a, ulong b);
 
