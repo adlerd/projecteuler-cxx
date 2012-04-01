@@ -25,6 +25,9 @@ bool is_prime(ulong x);
 std::vector<ulong> factors(ulong x);
 std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x);
 
+uint isqrt(ulong x);
+uint isqrt_part(ulong x);
+
 ulong divisor_ct(ulong x);
 std::vector<ulong> divisors(ulong x);
 ulong divisor_sum(ulong x);

@@ -71,6 +71,32 @@ std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x){
 	factors.push_back({x,1});
     return factors;
 }
+uint isqrt(ulong const x){
+    uint c = 1 << 31;
+    uint g = c;
+    while(c != 0){
+	g |= c;
+	ulong const gsq = ((ulong) g) * g;
+	if(gsq > x)
+	    g ^= c;
+	else if(gsq == x)
+	    return g;
+	c >>= 1;
+    }
+    return 0;
+}
+uint isqrt_part(ulong const x){
+    uint c = 1 << 31;
+    uint g = c;
+    while(c != 0){
+	g |= c;
+	ulong const gsq = ((ulong) g) * g;
+	if(gsq > x)
+	    g ^= c;
+	c >>= 1;
+    }
+    return g;
+}
 ulong divisor_ct(ulong x){
     ulong ct = 1;
     for(auto p : ct_factors(x))

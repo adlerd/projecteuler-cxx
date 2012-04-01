@@ -88,7 +88,22 @@ next:;
 	} while(std::next_permutation(digs.begin(), digs.end()));
 	return std::to_string(sum);
     }
+    bool is_pent(ulong p){
+	return isqrt(p * 24 + 1) % 6 == 5; // isq==0 will fail too
+    }
+    std::string problem44(){
+	std::vector<ulong> lowers;
+	for(ulong upper = 1, small_diff = 4; true; upper += small_diff, small_diff += 3){
+	    for(ulong lower : lowers){
+		ulong const diff = upper - lower;
+		ulong const sum = upper + lower;
+		if(is_pent(diff) && is_pent(sum))
+		    return std::to_string(diff);
+	    }
+	    lowers.push_back(upper);
+	}
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set4
-    {{P(40),P(41),P(42),P(43)}};
+    {{P(40),P(41),P(42),P(43),P(44)}};
 }
