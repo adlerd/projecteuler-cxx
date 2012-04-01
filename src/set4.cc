@@ -103,7 +103,24 @@ next:;
 	    lowers.push_back(*upper);
 	}
     }
+    std::string problem45(){
+	figurate::tri_iter ti(286);
+	figurate::pent_iter pi(166);
+	figurate::hex_iter hi(144);
+	while(true){
+	    if(*ti < *pi)
+		++ti;
+	    else if(*ti > *pi)
+		++pi;
+	    else if(*hi < *pi)
+		++hi;
+	    else if(*hi > *pi)
+		{++pi; ++ti;}
+	    else
+		return std::to_string(*hi);
+	}
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set4
-    {{P(40),P(41),P(42),P(43),P(44)}};
+    {{P(40),P(41),P(42),P(43),P(44),P(45)}};
 }
