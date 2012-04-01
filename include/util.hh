@@ -32,6 +32,37 @@ ulong divisor_ct(ulong x);
 std::vector<ulong> divisors(ulong x);
 ulong divisor_sum(ulong x);
 
+template <uint sides>
+    class figurate_iterator {
+	ulong f;
+	ulong d;
+    public:
+	figurate_iterator() : f(1), d(sides-1) {}
+	explicit figurate_iterator(ulong n)
+	    : f(n*((sides-2)*n+4-sides)/2), d(n*(sides-2)+1) {}
+	figurate_iterator<sides>& operator++(){
+	    f += d;
+	    d += sides - 2;
+	    return *this;
+	}
+	figurate_iterator<sides> operator++(int){
+	    figurate_iterator<sides> const tmp(*this);
+	    operator++();
+	    return tmp;
+	}
+	ulong operator*() const {
+	    return f;
+	}
+	ulong next_diff() const {
+	    return d;
+	}
+    };
+namespace figurate {
+    typedef figurate_iterator<3> tri_iter;
+    typedef figurate_iterator<5> pent_iter;
+    typedef figurate_iterator<6> hex_iter;
+}
+
 class digit_iterator : public std::iterator<std::input_iterator_tag, unsigned char> {
     bigint source;
     unsigned char current;

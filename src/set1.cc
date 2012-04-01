@@ -90,25 +90,7 @@ namespace euler {
 	return std::to_string(high);
     }
     std::string problem12(){
-	class triangle_iter {
-	    ulong t;
-	    ulong d;
-	public:
-	    triangle_iter() : t(1), d(1) {}
-	    triangle_iter& operator++(){
-		t += ++d;
-		return *this;
-	    }
-	    triangle_iter operator++(int){
-		triangle_iter tmp(*this);
-		operator++();
-		return tmp;
-	    }
-	    ulong operator*() const {
-		return t;
-	    }
-	};
-	triangle_iter ti;
+	figurate::tri_iter ti;
 	while(divisor_ct(*ti) <= 500)
 	    ++ti;
 	return std::to_string(*ti);

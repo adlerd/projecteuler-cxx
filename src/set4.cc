@@ -93,14 +93,14 @@ next:;
     }
     std::string problem44(){
 	std::vector<ulong> lowers;
-	for(ulong upper = 1, small_diff = 4; true; upper += small_diff, small_diff += 3){
+	for(figurate::pent_iter upper; true; ++upper){
 	    for(ulong lower : lowers){
-		ulong const diff = upper - lower;
-		ulong const sum = upper + lower;
+		ulong const diff = *upper - lower;
+		ulong const sum = *upper + lower;
 		if(is_pent(diff) && is_pent(sum))
 		    return std::to_string(diff);
 	    }
-	    lowers.push_back(upper);
+	    lowers.push_back(*upper);
 	}
     }
 #define P(x) {x, &problem ## x}
