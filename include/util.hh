@@ -59,6 +59,7 @@ template <uint sides>
     };
 namespace figurate {
     typedef figurate_iterator<3> tri_iter;
+    typedef figurate_iterator<4> square_iter;
     typedef figurate_iterator<5> pent_iter;
     typedef figurate_iterator<6> hex_iter;
 }

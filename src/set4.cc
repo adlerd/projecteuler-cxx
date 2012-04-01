@@ -1,5 +1,6 @@
 #include <array>
 #include <algorithm>
+#include <bitset>
 
 #include "set4.hh"
 #include "util.hh"
@@ -120,7 +121,41 @@ next:;
 		return std::to_string(*hi);
 	}
     }
+    std::string problem46(){
+	for(ulong i = 35; true; i += 2){
+	    bool good = false;
+	    for(figurate::square_iter si(0); !good && (*si)*2 < i; ++si){
+		ulong diff = i - (*si)*2;
+		if(is_prime(diff))
+		    good = true;
+	    }
+	    if(!good)
+		return std::to_string(i);
+	}
+    }
+    std::string problem47(){
+	std::bitset<4> bits(0);
+	for(ulong i = 1; true; ++i){
+	    bits <<= 1;
+	    bits[0] = (ct_factors(i).size() == 4);
+	    if(bits.all())
+		return std::to_string(i - 3);
+	}
+    }
+    std::string problem48(){
+	ulong constexpr mod = 10000000000;
+	bigint mod_bi(mod);
+	bigint base;
+	ulong sum = 0;
+	for(ulong i = 1; i < 1001; ++i){
+	    base = i;
+	    mpz_powm_ui(base.get_mpz_t(), base.get_mpz_t(), i,
+		    mod_bi.get_mpz_t());
+	    sum = (sum + base.get_ui()) % mod;
+	}
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set4
-    {{P(40),P(41),P(42),P(43),P(44),P(45)}};
+    {{P(40),P(41),P(42),P(43),P(44),P(45),P(46),P(47),P(48)}};
 }
