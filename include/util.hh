@@ -64,7 +64,7 @@ namespace figurate {
     typedef figurate_iterator<6> hex_iter;
 }
 
-class digit_iterator : public std::iterator<std::input_iterator_tag, unsigned char> {
+class digit_iterator : public std::iterator<std::forward_iterator_tag, unsigned char> {
     bigint source;
     unsigned char current;
 public:
