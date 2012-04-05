@@ -280,7 +280,8 @@ done:
 		++l_d;
 	    delta_iter = delta_iterator(l_d);
 	    k = lower / 60;
-	    vec_iter = get_vec_iter(k/ks_per_cycle) + k % ks_per_cycle;
+	    vec_iter = get_vec_iter(k/ks_per_cycle) + (k % ks_per_cycle) * 16
+		+ delta_iterator::delta_index_table[*delta_iter];
 	    if(!*vec_iter)
 		advance();
 	}
