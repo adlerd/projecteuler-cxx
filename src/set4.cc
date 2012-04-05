@@ -5,6 +5,8 @@
 #include "set4.hh"
 #include "util.hh"
 
+#include "atkin.hh"
+
 namespace euler {
     std::string problem40(){
 	ulong p = 1;
@@ -155,7 +157,23 @@ next:;
 	}
 	return std::to_string(sum);
     }
+    std::string problem49(){
+	for(prime_iterator pi(1000); *pi < 3340; ++pi){
+	    ulong const p1 = *pi;
+	    ulong const p2 = p1 + 3330;
+	    ulong const p3 = p2 + 3330;
+	    if(p1 != 1487 && is_prime(p2) && is_prime(p3)
+		    && is_permutation(digit_iterator(p1), digit_iterator(0),
+			digit_iterator(p2))
+		    && is_permutation(digit_iterator(p1), digit_iterator(0),
+			digit_iterator(p3))){
+		return std::to_string(p1) + std::to_string(p2)
+		    + std::to_string(p3);
+	    }
+	}
+	return "No solution found!";
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set4
-    {{P(40),P(41),P(42),P(43),P(44),P(45),P(46),P(47),P(48)}};
+    {{P(40),P(41),P(42),P(43),P(44),P(45),P(46),P(47),P(48),P(49)}};
 }
