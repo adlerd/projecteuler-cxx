@@ -67,7 +67,24 @@ namespace euler {
 	    }
 	}
     }
+    std::string problem52(){
+	for(ulong i = 1; true; ++i){
+	    std::vector<uchar> one(digit_iterator(i), digit_iterator(0));
+	    std::vector<uchar> other(digit_iterator(6*i), digit_iterator(0));
+	    if(one.size() == other.size()){
+		std::sort(one.begin(), one.end());
+		std::sort(other.begin(), other.end());
+		ulong n = 6;
+		while(std::equal(one.begin(), one.end(), other.begin())){
+		    if(--n == 1)
+			return std::to_string(i);
+		    other.assign(digit_iterator(n*i), digit_iterator(0));
+		    std::sort(other.begin(), other.end());
+		}
+	    }
+	}
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51)}};
+    {{P(50),P(51),P(52)}};
 }
