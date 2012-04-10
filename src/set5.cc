@@ -84,7 +84,22 @@ namespace euler {
 	    }
 	}
     }
+    std::string problem53(){
+	ulong ct = 0;
+	for(ulong n = 23; n <= 100; ++n){
+	    ulong first_r = 0;
+	    ulong ncr = 1;
+	    for(ulong r = 1; first_r == 0; ++r){
+		ncr *= (n - r + 1);
+		ncr /= r;
+		if(ncr > 1000000)
+		    first_r = r;
+	    }
+	    ct += n + 1 - 2 * first_r;
+	}
+	return std::to_string(ct);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51),P(52)}};
+    {{P(50),P(51),P(52),P(53)}};
 }
