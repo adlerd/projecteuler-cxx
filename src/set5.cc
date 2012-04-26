@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 
 #include "set5.hh"
 #include "util.hh"
@@ -99,7 +100,135 @@ namespace euler {
 	}
 	return std::to_string(ct);
     }
+    uchar constexpr bad_card_lookup = 255;
+#define B bad_card_lookup
+    std::array<uchar, 85> const char_lookup = {{
+	B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B,
+	B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B,
+	B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B,
+	B, B, 0, 1, 2, 3, 4, 5, 6, 7, B, B, B, B, B, B,
+	B,12, B, 0, 1, B, B, B, 2, B, 9,11, B, B, B, B,
+	B,10, B, 3, 8 }};
+#undef B
+    ulong next_hand_value(char const *input){
+	uchar value_counts[13] {0,0,0,0,0,0,0,0,0,0,0,0,0};
+	uchar suit_counts[4] {0,0,0,0};
+	uchar four = 13;
+	uchar trip = 13;
+	uchar doub = 13;
+	uchar second_doub = 13;
+	bool straight = true;
+	bool flush = false;
+	for(uint c = 0; c < 5; ++c){
+	    char c = *input++;
+	    assert(c >= 0 && c <= 'T');
+	    uchar v = char_lookup[c];
+	    assert(v < 13);
+	    ++value_counts[v];
+	    c = *input++;
+	    assert(c >= 0 && c <= 'T');
+	    v = char_lookup[c];
+	    assert(v < 4);
+	    ++suit_counts[v];
+	    c = *input++;
+	    assert(c == ' ');
+	}
+	uint more = 5;
+	for(uint v = 0; more; ++v){
+	    assert(v < 13);
+	    uint const ct = value_counts[v];
+	    switch(ct){
+	    case 0:
+		if(more != 5)
+		    straight = false;
+		break;
+	    case 1:
+		break;
+	    case 2:
+		straight = false;
+		if(doub == 13)
+		    doub = v;
+		else {
+		    if(doub < v){
+			second_doub = doub;
+			doub = v;
+		    } else {
+			second_doub = v;
+		    }
+		}
+		break;
+	    case 3:
+		straight = false;
+		trip = v;
+		break;
+	    case 4:
+		straight = false;
+		four = v;
+		break;
+	    default:
+		assert(false);
+	    }
+	    more -= ct;
+	}
+	for(uint s = 0; s < 4; ++s){
+	    uint const ct = suit_counts[s];
+	    if(ct == 5)
+		flush = true;
+	    if(ct != 0)
+		break;
+	}
+	// value is a 8-digit base 13 number, with these digits:
+	ulong value;
+	if(flush && straight)
+	    value = 12 * 13 * 13;
+	else if(four != 13)
+	    value = (11 * 13 + four) * 13;
+	else if(trip != 13 && doub != 13)
+	    value = (10 * 13 + trip) * 13;
+	else if(flush)
+	    value = (9 * 13) * 13;
+	else if(straight)
+	    value = (8 * 13) * 13;
+	else if(trip != 13)
+	    value = (7 * 13 + trip) * 13;
+	else if(second_doub != 13)
+	    value = (6 * 13 + doub) * 13 + second_doub;
+	else if(doub != 13)
+	    value = (5 * 13 + doub) * 13;
+	else
+	    value = 0;
+	uint extras = 0;
+	uint seen = 0;
+	for(int v = 12; seen < 5; --v){
+	    uint ct = value_counts[v];
+	    if(ct > 0){
+		value *= 13;
+		value += v;
+		extras += ct - 1;
+		seen += ct;
+	    }
+	}
+	for(uint i = 0; i < extras; ++i)
+	    value *= 13;
+	return value;
+    }
+    char const *const input54 =
+#include "poker.include"
+	;
+    std::string problem54(){
+	char const *input = input54;
+	uint one_count = 0;
+	for(uint i = 0; i < 1000; ++i){
+	    ulong const one = next_hand_value(input);
+	    input += 15;
+	    ulong const two = next_hand_value(input);
+	    input += 15;
+	    if(one > two)
+		++one_count;
+	}
+	return std::to_string(one_count);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51),P(52),P(53)}};
+    {{P(50),P(51),P(52),P(53),P(54)}};
 }
