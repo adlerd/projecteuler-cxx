@@ -228,7 +228,24 @@ namespace euler {
 	}
 	return std::to_string(one_count);
     }
+    std::string problem55(){
+	ulong lychrel_count = 0;
+	for(ulong i = 1; i < 10000; ++i){
+	    ulong n = i;
+	    for(uint c = 0; true; ++c){
+		auto nstr = std::to_string(n);
+		if(c > 0 && is_palindrome(nstr)){
+		    break;
+		} else if(c == 50){
+		    ++lychrel_count;
+		    break;
+		}
+		n += from_digits(digit_iterator(n), digit_iterator(0));
+	    }
+	}
+	return std::to_string(lychrel_count);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51),P(52),P(53),P(54)}};
+    {{P(50),P(51),P(52),P(53),P(54),P(55)}};
 }
