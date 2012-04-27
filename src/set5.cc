@@ -245,7 +245,17 @@ namespace euler {
 	}
 	return std::to_string(lychrel_count);
     }
+    std::string problem56(){
+	bigint big;
+	ulong max_sum = 0;
+	for(uint a = 1; a < 100; ++a)
+	    for(uint b = 1; b < 100; ++b){
+		mpz_ui_pow_ui(big.get_mpz_t(), a, b);
+		max_sum = std::max(max_sum, digit_sum(big));
+	    }
+	return std::to_string(max_sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51),P(52),P(53),P(54),P(55)}};
+    {{P(50),P(51),P(52),P(53),P(54),P(55),P(56)}};
 }
