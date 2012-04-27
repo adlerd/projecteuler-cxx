@@ -279,7 +279,64 @@ namespace euler {
 		return std::to_string(2*n+1);
 	}
     }
+    std::array<std::string, 5> const common_words = {{"the", "and", "of", "to", "in"}};
+    std::array<uchar, 1201> const input59 = {{
+#include "cipher1.include"
+    }};
+    bool normal_text_char(uchar c){
+	return c <= 'z' && c >= ' ';
+    }
+    bool input59_check(uint const offset, uchar const xchar){
+	for(uint i = offset; i < input59.size(); i += 3){
+	    uchar const c = input59[i] xor xchar;
+	    if(c > 'z' || c < ' ')
+		return false;
+	}
+	return true;
+    }
+    void input59_transform(uint const offset, uchar const xchar, std::array<uchar, 1201>& out){
+	for(uint i = offset; i < input59.size(); i += 3)
+	    out[i] = input59[i] xor xchar;
+    }
+    std::string problem59(){
+	std::vector<uchar> c1s;
+	for(uchar c1 = 'a'; c1 <= 'z'; ++c1)
+	    if(input59_check(0, c1))
+		c1s.push_back(c1);
+	std::vector<uchar> c2s;
+	for(uchar c2 = 'a'; c2 <= 'z'; ++c2)
+	    if(input59_check(1, c2))
+		c2s.push_back(c2);
+	std::vector<uchar> c3s;
+	for(uchar c3 = 'a'; c3 <= 'z'; ++c3)
+	    if(input59_check(2, c3))
+		c3s.push_back(c3);
+	std::array<uchar, 1201> check;
+	for(uchar c1 : c1s){
+	    input59_transform(0, c1, check);
+	    for(uchar c2 : c2s){
+		input59_transform(1, c2, check);
+		for(uchar c3 : c3s){
+		    input59_transform(2, c3, check);
+		    bool good = true;
+		    for(auto word : common_words){
+			if(std::search(check.cbegin(), check.cend(), word.cbegin(), word.cend()) == check.cend()){
+			    good = false;
+			    break;
+			}
+		    }
+		    if(good){
+			ulong ret = 0;
+			for(uchar ch : check)
+			    ret += ch;
+			return std::to_string(ret);
+		    }
+		}
+	    }
+	}
+	return "No solution found!";
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51),P(52),P(53),P(54),P(55),P(56),P(57),P(58)}};
+    {{P(50),P(51),P(52),P(53),P(54),P(55),P(56),P(57),P(58),P(59)}};
 }
