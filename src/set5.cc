@@ -255,7 +255,18 @@ namespace euler {
 	    }
 	return std::to_string(max_sum);
     }
+    std::string problem57(){
+	typedef mpq_class bigq;
+	bigq q(1);
+	ulong ct = 0;
+	for(uint i = 0; i < 1000; ++i){
+	    q = 1 + 1 / (1 + q);
+	    if(q > 1 && q.get_num().get_str().size() > q.get_den().get_str().size())
+		++ct;
+	}
+	return std::to_string(ct);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51),P(52),P(53),P(54),P(55),P(56)}};
+    {{P(50),P(51),P(52),P(53),P(54),P(55),P(56),P(57)}};
 }
