@@ -64,19 +64,47 @@ namespace figurate {
     typedef figurate_iterator<6> hex_iter;
 }
 
-class digit_iterator : public std::iterator<std::forward_iterator_tag, unsigned char> {
+class big_digit_iterator : public std::iterator<std::forward_iterator_tag, unsigned char> {
     bigint source;
     unsigned char current;
 public:
+    big_digit_iterator() : source(0), current(0) {}
+    explicit big_digit_iterator(bigint const& s) : source(s) {
+	operator++();
+    }
+    unsigned char operator*() const {
+	return current;
+    }
+    big_digit_iterator& operator++() noexcept {
+	current = mpz_fdiv_q_ui(source.get_mpz_t(), source.get_mpz_t(), 10);
+	return *this;
+    }
+    big_digit_iterator operator++(int){
+	big_digit_iterator tmp(*this);
+	operator++();
+	return tmp;
+    }
+    bool operator==(big_digit_iterator const& o) const {
+	return current == o.current && source == o.source;
+    }
+    bool operator!=(big_digit_iterator const& o) const {
+	return !operator==(o);
+    }
+};
+class digit_iterator : public std::iterator<std::forward_iterator_tag, unsigned char> {
+    ulong source;
+    unsigned char current;
+public:
     digit_iterator() : source(0), current(0) {}
-    explicit digit_iterator(bigint const& s) : source(s) {
+    explicit digit_iterator(ulong const& s) : source(s) {
 	operator++();
     }
     unsigned char operator*() const {
 	return current;
     }
     digit_iterator& operator++() noexcept {
-	current = mpz_fdiv_q_ui(source.get_mpz_t(), source.get_mpz_t(), 10);
+	current = source % 10;
+	source /= 10;
 	return *this;
     }
     digit_iterator operator++(int){
@@ -91,8 +119,6 @@ public:
 	return !operator==(o);
     }
 };
-
-extern digit_iterator const digit_iterator_end;
 
 ulong digit_sum(bigint const& b) noexcept;
 

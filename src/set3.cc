@@ -87,7 +87,7 @@ namespace euler {
 	ulong sum = 0;
 	for(ulong i = 10; i < 50000; ++i){
 	    ulong ds = 0;;
-	    for(digit_iterator di(i); ds <= i &&  di != digit_iterator_end; ++di)
+	    for(digit_iterator di(i); ds <= i &&  di != digit_iterator(); ++di)
 		ds += dfact[*di];
 	    if(i == ds)
 		sum += i;
@@ -131,7 +131,7 @@ namespace euler {
 	std::vector<uchar> rev_digits;
 	while(ct < 11){
 	    ulong const p = *iter++;
-	    rev_digits.assign(digit_iterator(p), digit_iterator_end);
+	    rev_digits.assign(digit_iterator(p), digit_iterator());
 	    for(uint i = 1; i < rev_digits.size(); ++i){
 		if(!is_prime(from_digits(rev_digits.crbegin()+i, rev_digits.crend()))
 			|| !is_prime(from_digits(rev_digits.crbegin(), rev_digits.crend()-i)))
@@ -155,7 +155,7 @@ namespace euler {
 		for(ulong m = 1; !ds.all(); ++m){
 		    auto beg = at;
 		    digit_iterator di(m*i);
-		    while(di != digit_iterator_end){
+		    while(di != digit_iterator()){
 			if(at == concat.end())
 			    goto bad;
 			uchar c = *di++;

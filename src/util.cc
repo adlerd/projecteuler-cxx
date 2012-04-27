@@ -128,8 +128,8 @@ digit_iterator const digit_iterator_end;
 
 ulong digit_sum(bigint const& b) noexcept {
     ulong sum = 0;
-    digit_iterator iter(b);
-    while(iter != digit_iterator_end){
+    big_digit_iterator iter(b);
+    while(iter != big_digit_iterator()){
 	sum += *iter;
 	++iter;
     }
