@@ -266,7 +266,20 @@ namespace euler {
 	}
 	return std::to_string(ct);
     }
+    std::string problem58(){
+	ulong prime_ct = 0;
+	for(uint n = 1; true; ++n){
+	    ulong base = 1+2*n*(2*n-1);
+	    for(uint rep = 0; rep < 3; ++rep){
+		if(is_prime(base))
+		    ++prime_ct;
+		base += 2*n;
+	    }
+	    if(10*prime_ct < (4*n + 1))
+		return std::to_string(2*n+1);
+	}
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set5
-    {{P(50),P(51),P(52),P(53),P(54),P(55),P(56),P(57)}};
+    {{P(50),P(51),P(52),P(53),P(54),P(55),P(56),P(57),P(58)}};
 }
