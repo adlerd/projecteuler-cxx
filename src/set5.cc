@@ -120,18 +120,18 @@ namespace euler {
 	bool straight = true;
 	bool flush = false;
 	for(uint c = 0; c < 5; ++c){
-	    char c = *input++;
-	    assert(c >= 0 && c <= 'T');
-	    uchar v = char_lookup[c];
+	    char ch = *input++;
+	    assert(ch >= 0 && ch <= 'T');
+	    uchar v = char_lookup[ch];
 	    assert(v < 13);
 	    ++value_counts[v];
-	    c = *input++;
-	    assert(c >= 0 && c <= 'T');
-	    v = char_lookup[c];
+	    ch = *input++;
+	    assert(ch >= 0 && ch <= 'T');
+	    v = char_lookup[ch];
 	    assert(v < 4);
 	    ++suit_counts[v];
-	    c = *input++;
-	    assert(c == ' ');
+	    ch = *input++;
+	    assert(ch == ' ');
 	}
 	uint more = 5;
 	for(uint v = 0; more; ++v){
