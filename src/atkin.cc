@@ -3,9 +3,12 @@
 #include <cassert>
 #include <vector>
 #include <array>
+#include <algorithm>
+
+#ifndef NO_THREADS
 #include <mutex>
 #include <condition_variable>
-#include <algorithm>
+#endif
 
 namespace euler {
     struct fg_pair {
@@ -233,6 +236,7 @@ done:
 	} while(!*vec_iter);
     }
     auto prime_iterator::get_vec_iter(ulong x) -> b_vec::const_iterator {
+#ifndef NO_THREADS
 	typedef std::unique_lock<std::mutex> lock_t;
 	static std::mutex read_mutex;
 	static std::condition_variable *extension_condition;
@@ -259,6 +263,13 @@ done:
 	    }
 	    assert(lock.owns_lock());
 	}
+#else
+	while(x >= primes.size()){
+	    primes.push_back(extend_primes());
+	    if(primes.size() == 1)
+		primes.front()[0] = false;
+	}
+#endif
 	assert(primes[x].size() == ks_per_cycle * 16);
 	return primes[x].cbegin();
     }

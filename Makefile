@@ -1,7 +1,14 @@
-CC=/usr/bin/gcc-4.7.1 --std=c++11 -pthread
-CXX=/usr/bin/g++-4.7.1 --std=c++11 -pthread
+CC=/usr/bin/gcc-4.7.1 --std=c++11
+CXX=/usr/bin/g++-4.7.1 --std=c++11
+ALL_CPPFLAGS=-I./include/ -Wall
+ifneq "$(NO_THREADS)" "true"
+    CC += -pthread
+    CXX += -pthread
+else
+    ALL_CPPFLAGS += -DNO_THREADS
+endif
 LDLIBS=-lgmp -lgmpxx
-ALL_CPPFLAGS=-I./include/ -Wall $(CPPFLAGS)
+ALL_CPPFLAGS += $(CPPFLAGS)
 OBJDUMP_FLAGS=-dCSr
 
 empty:=

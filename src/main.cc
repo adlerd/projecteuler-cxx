@@ -1,12 +1,15 @@
 #include <stdexcept>
 #include <iostream>
-#include <mutex>
-#include <condition_variable>
-#include <thread>
 #include <map>
 #include <set>
 #include <algorithm>
 #include <cassert>
+
+#ifndef NO_THREADS
+#include <mutex>
+#include <condition_variable>
+#include <thread>
+#endif
 
 #include "util.hh"
 #include "atkin.hh"
@@ -17,14 +20,12 @@
 #include "set4.hh"
 #include "set5.hh"
 
-#define THREAD_COUNT 5
-
 using namespace euler;
 
 void queue_problem(problem const& fun);
 answer retrieve_answer();
-void problems_runner();
 void die();
+void start_threads();
 
 void print_answer(answer const& a){
     std::cout << a.first << ": " << a.second << std::endl;
@@ -62,9 +63,7 @@ void for_problems(Function f){
     std::for_each(set5.cbegin(), set5.cend(), f);
 }
 int main(int argc, char* argv[]){
-    std::list<std::thread*> threads;
-    for(int i = 0; i < THREAD_COUNT; ++i)
-	threads.push_back(new std::thread(&problems_runner));
+    start_threads();
     std::vector<ulong> order;
     if(argc == 1){
 	for_problems([&order](problem const& p)
@@ -94,12 +93,12 @@ int main(int argc, char* argv[]){
     }
     print_in_order(order);
     die();
-    for(auto t : threads){
-	t->join();
-	delete t;
-    }
     return 0;
 }
+
+#ifndef NO_THREADS
+
+ulong constexpr THREAD_COUNT = 5;
 
 bool die_flag = false;
 
@@ -146,8 +145,43 @@ void problems_runner(){
     }
 }
 
+std::list<std::thread*> threads;
+
 void die(){
-    std::unique_lock<std::mutex> lock(problem_mutex);
-    die_flag = true;
-    problem_condition.notify_all();
+    {
+	std::unique_lock<std::mutex> lock1(problem_mutex);
+	assert(problem_queue.empty());
+	die_flag = true;
+	problem_condition.notify_all();
+    }
+    for(auto t : threads){
+	t->join();
+	delete t;
+    }
+    assert(answer_queue.empty());
 }
+
+void start_threads(){
+    for(uint i = 0; i < THREAD_COUNT; ++i)
+	threads.push_back(new std::thread(&problems_runner));
+}
+
+#else
+
+std::queue<problem, std::list<problem>> problem_queue;
+
+void queue_problem(problem const& problem){
+    problem_queue.push(problem);
+}
+answer retrieve_answer(){
+    problem p = problem_queue.front();
+    problem_queue.pop();
+    return {p.get_number(), p()};
+}
+
+void die(){
+    assert(problem_queue.empty());
+}
+void start_threads(){}
+
+#endif
