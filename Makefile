@@ -1,5 +1,5 @@
-CC=/usr/bin/gcc-4.6.3 --std=c++0x -pthread
-CXX=/usr/bin/g++-4.6.3 --std=c++0x -pthread
+CC=/usr/bin/gcc-4.7.1 --std=c++11 -pthread
+CXX=/usr/bin/g++-4.7.1 --std=c++11 -pthread
 LDLIBS=-lgmp -lgmpxx
 ALL_CPPFLAGS=-I./include/ -Wall $(CPPFLAGS)
 OBJDUMP_FLAGS=-dCSr
