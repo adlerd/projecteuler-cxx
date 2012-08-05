@@ -14,7 +14,8 @@ OBJDUMP_FLAGS=-dCSr
 empty:=
 space:= $(empty) $(empty)
 
-libsources = atkin.cc util.cc set0.cc set1.cc set2.cc set3.cc set4.cc set5.cc
+libsources = atkin.cc util.cc set0.cc set1.cc set2.cc set3.cc set4.cc set5.cc \
+	     set6.cc
 sources = $(libsources) main.cc
 
 hlibs = $(subst $(space),|,$(basename $(libsources)))
