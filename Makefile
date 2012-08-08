@@ -37,16 +37,7 @@ cleanall: clean
 	rm -f *.d.????
 
 %.d: %.cc Makefile
-	@set -e; \
-	rm -f $@; \
-	echo -n "$(CC) -MM $<; et cetera ... "; \
-	$(CC) -MM $(ALL_CPPFLAGS) $< > $@.$$$$; \
-	sed -e 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
-	echo -n "$* : " >> $@ ; \
-	awk 'BEGIN { RS = " " } ; /include\/($(hlibs)).hh/ { print $$0 }' $@ | sed -n -e 's,^[^/]*/\([^.]*\).hh,\1.o ,w/dev/stdout' | tr -d '\012' >> $@; \
-	echo >> $@; \
-	rm -f $@.$$$$; \
-	echo $@;
+	$(CC) -MM $(ALL_CPPFLAGS) $< > $@
 
 include $(if $(filter-out clean cleanall,$(MAKECMDGOALS)),$(sources:%.cc=%.d))
 #doesn't include *.d if MAKECMDGOALS consists *only* of clean and cleanall
@@ -54,7 +45,7 @@ include $(if $(filter-out clean cleanall,$(MAKECMDGOALS)),$(sources:%.cc=%.d))
 %.o: %.cc
 	$(CXX) -o $@ $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
 
-%: %.o
+main: $(subst .cc,.o,$(sources))
 	mkdir -p bin
 	$(CXX) -o bin/$@ $^ $(LDFLAGS) $(LDLIBS) 2>&1
 
