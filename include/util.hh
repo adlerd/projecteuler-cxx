@@ -57,6 +57,19 @@ template <uint sides>
 	    return d;
 	}
     };
+template <uint sides>
+    bool is_figurate(ulong p){
+	ulong constexpr bsq = 16 - 8*sides + sides*sides;
+	ulong constexpr eight_a = 8 * sides - 16;
+	ulong constexpr two_a = 2 * sides - 4;
+	ulong constexpr mod = (two_a - ((sides - 4) % two_a)) % two_a;
+	ulong const sqrt = isqrt(p * eight_a + bsq);
+	return sqrt != 0 && sqrt % two_a == mod;
+    }
+template <>
+    inline bool is_figurate<4>(ulong p){
+	return isqrt(p) != 0;
+    }
 namespace figurate {
     typedef figurate_iterator<3> tri_iter;
     typedef figurate_iterator<4> square_iter;

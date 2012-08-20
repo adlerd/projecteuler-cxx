@@ -39,15 +39,6 @@ namespace euler {
 		return std::to_string(n);
 	}
     }
-    bool is_tri(ulong t){
-	ulong n = 1 + 8 * t;
-	if(n % 2 == 0)
-	    return false;
-	for(auto p : ct_factors(n))
-	    if(p.second % 2 != 0)
-		return false;
-	return true;
-    }
     std::array<char const *const, 1786> words = {{
 #include "words.include"
 	    }};
@@ -57,7 +48,7 @@ namespace euler {
 	    ulong csum = 0;
 	    for(char c : str)
 		csum += c + 1 - 'A';
-	    if(is_tri(csum))
+	    if(is_figurate<3>(csum))
 		++ct;
 	}
 	return std::to_string(ct);
@@ -91,16 +82,13 @@ next:;
 	} while(std::next_permutation(digs.begin(), digs.end()));
 	return std::to_string(sum);
     }
-    bool is_pent(ulong p){
-	return isqrt(p * 24 + 1) % 6 == 5; // isq==0 will fail too
-    }
     std::string problem44(){
 	std::vector<ulong> lowers;
 	for(figurate::pent_iter upper; true; ++upper){
 	    for(ulong lower : lowers){
 		ulong const diff = *upper - lower;
 		ulong const sum = *upper + lower;
-		if(is_pent(diff) && is_pent(sum))
+		if(is_figurate<5>(diff) && is_figurate<5>(sum))
 		    return std::to_string(diff);
 	    }
 	    lowers.push_back(*upper);
