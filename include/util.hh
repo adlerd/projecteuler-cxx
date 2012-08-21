@@ -33,6 +33,13 @@ std::vector<ulong> divisors(ulong x);
 ulong divisor_sum(ulong x);
 
 template <uint sides>
+    struct figurate_constants {
+	static ulong constexpr bsq = 16 + sides*sides - 8*sides;
+	static ulong constexpr eight_a = 8 * sides - 16;
+	static ulong constexpr two_a = 2 * sides - 4;
+	static ulong constexpr mod = (two_a - ((sides - 4) % two_a)) % two_a;
+    };
+template <uint sides>
     class figurate_iterator {
 	ulong f;
 	ulong d;
@@ -40,6 +47,8 @@ template <uint sides>
 	figurate_iterator() : f(1), d(sides-1) {}
 	explicit figurate_iterator(ulong n)
 	    : f(n*((sides-2)*n+4-sides)/2), d(n*(sides-2)+1) {}
+	figurate_iterator(figurate_iterator const&) = default;
+	figurate_iterator(figurate_iterator&&) = default;
 	figurate_iterator<sides>& operator++(){
 	    f += d;
 	    d += sides - 2;
@@ -56,15 +65,18 @@ template <uint sides>
 	ulong next_diff() const {
 	    return d;
 	}
+	static figurate_iterator at_least(ulong p){
+	    typedef figurate_constants<sides> fcs;
+	    ulong const ipart = isqrt_part((p - 1) * fcs::eight_a + fcs::bsq);
+	    ulong const numer = ipart + sides - 4;
+	    return figurate_iterator(1 + numer/fcs::two_a);
+	}
     };
 template <uint sides>
     bool is_figurate(ulong p){
-	ulong constexpr bsq = 16 - 8*sides + sides*sides;
-	ulong constexpr eight_a = 8 * sides - 16;
-	ulong constexpr two_a = 2 * sides - 4;
-	ulong constexpr mod = (two_a - ((sides - 4) % two_a)) % two_a;
-	ulong const sqrt = isqrt(p * eight_a + bsq);
-	return sqrt != 0 && sqrt % two_a == mod;
+	typedef figurate_constants<sides> fcs;
+	ulong const sqrt = isqrt(p * fcs::eight_a + fcs::bsq);
+	return sqrt != 0 && sqrt % fcs::two_a == fcs::mod;
     }
 template <>
     inline bool is_figurate<4>(ulong p){
