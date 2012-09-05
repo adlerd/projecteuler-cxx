@@ -2,6 +2,8 @@
 #include "atkin.hh"
 #include <map>
 #include <list>
+#include <forward_list>
+#include <algorithm>
 
 namespace euler {
     namespace euler60 {
@@ -103,7 +105,96 @@ namespace euler {
 	}
 	return std::to_string(state.minsum);
     }
+    namespace euler61 {
+	struct fourd {
+	    uchar top;
+	    uchar bottom;
+	    fourd(ulong a) : top(a / 100), bottom(a % 100) {
+		assert(top < 100);
+	    }
+	    fourd(uchar t, uchar b) : top(t), bottom(b) {
+		assert(t < 100 && b < 100);
+	    }
+
+	    fourd(fourd&&) = default;
+	    fourd(fourd const&) = default;
+	    ~fourd() = default;
+
+	    operator ulong(){
+		return top * 100 + bottom;
+	    }
+	    bool operator==(fourd const& other) const {
+		return (top == other.top) && (bottom == other.bottom);
+	    }
+	};
+	typedef std::vector<fourd> figvec;
+	typedef std::list<figvec*> veclist;
+	typedef std::forward_list<fourd> resultlist;
+	template <uint sides>
+	void populate_vector(figvec& vec){
+	    for(auto iter = figurate_iterator<sides>::at_least(1000);
+		    *iter < 10000; ++iter)
+		vec.emplace_back(*iter);
+	}
+	resultlist *rec(veclist vecs, fourd prev, fourd& first){
+	    assert(vecs.begin() != vecs.end());
+	    figvec *alt = vecs.front();
+	    vecs.pop_front();
+	    if(vecs.empty()){
+		assert(prev != 0);
+		fourd target(prev.bottom, first.top);
+		if(std::find(alt->begin(), alt->end(), target) != alt->end())
+		    return new resultlist(1, target);
+	    } else if (((ulong)prev) == 0){
+		for(auto& fd : *alt){
+		    auto ret = rec(vecs, fd, fd);
+		    if(ret != nullptr){
+			ret->push_front(fd);
+			return ret;
+		    }
+		}
+	    } else {
+		veclist::iterator iter = vecs.begin();
+		while(true){
+		    for(auto& fd : *alt){
+			if(fd.top == prev.bottom){
+			    auto ret = rec(vecs, fd, first);
+			    if(ret != nullptr){
+				ret->push_front(fd);
+				return ret;
+			    }
+			}
+		    }
+		    if(iter == vecs.end())
+			break;
+		    std::swap(alt,*iter++);
+		}
+	    }
+	    return nullptr;
+	}
+    }
+    std::string problem61(){
+	using namespace euler61;
+	figvec vecs[6];
+	populate_vector<3>(vecs[0]);
+	populate_vector<4>(vecs[1]);
+	populate_vector<5>(vecs[2]);
+	populate_vector<6>(vecs[3]);
+	populate_vector<7>(vecs[4]);
+	populate_vector<8>(vecs[5]);
+	veclist master;
+	for(figvec *v = vecs; v < vecs+6; ++v)
+	    master.push_back(v);
+	fourd fake(0);
+	auto *sol = rec(master, 0, fake);
+	if(sol == nullptr)
+	    throw std::logic_error("problem 61 unsolved");
+	ulong sum = 0;
+	for(auto& fd : *sol)
+	    sum += fd;
+	return std::to_string(sum);
+    }
 #define P(x) {x, &problem ## x}
     std::list<problem> set6
-    {{P(60)}};
+    {{P(60),P(61)}};
 }
