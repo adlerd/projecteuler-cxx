@@ -5,6 +5,7 @@
 #include <forward_list>
 #include <algorithm>
 #include <array>
+#include <set>
 
 namespace euler {
     namespace euler60 {
@@ -238,7 +239,36 @@ namespace euler {
 	}
 	return ct;
     }
+    namespace euler64 {
+	typedef std::array<uint, 3> triple;
+	typedef std::set<triple> tset;
+	ulong period(ulong n){
+	    uint abs_floor = isqrt_part(n);
+	    if(abs_floor * abs_floor == n)
+		return 0;
+	    triple prev = {{ abs_floor, 0, 1}};
+	    triple t;
+	    tset set;
+	    while(true){
+		ulong m = t[1] = prev[2] * prev[0] - prev[1];
+		ulong d = t[2] = (n - m * m) / prev[2];
+		assert((n - m * m) % prev[2] == 0);
+		t[0] = (abs_floor + m) / d;
+		if(set.find(t) != set.end())
+		    return set.size();
+		set.insert(t);
+		std::copy(t.begin(), t.end(), prev.begin());
+	    }
+	}
+    }
+    ulong problem64(){
+	ulong ct = 0;
+	for(ulong n = 1; n <= 10000; ++n)
+	    if(euler64::period(n) % 2 != 0)
+		++ct;
+	return ct;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61),P(62),P(63)}};
+    {{P(60),P(61),P(62),P(63),P(64)}};
 }
