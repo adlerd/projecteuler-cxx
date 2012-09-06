@@ -192,6 +192,7 @@ namespace euler {
 	ulong sum = 0;
 	for(auto& fd : *sol)
 	    sum += fd;
+	delete sol;
 	return sum;
     }
 #define P(x) new_problem(x, &problem ## x)
