@@ -70,8 +70,8 @@ namespace euler {
     std::string problem24(){
 	std::array<char, 10> arr {{'0','1','2','3','4','5','6','7','8','9'}};
 	for(int i = 1; i < 1000000; ++i){
-	    bool const ret = std::next_permutation(arr.begin(), arr.end());
-	    assert(ret);
+	    if(!std::next_permutation(arr.begin(), arr.end()))
+		assert(false);
 	}
 	return { arr.begin(), arr.end() };
     }
