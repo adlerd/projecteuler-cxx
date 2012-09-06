@@ -47,7 +47,7 @@ include $(if $(filter-out clean cleanall,$(MAKECMDGOALS)),$(sources:%.cc=%.d))
 
 main: $(subst .cc,.o,$(sources))
 	mkdir -p bin
-	$(CXX) -o bin/$@ $^ $(LDFLAGS) $(LDLIBS) 2>&1
+	$(CXX) -o bin/$@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) 2>&1
 
 %.cps: %.cc
 	$(CXX) -S $(ALL_CPPFLAGS) $(CXXFLAGS) $< -o $@
