@@ -172,23 +172,27 @@ public:
 };
 
 template <class T>
+inline std::string euler_to_string(T const& x){
+    return std::to_string(x);
+}
+template <>
+inline std::string euler_to_string<std::string>(std::string const& x){
+    return x;
+}
+template <>
+inline std::string euler_to_string<bigint>(bigint const& x){
+    return x.get_str();
+}
+
+
+template <class T>
 class typed_problem : public problem {
     typedef T (*fun_t)();
     fun_t fun;
 public:
     typed_problem(ulong n, fun_t f) : problem(n), fun(f) {}
     virtual std::string run() const {
-	return std::to_string(fun());
-    }
-};
-template <>
-class typed_problem<std::string> : public problem {
-    typedef std::string (*fun_t)();
-    fun_t fun;
-public:
-    typed_problem(ulong n, fun_t f) : problem(n), fun(f) {}
-    virtual std::string run() const {
-	return fun();
+	return euler_to_string(fun());
     }
 };
 
