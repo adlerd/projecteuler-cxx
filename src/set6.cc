@@ -137,7 +137,7 @@ namespace euler {
 		    *iter < 10000; ++iter)
 		vec.emplace_back(*iter);
 	}
-	resultlist *rec(veclist vecs, fourd prev, fourd& first){
+	std::unique_ptr<resultlist> rec(veclist vecs, fourd prev, fourd& first){
 	    assert(vecs.begin() != vecs.end());
 	    figvec *alt = vecs.front();
 	    vecs.pop_front();
@@ -145,7 +145,8 @@ namespace euler {
 		assert(prev != 0);
 		fourd target(prev.bottom, first.top);
 		if(std::find(alt->begin(), alt->end(), target) != alt->end())
-		    return new resultlist(1, target);
+		    return std::unique_ptr<resultlist>
+			(new resultlist(1, target));
 	    } else if (((ulong)prev) == 0){
 		for(auto& fd : *alt){
 		    auto ret = rec(vecs, fd, fd);
@@ -187,13 +188,12 @@ namespace euler {
 	for(figvec *v = vecs; v < vecs+6; ++v)
 	    master.push_back(v);
 	fourd fake(0);
-	auto *sol = rec(master, 0, fake);
+	auto sol = rec(master, 0, fake);
 	if(sol == nullptr)
 	    throw std::logic_error("problem 61 unsolved");
 	ulong sum = 0;
 	for(auto& fd : *sol)
 	    sum += fd;
-	delete sol;
 	return sum;
     }
     namespace euler62 {
