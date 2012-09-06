@@ -1,4 +1,5 @@
 #include "set6.hh"
+#include "set1.hh"
 #include "atkin.hh"
 #include <map>
 #include <list>
@@ -325,7 +326,13 @@ namespace euler {
 	}
 	return res_d;
     }
+    std::array<uchar const, 5050> const input67 = {{
+#include "bigtriangle.include"
+    }};
+    ulong problem67(){
+	return tri_collapse::triangle_collapse(input67.end(), 100);
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61),P(62),P(63),P(64),P(65),P(66)}};
+    {{P(60),P(61),P(62),P(63),P(64),P(65),P(66),P(67)}};
 }
