@@ -281,7 +281,51 @@ namespace euler {
 	part += 1;
 	return digit_sum(part.get_num());
     }
+    namespace euler66 {
+	struct basis {
+	    ulong n;
+	    ulong w_0;
+	    explicit basis(ulong nn) : n(nn), w_0(isqrt_part(nn)) {}
+	};
+	struct term {
+	    bigint prev_n, prev_d;
+	    bigint n, d;
+	    ulong w_n, d_n, m_n;
+	    term next(basis const& b) const {
+		ulong next_m = d_n * w_n - m_n;
+		ulong next_d = (b.n - next_m * next_m) / d_n;
+		assert(next_d * d_n == b.n - next_m * next_m);
+		ulong next_w = (b.w_0 + next_m) / next_d;
+		return {n, d, w_n * n + prev_n, w_n * d + prev_d,
+		    next_w, next_d, next_m};
+	    }
+	};
+	bigint min_x(uint d){
+	    basis const b(d);
+	    term t = { 0, 1, 1, 0, b.w_0, 1, 0 };
+	    t = t.next(b);
+	    while(true){
+		t = t.next(b);
+		if(t.n * t.n - d * t.d * t.d == 1)
+		    return t.n;
+	    }
+	}
+    }
+    uint problem66(){
+	bigint max_x = 0;
+	uint res_d = 0;
+	for(uint d = 2; d < 1001; ++d){
+	    if(isqrt(d) == 0){
+		bigint x = euler66::min_x(d);
+		if(x > max_x){
+		    max_x = x;
+		    res_d = d;
+		}
+	    }
+	}
+	return res_d;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61),P(62),P(63),P(64),P(65)}};
+    {{P(60),P(61),P(62),P(63),P(64),P(65),P(66)}};
 }
