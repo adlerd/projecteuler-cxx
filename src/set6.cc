@@ -225,7 +225,20 @@ namespace euler {
 	    }
 	}
     }
+    ulong problem63(){
+	ulong ct = 0;
+	for(uint b = 1; b < 10; ++b){
+	    bigint pow = b;
+	    uint e = 1;
+	    while(distance(big_digit_iterator(pow), {}) == e){
+		pow *= b;
+		++e;
+	    }
+	    ct += e-1;
+	}
+	return ct;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61),P(62)}};
+    {{P(60),P(61),P(62),P(63)}};
 }
