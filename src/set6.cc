@@ -4,6 +4,7 @@
 #include <list>
 #include <forward_list>
 #include <algorithm>
+#include <array>
 
 namespace euler {
     namespace euler60 {
@@ -195,7 +196,36 @@ namespace euler {
 	delete sol;
 	return sum;
     }
+    namespace euler62 {
+	typedef std::array<uchar, 10> digit_cts;
+	digit_cts count_digits(bigint& n){
+	    digit_cts counts = {{0,0,0,0,0,0,0,0,0,0}};
+	    big_digit_iterator iter(n);
+	    while(iter != big_digit_iterator())
+		counts[*iter++]++;
+	    return counts;
+	}
+	struct count_entry {
+	    bigint lowest;
+	    uchar ct;
+	};
+    }
+    bigint problem62(){
+	using namespace euler62;
+	std::map<digit_cts, count_entry> counts;
+	for(ulong n = 4; true; ++n){
+	    bigint cube = ((bigint)n) * n * n;
+	    auto cts = count_digits(cube);
+	    auto iter = counts.find(cts);
+	    if(iter != counts.end()){
+		if(++(iter->second.ct) == 5)
+		    return iter->second.lowest;
+	    } else {
+		counts.insert({cts, {cube, 1}});
+	    }
+	}
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61)}};
+    {{P(60),P(61),P(62)}};
 }
