@@ -268,7 +268,20 @@ namespace euler {
 		++ct;
 	return ct;
     }
+    ulong problem65(){
+	typedef mpq_class bigq;
+	bigq part = 1;
+	for(uint i = 99; i > 0; --i){
+	    part = 1 / part;
+	    if(i % 3 == 0)
+		part += 2 * (i / 3);
+	    else
+		part += 1;
+	}
+	part += 1;
+	return digit_sum(part.get_num());
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61),P(62),P(63),P(64)}};
+    {{P(60),P(61),P(62),P(63),P(64),P(65)}};
 }
