@@ -300,7 +300,7 @@ namespace euler {
 	return tri_collapse::triangle_collapse(input18.end(), 15);
     }
     ulong problem19(){
-	static ulong constexpr lookup[] = {31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+	static ulong constexpr lookup[] = {31,0,31,30,31,30,31,31,30,31,30,31};
 	class month_len_iterator{
 	    ulong month;
 	    ulong year;
