@@ -5,7 +5,7 @@
 #include <list>
 
 namespace euler {
-    extern std::list<problem> set1;
+    extern std::list<problem const*> set1;
     ulong triangle_collapse(ulong const *start, ulong const *const end);
 }
 

@@ -9,14 +9,14 @@
 #include "set1.hh"
 
 namespace euler {
-    std::string problem10(){
+    ulong problem10(){
 	prime_iterator pi;
 	ulong sum = 0;
 	while(*pi < 2000000){
 	    ulong p = *pi++;
 	    sum += p;
 	}
-	return std::to_string(sum);
+	return sum;
     }
     template <int d_i, int d_j, int l_i, class Iter>
 	struct grid_iterator {
@@ -67,7 +67,7 @@ namespace euler {
 	    1,70,54,71,83,51,54,69,16,92,33,48,61,43,52,1,89,19,67,48}};
     typedef decltype(input11) input11_t;
     typedef input11_t::const_iterator input11_iter_t;
-    std::string problem11(){
+    ulong problem11(){
 	ulong high = 0;
 #define HSP(di,dj,i0,j0,iX,jX)\
 	high_subseq_prod(grid_iterator<di,dj,20,input11_iter_t>\
@@ -87,13 +87,13 @@ namespace euler {
 	for(int j0 = 1; j0 < 20; ++j0) //NE-SW, below diagonal
 	    high = std::max(high, HSP(-1,1,19,j0,j0-1,20));
 #undef HSP
-	return std::to_string(high);
+	return high;
     }
-    std::string problem12(){
+    ulong problem12(){
 	figurate::tri_iter ti;
 	while(divisor_ct(*ti) <= 500)
 	    ++ti;
-	return std::to_string(*ti);
+	return *ti;
     }
     std::array<char const *const, 100> input13
     {{ "37107287533902102798797998220837590246510135740250",
@@ -217,7 +217,7 @@ namespace euler {
 	    return add + val;
 	}
     }
-    std::string problem14(){
+    ulong problem14(){
 	std::vector<ulong> collatz_map(1000000);
 	collatz_map[1] = 0;
 	ulong max = 0;
@@ -229,7 +229,7 @@ namespace euler {
 		ans = i;
 	    }
 	}
-	return std::to_string(ans);
+	return ans;
     }
     std::string problem15(){
 	// 40 choose 20
@@ -240,12 +240,12 @@ namespace euler {
 	    v /= i;
 	return v.get_str();
     }
-    std::string problem16(){
+    ulong problem16(){
 	bigint b;
 	mpz_ui_pow_ui(b.get_mpz_t(), 2, 1000);
-	return std::to_string(digit_sum(b));
+	return digit_sum(b);
     }
-    std::string problem17(){
+    ulong problem17(){
 	static ulong constexpr ones[10] = {0, 3, 3, 5, 4, 4, 3, 5, 5, 4};
 	static ulong constexpr tens[10] = {0, 3, 6, 6, 5, 5, 5, 7, 6, 6};
 	static ulong constexpr hundred = 7;
@@ -263,7 +263,7 @@ namespace euler {
 		sum += ones[i / 100];
 	    }
 	}
-	return std::to_string(sum);
+	return sum;
     }
     ulong triangle_collapse(ulong const *start, ulong const *const end){
 	if(start == end)
@@ -297,10 +297,10 @@ namespace euler {
 	 32,37,16,94,29,53,71,44,65,25,43,91,52,97,51,14,70,11,33,28,77,73,17,
 	 78,39,68,17,57,91,71,52,38,17,14,91,43,58,50,27,29,48,63,66,4,68,89,
 	 53,67,30,73,16,69,87,40,31,4,62,98,27,23,9,70,98,73,93,38,53,60,4,23}};
-    std::string problem18(){
-	return std::to_string(triangle_collapse(&input18[0], &input18[120]));
+    ulong problem18(){
+	return triangle_collapse(&input18[0], &input18[120]);
     }
-    std::string problem19(){
+    ulong problem19(){
 	static ulong constexpr lookup[] = {31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	class month_len_iterator{
 	    ulong month;
@@ -353,9 +353,9 @@ namespace euler {
 		++ct;
 	    day = (day + *begin++) % 7;
 	}
-	return std::to_string(ct);
+	return ct;
     }
-#define P(x) {x, &problem ## x}
-    std::list<problem> set1
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set1
     {{P(10),P(11), P(12), P(13), P(14), P(15), P(16), P(17), P(18), P(19)}};
 }

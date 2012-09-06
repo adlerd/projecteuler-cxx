@@ -7,7 +7,7 @@
 #include <type_traits>
 
 namespace euler {
-    extern std::list<problem> set0;
+    extern std::list<problem const*> set0;
     template <class Iter>
 	ulong high_subseq_prod(Iter first, Iter const last, ulong len){
 	    ulong zct = 0;

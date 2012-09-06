@@ -6,7 +6,7 @@
 #include "atkin.hh"
 
 namespace euler {
-    std::string problem50(){
+    ulong problem50(){
 	ulong max_ct = 0;
 	ulong max_prime = 0;
 	for(prime_iterator start; *start < 1000; ++start){
@@ -21,7 +21,7 @@ namespace euler {
 		sum += *end;
 	    }
 	}
-	return std::to_string(max_prime);
+	return max_prime;
     }
     template <class Iterator, class Object>
     std::list<ulong> find_all(Iterator begin, Iterator end, Object what){
@@ -32,7 +32,7 @@ namespace euler {
 	    indices.push_back(std::distance(begin, iter));
 	return indices;
     }
-    std::string problem51(){
+    ulong problem51(){
 	for(prime_iterator pi(10); true; ++pi){
 	    std::vector<uchar> digits(digit_iterator(*pi), digit_iterator(0));
 	    std::reverse(digits.begin(), digits.end());
@@ -59,7 +59,7 @@ namespace euler {
 			if(is_prime(from_digits(new_digits.begin(), new_digits.end()))){
 			    ++count;
 			    if(count >= 8)
-				return std::to_string(*pi);
+				return *pi;
 			} else if(count + 9 - i < 8){
 			    break;
 			}
@@ -68,7 +68,7 @@ namespace euler {
 	    }
 	}
     }
-    std::string problem52(){
+    ulong problem52(){
 	for(ulong i = 1; true; ++i){
 	    std::vector<uchar> one(digit_iterator(i), digit_iterator(0));
 	    std::vector<uchar> other(digit_iterator(6*i), digit_iterator(0));
@@ -78,14 +78,14 @@ namespace euler {
 		ulong n = 6;
 		while(std::equal(one.begin(), one.end(), other.begin())){
 		    if(--n == 1)
-			return std::to_string(i);
+			return i;
 		    other.assign(digit_iterator(n*i), digit_iterator(0));
 		    std::sort(other.begin(), other.end());
 		}
 	    }
 	}
     }
-    std::string problem53(){
+    ulong problem53(){
 	ulong ct = 0;
 	for(ulong n = 23; n <= 100; ++n){
 	    ulong first_r = 0;
@@ -98,7 +98,7 @@ namespace euler {
 	    }
 	    ct += n + 1 - 2 * first_r;
 	}
-	return std::to_string(ct);
+	return ct;
     }
     uchar constexpr bad_card_lookup = 255;
 #define B bad_card_lookup
@@ -215,7 +215,7 @@ namespace euler {
     char const *const input54 =
 #include "poker.include"
 	;
-    std::string problem54(){
+    ulong problem54(){
 	char const *input = input54;
 	uint one_count = 0;
 	for(uint i = 0; i < 1000; ++i){
@@ -226,15 +226,15 @@ namespace euler {
 	    if(one > two)
 		++one_count;
 	}
-	return std::to_string(one_count);
+	return one_count;
     }
-    std::string problem55(){
+    ulong problem55(){
 	ulong lychrel_count = 0;
 	for(ulong i = 1; i < 10000; ++i){
 	    ulong n = i;
 	    for(uint c = 0; true; ++c){
-		auto nstr = std::to_string(n);
-		if(c > 0 && is_palindrome(nstr)){
+		auto nstr = n;
+		if(c > 0 && is_palindrome(std::to_string(nstr))){
 		    break;
 		} else if(c == 50){
 		    ++lychrel_count;
@@ -243,9 +243,9 @@ namespace euler {
 		n += from_digits(digit_iterator(n), digit_iterator(0));
 	    }
 	}
-	return std::to_string(lychrel_count);
+	return lychrel_count;
     }
-    std::string problem56(){
+    ulong problem56(){
 	bigint big;
 	ulong max_sum = 0;
 	for(uint a = 1; a < 100; ++a)
@@ -253,9 +253,9 @@ namespace euler {
 		mpz_ui_pow_ui(big.get_mpz_t(), a, b);
 		max_sum = std::max(max_sum, digit_sum(big));
 	    }
-	return std::to_string(max_sum);
+	return max_sum;
     }
-    std::string problem57(){
+    ulong problem57(){
 	typedef mpq_class bigq;
 	bigq q(1);
 	ulong ct = 0;
@@ -264,9 +264,9 @@ namespace euler {
 	    if(q > 1 && q.get_num().get_str().size() > q.get_den().get_str().size())
 		++ct;
 	}
-	return std::to_string(ct);
+	return ct;
     }
-    std::string problem58(){
+    ulong problem58(){
 	ulong prime_ct = 0;
 	for(uint n = 1; true; ++n){
 	    ulong base = 1+2*n*(2*n-1);
@@ -276,7 +276,7 @@ namespace euler {
 		base += 2*n;
 	    }
 	    if(10*prime_ct < (4*n + 1))
-		return std::to_string(2*n+1);
+		return 2*n+1;
 	}
     }
     std::array<std::string, 5> const common_words = {{"the", "and", "of", "to", "in"}};
@@ -298,7 +298,7 @@ namespace euler {
 	for(uint i = offset; i < input59.size(); i += 3)
 	    out[i] = input59[i] xor xchar;
     }
-    std::string problem59(){
+    ulong problem59(){
 	std::vector<uchar> c1s;
 	for(uchar c1 = 'a'; c1 <= 'z'; ++c1)
 	    if(input59_check(0, c1))
@@ -329,14 +329,14 @@ namespace euler {
 			ulong ret = 0;
 			for(uchar ch : check)
 			    ret += ch;
-			return std::to_string(ret);
+			return ret;
 		    }
 		}
 	    }
 	}
-	return "No solution found!";
+	throw std::logic_error("Solution not found for problem 59!");
     }
-#define P(x) {x, &problem ## x}
-    std::list<problem> set5
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set5
     {{P(50),P(51),P(52),P(53),P(54),P(55),P(56),P(57),P(58),P(59)}};
 }

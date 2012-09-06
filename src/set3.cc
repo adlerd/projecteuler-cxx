@@ -11,7 +11,7 @@ namespace euler {
     std::array<ulong, 10> constexpr five_dig
     {{ 0, 1, 1 << 5, 81 * 3, 1 << 10, 125 * 25, (81 * 3) << 5, 49 * 49 * 7, 1 << 15,
 	 81 * 81 * 9 }};
-    std::string problem30(){
+    ulong problem30(){
 	ulong sum = 0;
 	for(ulong n = 2; n < 200000; ++n){
 	    ulong dsum = 0;
@@ -24,7 +24,7 @@ namespace euler {
 	    if(dsum == n)
 		sum += n;
 	}
-	return std::to_string(sum);
+	return sum;
     }
     template <ulong coin_value, class L>
 	struct coin_loop {
@@ -38,16 +38,16 @@ namespace euler {
 		}
 	    }
 	};
-    std::string problem31(){
+    ulong problem31(){
 	ulong ct = 0;
 	auto const lambda = [&](ulong total){++ct;};
 	coin_loop<200,coin_loop<100,coin_loop<50,coin_loop<20,coin_loop<10,
 	    coin_loop<5,coin_loop<2,decltype(lambda)>>>>>>> const
 		cl {{{{{{{std::move(lambda)}}}}}}};
 	cl(0);
-	return std::to_string(ct);
+	return ct;
     }
-    std::string problem32(){
+    ulong problem32(){
 	std::array<uchar, 9> digits = {{1, 2, 3, 4, 5, 6, 7, 8, 9}};
 	std::set<ulong> products;
 	do {
@@ -62,14 +62,14 @@ namespace euler {
 	ulong s = 0;
 	for(ulong p : products)
 	    s += p;
-	return std::to_string(s);
+	return s;
     }
     template <class N>
 	inline std::pair<N, N> lowest_terms(N n, N d){
 	    ulong const g = gcd(n,d);
 	    return {n / g, d / g};
 	}
-    std::string problem33(){
+    ulong problem33(){
 	std::pair<ulong,ulong> product({1,1});
 	for(uchar a = 1; a < 10; ++a)
 	    for(uchar b = 1; b < 10; ++b)
@@ -80,10 +80,10 @@ namespace euler {
 			    if(n < d && simple == lowest_terms(n,d))
 				product = lowest_terms(product.first * n, product.second * d);
 		}
-	return std::to_string(product.second);
+	return product.second;
     }
     std::array<ulong, 10> dfact = {{1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880}};
-    std::string problem34(){
+    ulong problem34(){
 	ulong sum = 0;
 	for(ulong i = 10; i < 50000; ++i){
 	    ulong ds = 0;;
@@ -92,9 +92,9 @@ namespace euler {
 	    if(i == ds)
 		sum += i;
 	}
-	return std::to_string(sum);
+	return sum;
     }
-    std::string problem35(){
+    ulong problem35(){
 	ulong ct = 0;
 	std::deque<uchar> rev_digits;
 	for(prime_iterator pi; *pi < 1000000; ++pi){
@@ -109,9 +109,9 @@ namespace euler {
 	    ++ct;
 	    dead:;
 	}
-	return std::to_string(ct);
+	return ct;
     }
-    std::string problem36(){
+    ulong problem36(){
 	ulong sum = 0;
 	for(ulong i = 1; i < 1000000; ++i)
 	    if(is_palindrome(std::to_string(i))){
@@ -121,9 +121,9 @@ namespace euler {
 		if(is_palindrome(bin))
 		    sum += i;
 	    }
-	return std::to_string(sum);
+	return sum;
     }
-    std::string problem37(){
+    ulong problem37(){
 	prime_iterator iter;
 	ulong ct = 0;
 	ulong sum = 0;
@@ -141,10 +141,10 @@ namespace euler {
 	    sum += p;
 	    bad:;
 	}
-	return std::to_string(sum);
+	return sum;
     }
     std::array<uint, 6> ten_lookup = {{1, 10, 100, 1000, 10000, 100000}};
-    std::string problem38(){
+    ulong problem38(){
 	ulong max = 0;
 	std::array<uchar, 9> concat;
 	std::array<ulong, 6> starts = {{1, 10, 100, 1000, 10000, 100000}};
@@ -177,9 +177,9 @@ namespace euler {
 bad:;
 	    }
 	}
-	return std::to_string(max);
+	return max;
     }
-    std::string problem39(){
+    ulong problem39(){
 	std::vector<uchar> arr(500,0);
 	for(ulong m = 2; m * m * 2 < 1000; ++m){
 	    for(ulong n = m % 2 + 1; n < m; n += 2){
@@ -192,9 +192,9 @@ bad:;
 	    }
 	}
 	auto iter = std::max_element(arr.cbegin(), arr.cend());
-	return std::to_string(2 * (iter - arr.cbegin()));
+	return 2 * (iter - arr.cbegin());
     }
-#define P(x) {x, &problem ## x}
-    std::list<problem> set3
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set3
     {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37),P(38),P(39)}};
 }

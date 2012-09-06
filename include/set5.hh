@@ -5,7 +5,7 @@
 #include <list>
 
 namespace euler {
-    extern std::list<problem> set5;
+    extern std::list<problem const*> set5;
 }
 
 #endif

@@ -10,12 +10,12 @@
 #include "atkin.hh"
 
 namespace euler {
-    std::string problem20(){
+    ulong problem20(){
 	bigint fac;
 	mpz_fac_ui(fac.get_mpz_t(), 100);
-	return std::to_string(digit_sum(fac));
+	return digit_sum(fac);
     }
-    std::string problem21(){
+    ulong problem21(){
 	ulong constexpr limit = 10000;
 	std::vector<ulong> vec(1);
 	for(ulong i = 1; i < limit; ++i)
@@ -26,12 +26,12 @@ namespace euler {
 	    if(ds != i && (ds < limit ? vec[ds] == i : divisor_sum(ds) == i))
 		sum += i;
 	}
-	return std::to_string(sum);
+	return sum;
     }
     std::array<char const *const, 5163> input22 {{
 #include "names.include"
     }};
-    std::string problem22(){
+    ulong problem22(){
 	ulong sum = 0;
 	ulong pos = 0;
 	std::vector<std::string> names(input22.cbegin(), input22.cend());
@@ -42,9 +42,9 @@ namespace euler {
 		psum += ch + 1 - 'A';
 	    sum += psum * ++pos;
 	}
-	return std::to_string(sum);
+	return sum;
     }
-    std::string problem23(){
+    ulong problem23(){
 	static ulong constexpr limit = 28124;
 	std::vector<ulong> abundant;
 	for(ulong i = 1; i < limit; ++i)
@@ -65,7 +65,7 @@ namespace euler {
 	for(ulong i = 0; i < limit; ++i)
 	    if(!isSum[i])
 		sum += i;
-	return std::to_string(sum);
+	return sum;
     }
     std::string problem24(){
 	std::array<char, 10> arr {{'0','1','2','3','4','5','6','7','8','9'}};
@@ -75,7 +75,7 @@ namespace euler {
 	}
 	return { arr.begin(), arr.end() };
     }
-    std::string problem25(){
+    ulong problem25(){
 	bigint a = 0;
 	bigint b = 1;
 	bigint target;
@@ -85,7 +85,7 @@ namespace euler {
 	    mpz_swap(a.get_mpz_t(), b.get_mpz_t());
 	    b += a;
 	}
-	return std::to_string(i);
+	return i;
     }
     ulong rec_rep(ulong x){
 	//remove 2s and 5s
@@ -107,7 +107,7 @@ namespace euler {
 	} while(x != start);
 	return i;
     }
-    std::string problem26(){
+    ulong problem26(){
 	ulong max = 0;
 	ulong v = 0;
 	for(ulong i = 2; i < 1000; ++i){
@@ -117,9 +117,9 @@ namespace euler {
 		v = i;
 	    }
 	}
-	return std::to_string(v);
+	return v;
     }
-    std::string problem27(){
+    long problem27(){
 	long max = 0;
 	long val = 0;
 	prime_iterator b_iter;
@@ -135,17 +135,17 @@ namespace euler {
 		}
 	    }
 	}
-	return std::to_string(val);
+	return val;
     }
-    std::string problem28(){
+    ulong problem28(){
 	ulong sum = 0;
 	for(uint n = 1; n <= 500; ++n)
 	    sum += 4*n*n+n+1;
 	sum *= 4;
 	sum += 1;
-	return std::to_string(sum);
+	return sum;
     }
-    std::string problem29(){
+    ulong problem29(){
 	ulong ct = 0;
 	std::set<bigint> set;
 	bigint p;
@@ -158,9 +158,9 @@ namespace euler {
 		    set.insert(p);
 		}
 	    }
-	return std::to_string(ct);
+	return ct;
     }
-#define P(x) {x, &problem ## x}
-    std::list<problem> set2
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set2
     {{P(20), P(21), P(22), P(23), P(24), P(25), P(26), P(27), P(28), P(29)}};
 }

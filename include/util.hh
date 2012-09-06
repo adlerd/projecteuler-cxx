@@ -161,19 +161,42 @@ ulong gcd(ulong a, ulong b);
 
 class problem {
     ulong number;
-    problem_fun fun;
 public:
-    problem(ulong n = 0, problem_fun f = NYI_problem)
-	: number(n), fun(f) {}
+    problem(ulong n) : number(n) {}
+    virtual ~problem() {}
     ulong get_number() const { return number; }
-    problem_fun get_fun() const { return fun; }
-    std::string operator()() const {
-	return (*fun)();
-    }
+    virtual std::string run() const = 0;
     bool operator<(problem const& other) const {
 	return number < other.number;
     }
 };
+
+template <class T>
+class typed_problem : public problem {
+    typedef T (*fun_t)();
+    fun_t fun;
+public:
+    typed_problem(ulong n, fun_t f) : problem(n), fun(f) {}
+    virtual std::string run() const {
+	return std::to_string(fun());
+    }
+};
+template <>
+class typed_problem<std::string> : public problem {
+    typedef std::string (*fun_t)();
+    fun_t fun;
+public:
+    typed_problem(ulong n, fun_t f) : problem(n), fun(f) {}
+    virtual std::string run() const {
+	return fun();
+    }
+};
+
+template <class T>
+problem const *new_problem(ulong n, T (*fun)()) {
+    return new typed_problem<T>(n, fun);
+}
+
 }
 
 #endif

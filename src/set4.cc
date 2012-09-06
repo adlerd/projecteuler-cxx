@@ -161,7 +161,7 @@ next:;
 	}
 	return "No solution found!";
     }
-#define P(x) {x, &problem ## x}
-    std::list<problem> set4
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set4
     {{P(40),P(41),P(42),P(43),P(44),P(45),P(46),P(47),P(48),P(49)}};
 }

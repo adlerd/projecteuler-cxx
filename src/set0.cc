@@ -7,14 +7,14 @@
 #include "atkin.hh"
 
 namespace euler {
-    std::string problem1(){
+    ulong problem1(){
 	ulong sum = 0;
 	for(ulong i = 0; i < 1000; ++i)
 	    if((i%3) * (i%5) == 0)
 		sum += i;
-	return std::to_string(sum);
+	return sum;
     }
-    std::string problem2(){
+    ulong problem2(){
 	ulong a = 0;
 	ulong b = 1;
 	ulong sum = 0;
@@ -25,12 +25,12 @@ namespace euler {
 	    a = b;
 	    b = t;
 	}
-	return std::to_string(sum);
+	return sum;
     }
-    std::string problem3(){
-	return std::to_string(factors(600851475143).back());
+    ulong problem3(){
+	return factors(600851475143).back();
     }
-    std::string problem4(){
+    ulong problem4(){
 	ulong high = 0;
 	for(ulong i = 999; i < 1000; --i)
 	    for(ulong j = 999; j >= i; --j){
@@ -41,15 +41,15 @@ namespace euler {
 		if(is_palindrome(str))
 		    high = p;
 	    }
-	return std::to_string(high);
+	return high;
     }
-    std::string problem5(){
+    ulong problem5(){
 	ulong g = 1;
 	for(ulong i = 2; i <= 20; ++i)
 	    g = (g * i) / gcd(g, i);
-	return std::to_string(g);
+	return g;
     }
-    std::string problem6(){
+    ulong problem6(){
 	ulong sum = 0;
 	ulong sum_sq = 0;
 	for(ulong i = 1; i <= 100; ++i){
@@ -57,13 +57,13 @@ namespace euler {
 	    sum_sq += i * i;
 	}
 	sum *= sum;
-	return std::to_string(sum > sum_sq ? sum - sum_sq : sum_sq - sum);
+	return sum > sum_sq ? sum - sum_sq : sum_sq - sum;
     }
-    std::string problem7(){
+    ulong problem7(){
 	prime_iterator pi;
 	for(int i = 0; i < 10000; ++i)
 	    ++pi;
-	return std::to_string(*pi);
+	return *pi;
     }
     std::array<uchar, 1000> constexpr input8 {{
 	7,3,1,6,7,1,7,6,5,3,1,3,3,0,6,2,4,9,1,9,2,2,5,1,1,9,6,7,4,4,2,6,5,7,4,
@@ -95,21 +95,21 @@ namespace euler {
 	7,1,0,9,4,0,5,0,7,7,5,4,1,0,0,2,2,5,6,9,8,3,1,5,5,2,0,0,0,5,5,9,3,5,7,
 	2,9,7,2,5,7,1,6,3,6,2,6,9,5,6,1,8,8,2,6,7,0,4,2,8,2,5,2,4,8,3,6,0,0,8,
 	2,3,2,5,7,5,3,0,4,2,0,7,5,2,9,6,3,4,5,0}};
-    std::string problem8(){
-	return std::to_string(high_subseq_prod(input8.cbegin(), input8.cend(), 5));
+    ulong problem8(){
+	return high_subseq_prod(input8.cbegin(), input8.cend(), 5);
     }
-    std::string problem9(){
+    ulong problem9(){
 	for(ulong b = 1; b < 1000; ++b){
 	    ulong const lim = b > 500 ? 1000 - b : b;
 	    for(ulong a = 1; a < lim; ++a){
 		ulong const c = 1000 - b - a;
 		if(a*a + b*b == c*c)
-		    return std::to_string(a*b*c);
+		    return a*b*c;
 	    }
 	}
 	throw std::logic_error("problem 9 unsolved");
     }
-#define P(x) {x, &problem ## x}
-    std::list<problem> set0
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set0
     {{P(1), P(2), P(3), P(4), P(5), P(6), P(7), P(8), P(9)}};
 }

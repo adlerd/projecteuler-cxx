@@ -23,7 +23,7 @@
 
 using namespace euler;
 
-void queue_problem(problem const& fun);
+void queue_problem(problem const *fun);
 answer retrieve_answer();
 void die();
 void start_threads();
@@ -68,8 +68,8 @@ int main(int argc, char* argv[]){
     start_threads();
     std::vector<ulong> order;
     if(argc == 1){
-	for_problems([&order](problem const& p)
-		{ order.push_back(p.get_number());
+	for_problems([&order](problem const *p)
+		{ order.push_back(p->get_number());
 		  queue_problem(p); });
     } else {
 	std::set<ulong> set;
@@ -84,8 +84,8 @@ int main(int argc, char* argv[]){
 		set.insert(ul);
 	    }
 	}
-	for_problems([&set](problem const& p)
-		{ auto const place = set.find(p.get_number());
+	for_problems([&set](problem const *p)
+		{ auto const place = set.find(p->get_number());
 		  if(place != set.cend()){
 		      queue_problem(p);
 		      set.erase(place);
@@ -110,9 +110,9 @@ std::queue<answer, std::list<answer>> answer_queue;
 
 std::mutex problem_mutex;
 std::condition_variable problem_condition;
-std::queue<problem, std::list<problem>> problem_queue;
+std::queue<problem const*, std::list<problem const*>> problem_queue;
 
-void queue_problem(problem const& problem){
+void queue_problem(problem const *problem){
     std::unique_lock<std::mutex> lock(problem_mutex);
     problem_queue.push(problem);
     problem_condition.notify_one();
@@ -135,13 +135,13 @@ void problems_runner(){
 	if(problem_queue.empty()) {
 	    problem_condition.wait(lock);
 	} else {
-	    problem p = problem_queue.front();
+	    problem const *p = problem_queue.front();
 	    problem_queue.pop();
 	    lock.unlock();
-	    std::string const str = p();
+	    std::string const str = p->run();
 	    lock = std::unique_lock<std::mutex>(answer_mutex);
 	    assert(lock.owns_lock());
-	    answer_queue.push({p.get_number(), str});
+	    answer_queue.push({p->get_number(), str});
 	    answer_condition.notify_all();
 	}
     }
@@ -170,15 +170,15 @@ void start_threads(){
 
 #else
 
-std::queue<problem, std::list<problem>> problem_queue;
+std::queue<problem const*, std::list<problem const*>> problem_queue;
 
-void queue_problem(problem const& problem){
+void queue_problem(problem const *problem){
     problem_queue.push(problem);
 }
 answer retrieve_answer(){
-    problem p = problem_queue.front();
+    problem const *p = problem_queue.front();
     problem_queue.pop();
-    return {p.get_number(), p()};
+    return {p->get_number(), p->run()};
 }
 
 void die(){

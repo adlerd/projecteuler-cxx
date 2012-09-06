@@ -91,7 +91,7 @@ namespace euler {
 	    return true;
 	}
     }
-    std::string problem60(){
+    ulong problem60(){
 	using namespace euler60;
 	state state;
 	state.prime = 3;
@@ -103,7 +103,7 @@ namespace euler {
 	    if(state.minsum)
 		refilter(state.top, state.prime, 0, state.minsum);
 	}
-	return std::to_string(state.minsum);
+	return state.minsum;
     }
     namespace euler61 {
 	struct fourd {
@@ -173,7 +173,7 @@ namespace euler {
 	    return nullptr;
 	}
     }
-    std::string problem61(){
+    ulong problem61(){
 	using namespace euler61;
 	figvec vecs[6];
 	populate_vector<3>(vecs[0]);
@@ -192,9 +192,9 @@ namespace euler {
 	ulong sum = 0;
 	for(auto& fd : *sol)
 	    sum += fd;
-	return std::to_string(sum);
+	return sum;
     }
-#define P(x) {x, &problem ## x}
-    std::list<problem> set6
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set6
     {{P(60),P(61)}};
 }
