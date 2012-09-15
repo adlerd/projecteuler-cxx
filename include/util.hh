@@ -159,6 +159,8 @@ template <class Iter>
 
 ulong gcd(ulong a, ulong b);
 
+ulong totient(ulong n);
+
 class problem {
     ulong number;
 public:

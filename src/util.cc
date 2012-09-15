@@ -161,4 +161,16 @@ ulong gcd(ulong a, ulong b){
     } while(b != 0);
     return a << shift;
 }
+ulong totient(ulong n){
+    ulong prev_factor = 0;
+    ulong tot = 1;
+    for(ulong f : factors(n))
+	if(f == prev_factor){
+	    tot *= f;
+	} else {
+	    prev_factor = f;
+	    tot *= (f - 1);
+	}
+    return tot;
+}
 }

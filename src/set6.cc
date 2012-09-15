@@ -421,7 +421,19 @@ namespace euler {
 	rec<0>(digs, ring, best);
 	return best;
     }
+    ulong problem69(){
+	float mr = 0.0;
+	ulong mn = 0;
+	for(ulong i = 2; i <= 1000000; ++i){
+	    float ratio = ((float)i) / totient(i);
+	    if(ratio > mr){
+		mr = ratio;
+		mn = i;
+	    }
+	}
+	return mn;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61),P(62),P(63),P(64),P(65),P(66),P(67),P(68)}};
+    {{P(60),P(61),P(62),P(63),P(64),P(65),P(66),P(67),P(68),P(69)}};
 }
