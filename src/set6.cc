@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <array>
 #include <set>
+#include <bitset>
 
 namespace euler {
     namespace euler60 {
@@ -332,7 +333,95 @@ namespace euler {
     ulong problem67(){
 	return tri_collapse::triangle_collapse(input67.end(), 100);
     }
+    namespace euler68 {
+	typedef std::array<uchar, 10> ring;
+	typedef std::bitset<9> dset;
+	ulong concat_ulong(ulong a, ulong b){
+	    ulong t  = 1;
+	    while(t <= b)
+		t *= 10;
+	    return a*t + b;
+	}
+	ulong to_seq(ring& ring){
+	    uint mi = 0;
+	    uchar md = 10;
+	    for(uint i = 0; i < ring.size(); i += 2){
+		if(ring[i] < md){
+		    mi = i;
+		    md = ring[i];
+		}
+	    }
+	    ulong concat = 0;
+	    for(uint i = mi; i < 10; i += 2){
+		concat = concat_ulong(concat, ring[i]);
+		concat = concat_ulong(concat, ring[i+1]);
+		concat = concat_ulong(concat, ring[(i+3)%10]);
+	    }
+	    for(uint i = 0; i < mi; i += 2){
+		concat = concat_ulong(concat, ring[i]);
+		concat = concat_ulong(concat, ring[i+1]);
+		concat = concat_ulong(concat, ring[(i+3)%10]);
+	    }
+	    return concat;
+	}
+	template <uchar layer>
+	void rec(dset& digs, ring& ring, ulong& best) noexcept {
+	    switch(layer){
+	    case 10:
+		if(ring[0] + ring[3] != ring[8] + ring[9])
+		    break;
+		assert(digs.all());
+		best = std::max(best, to_seq(ring));
+		break;
+	    case 0:
+		ring[0] = 10;
+		rec<1>(digs, ring, best);
+		break;
+	    case 5:
+	    case 7:
+	    case 9:
+		{
+		    uchar const base = ring[0] + ring[1] + ring[3];
+		    uchar o = ring[layer-2] + ring[layer-3];
+		    if(o >= base)
+			break;
+		    o = base - o - 1;
+		    if(o > 8 || digs[o])
+			break;
+		    digs[o] = true;
+		    ring[layer] = o + 1;
+		    rec<layer+1>(digs, ring, best);
+		    digs[o] = false;
+		    break;
+		}
+	    default:
+		for(int i = 0; i < 9; ++i){
+		    if(digs[i])
+			continue;
+		    else {
+			digs[i] = true;
+			ring[layer] = i + 1;
+			rec<layer+1>(digs, ring, best);
+			digs[i] = false;
+		    }
+		}
+		break;
+	    }
+	}
+	template <>
+	void rec<11>(dset& digs, ring& ring, ulong& best){
+	    std::logic_error("LOGIC ERROR.");
+	}
+    }
+    ulong problem68(){
+	using namespace euler68;
+	dset digs;
+	ring ring;
+	ulong best;
+	rec<0>(digs, ring, best);
+	return best;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
-    {{P(60),P(61),P(62),P(63),P(64),P(65),P(66),P(67)}};
+    {{P(60),P(61),P(62),P(63),P(64),P(65),P(66),P(67),P(68)}};
 }
