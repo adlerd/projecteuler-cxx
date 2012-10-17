@@ -45,7 +45,23 @@ namespace euler {
 	}
 	return best_n;
     }
+    ulong problem72(){
+	ulong sum = 0;
+	for(uint i = 2; i <= 1000000; ++i)
+	    sum += totient(i);
+	return sum;
+    }
+    uint problem73(){
+	uint ct = 0;
+	for(uint d = 1; d <= 12000; ++d){
+	    uint n = d/3;
+	    while(2*++n < d)
+		if(gcd(n,d) == 1)
+		    ++ct;
+	}
+	return ct;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set7
-    {{P(70),P(71)}};
+    {{P(70),P(71),P(72),P(73)}};
 }
