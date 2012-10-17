@@ -24,10 +24,12 @@
 
 using namespace euler;
 
+ulong constexpr THREAD_COUNT = 5;
+
 void queue_problem(problem const *fun);
 answer retrieve_answer();
 void die();
-void start_threads();
+void start_threads(uint ct);
 
 void print_answer(answer const& a){
     std::cout << a.first << ": " << a.second << std::endl;
@@ -67,9 +69,9 @@ void for_problems(Function f){
     std::for_each(set7.cbegin(), set7.cend(), f);
 }
 int main(int argc, char* argv[]){
-    start_threads();
     std::vector<ulong> order;
     if(argc == 1){
+	start_threads(THREAD_COUNT);
 	for_problems([&order](problem const *p)
 		{ order.push_back(p->get_number());
 		  queue_problem(p); });
@@ -86,6 +88,7 @@ int main(int argc, char* argv[]){
 		set.insert(ul);
 	    }
 	}
+	start_threads(std::min(THREAD_COUNT, set.size()));
 	for_problems([&set](problem const *p)
 		{ auto const place = set.find(p->get_number());
 		  if(place != set.cend()){
@@ -101,8 +104,6 @@ int main(int argc, char* argv[]){
 }
 
 #ifndef NO_THREADS
-
-ulong constexpr THREAD_COUNT = 5;
 
 bool die_flag = false;
 
@@ -165,8 +166,8 @@ void die(){
     assert(answer_queue.empty());
 }
 
-void start_threads(){
-    for(uint i = 0; i < THREAD_COUNT; ++i)
+void start_threads(uint ct){
+    for(uint i = 0; i < ct; ++i)
 	threads.push_back(new std::thread(&problems_runner));
 }
 
@@ -186,6 +187,6 @@ answer retrieve_answer(){
 void die(){
     assert(problem_queue.empty());
 }
-void start_threads(){}
+void start_threads(uint){}
 
 #endif
