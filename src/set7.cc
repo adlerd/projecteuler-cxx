@@ -23,7 +23,29 @@ namespace euler {
 	}
 	return min_n;
     }
+    uint problem71(){
+	uint target_n = 3;
+	uint target_d = 7;
+	uint max_d = 1000000;
+	uint best_n = target_n - 1;
+	uint best_d = target_d;
+	{
+	    uint g = gcd(best_n, best_d);
+	    best_n /= g;
+	    best_d /= g;
+	}
+	for(uint d = 2; d <= max_d; ++d){
+	    uint n = d * target_n / target_d;
+	    if(gcd(n, d) == 1 && n*best_d > best_n * d){
+		if(d == target_d)
+		    continue;
+		best_d = d;
+		best_n = n;
+	    }
+	}
+	return best_n;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set7
-    {{P(70)}};
+    {{P(70),P(71)}};
 }
