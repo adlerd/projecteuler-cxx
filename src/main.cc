@@ -20,6 +20,7 @@
 #include "set4.hh"
 #include "set5.hh"
 #include "set6.hh"
+#include "set7.hh"
 
 using namespace euler;
 
@@ -63,6 +64,7 @@ void for_problems(Function f){
     std::for_each(set4.cbegin(), set4.cend(), f);
     std::for_each(set5.cbegin(), set5.cend(), f);
     std::for_each(set6.cbegin(), set6.cend(), f);
+    std::for_each(set7.cbegin(), set7.cend(), f);
 }
 int main(int argc, char* argv[]){
     start_threads();
