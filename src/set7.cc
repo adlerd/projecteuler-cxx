@@ -1,6 +1,8 @@
 #include "set7.hh"
 #include "util.hh"
 #include <list>
+#include <forward_list>
+#include <array>
 #include <algorithm>
 
 namespace euler {
@@ -61,7 +63,47 @@ namespace euler {
 	}
 	return ct;
     }
+    uint problem74(){
+	std::array<uchar, 2178000> lens;
+	std::array<uint, 10> facts;
+	facts[0] = 1;
+	for(uint i = 1, n = 1; i < 10; ++i)
+	    facts[i] = (n *= i);
+	lens[169] = lens[363601] = lens[1545] = 3;
+	lens[871] = lens[45361] = 2;
+	lens[872] = lens[45362] = 2;
+	uint ct = 0;
+	for(uint i = 1; i < 1000000; ++i){
+	    uint n = i;
+	    uint l = lens[n];
+	    std::forward_list<uint> stack;
+	    while(l == 0){
+		stack.push_front(n);
+		digit_iterator di(n);
+		n = 0;
+		while(di != digit_iterator(0))
+		    n += facts[*di++];
+		if(n == stack.front()){
+		    l = 1;
+		} else if(lens[n]){
+		    if(lens[n] >= 60)
+			l = 61;
+		    else
+			l = lens[n] + 1;
+		}
+	    }
+	    while(!stack.empty()){
+		lens[stack.front()] = l;
+		stack.pop_front();
+		if(l == 60)
+		    ++ct;
+		if(l < 61)
+		    ++l;
+	    }
+	}
+	return ct;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set7
-    {{P(70),P(71),P(72),P(73)}};
+    {{P(70),P(71),P(72),P(73),P(74)}};
 }
