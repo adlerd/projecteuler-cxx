@@ -32,7 +32,7 @@ namespace euler {
     }
     ulong problem4(){
 	ulong high = 0;
-	for(ulong i = 999; i < 1000; --i)
+	for(ulong i = 999; i > 100; --i)
 	    for(ulong j = 999; j >= i; --j){
 		ulong const p = i * j;
 		if(p <= high) 
