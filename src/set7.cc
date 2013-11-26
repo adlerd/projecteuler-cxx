@@ -4,6 +4,7 @@
 #include <forward_list>
 #include <array>
 #include <algorithm>
+#include <cassert>
 
 namespace euler {
     bool is_digit_permutation(ulong a, ulong b){
@@ -209,7 +210,44 @@ namespace euler {
 	    ++x;
 	return x;
     }
+    uint problem78(){
+	using namespace figurate;
+	uint constexpr lim = 1000000;
+	std::vector<uint> memo(60000);
+	uint n = 1;
+	memo[0] = 1;
+	do {
+	    assert(n < memo.size());
+	    pent_iter pi;
+	    uint x = 1;
+	    uint summod = 0;
+	    while(true){
+		uint i = *pi++;
+		if(i > n)
+		    break;
+		summod += memo[n - i];
+		i += x++;
+		if(i > n)
+		    break;
+		summod += memo[n - i];
+		if(summod < 2*lim)
+		    summod += 2*lim;
+		i = *pi++;
+		if(i > n)
+		    break;
+		summod -= memo[n - i];
+		i += x++;
+		if(i > n)
+		    break;
+		summod -= memo[n - i];
+		if(summod > 10*lim)
+		    summod %= lim;
+	    }
+	    memo[n] = summod % lim;
+	} while(memo[n++]);
+	return n-1;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set7
-    {{P(70),P(71),P(72),P(73),P(74),P(75),P(76),P(77)}};
+    {{P(70),P(71),P(72),P(73),P(74),P(75),P(76),P(77),P(78)}};
 }
