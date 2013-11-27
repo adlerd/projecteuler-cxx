@@ -5,6 +5,7 @@
 #include <array>
 #include <algorithm>
 #include <cassert>
+#include <bitset>
 
 namespace euler {
     bool is_digit_permutation(ulong a, ulong b){
@@ -247,7 +248,50 @@ namespace euler {
 	} while(memo[n++]);
 	return n-1;
     }
+    char const *const input79 = "319680180690129620762689762318368710720710629168160689716731736729316729729710769290719680318389162289162718729319790680890362319760316729380319728716";
+    uint problem79(){
+	std::array<std::bitset<10>,10> follows;
+	uint out = 0;
+	std::bitset<10> found;
+	for(auto i = input79; *i; i += 3){
+	    assert(i - input79 < 150);
+	    assert('0' <= i[0] && i[0] <= '9');
+	    assert('0' <= i[1] && i[1] <= '9');
+	    assert('0' <= i[2] && i[2] <= '9');
+	    uint x = i[0]-'0';
+	    uint y = i[1]-'0';
+	    uint z = i[2]-'0';
+	    follows[y][x] = true;
+	    follows[z][y] = true;
+	    follows[z][x] = true;
+	    found[x] = true;
+	    found[y] = true;
+	    found[z] = true;
+	}
+	for(uint i = 0; i < 10; ++i)
+	    if(!found[i])
+		follows[i][i] = true;
+	uint i = 0;
+	while(i < 10){
+	   if(follows[i].none()){
+	       found.reset();
+	       found[i] = true;
+	       follows[i] = found;
+	       found.flip();
+	       for(uint j = 0; j < i; ++j)
+		   follows[j] &= found;
+	       for(uint j = i+1; j < 10; ++j)
+		   follows[j] &= found;
+	       out *= 10;
+	       out += i;
+	       i = 0;
+	   } else {
+	       ++i;
+	   }
+	}
+	return out;
+    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set7
-    {{P(70),P(71),P(72),P(73),P(74),P(75),P(76),P(77),P(78)}};
+    {{P(70),P(71),P(72),P(73),P(74),P(75),P(76),P(77),P(78),P(79)}};
 }
