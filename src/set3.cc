@@ -143,11 +143,11 @@ namespace euler {
 	}
 	return sum;
     }
-    std::array<uint, 6> ten_lookup = {{1, 10, 100, 1000, 10000, 100000}};
+    std::array<uint, 7> ten_lookup{{1, 10, 100, 1000, 10000, 100000, 1000000}};
     ulong problem38(){
 	ulong max = 0;
 	std::array<uchar, 9> concat;
-	std::array<ulong, 6> starts = {{1, 10, 100, 1000, 10000, 100000}};
+	std::array<ulong, 6> starts{{1, 10, 100, 1000, 10000, 100000}};
 	for(uint dct = 1; dct < 7; ++dct){
 	    for(ulong i = starts[dct-1]; i < ten_lookup[dct]; ++i){
 		std::bitset<9> ds = 0;
