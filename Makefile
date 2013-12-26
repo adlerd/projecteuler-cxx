@@ -23,7 +23,7 @@ hlibs = $(subst $(space),|,$(basename $(libsources)))
 vpath %.cc src/
 vpath %.hh include/
 
-default:
+default: bin/euler
 
 libs: $(subst .cc,.o,$(libsources))
 
@@ -45,9 +45,9 @@ include $(if $(filter-out clean cleanall,$(MAKECMDGOALS)),$(sources:%.cc=%.d))
 %.o: %.cc
 	$(CXX) -o $@ $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
 
-main: $(subst .cc,.o,$(sources))
+bin/euler: $(subst .cc,.o,$(sources))
 	mkdir -p bin
-	$(CXX) -o bin/$@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) 2>&1
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) 2>&1
 
 %.cps: %.cc
 	$(CXX) -S $(ALL_CPPFLAGS) $(CXXFLAGS) $< -o $@
