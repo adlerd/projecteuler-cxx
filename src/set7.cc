@@ -66,7 +66,7 @@ namespace euler {
 	return ct;
     }
     uint problem74(){
-	std::array<uchar, 2178000> lens;
+	std::vector<uchar> lens(2178000);
 	std::array<uint, 10> facts;
 	facts[0] = 1;
 	for(uint i = 1, n = 1; i < 10; ++i)

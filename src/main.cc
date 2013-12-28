@@ -102,6 +102,7 @@ int main(int argc, char* argv[]){
     }
     print_in_order(order);
     die();
+    for_problems([](problem const *p) { delete p; });
     return 0;
 }
 

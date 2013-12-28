@@ -417,7 +417,7 @@ namespace euler {
 	using namespace euler68;
 	dset digs;
 	ring ring;
-	ulong best;
+	ulong best = 0;
 	rec<0>(digs, ring, best);
 	return best;
     }
