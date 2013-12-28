@@ -238,26 +238,34 @@ done:
     auto prime_iterator::get_vec_iter(ulong x) -> b_vec::const_iterator {
 #ifndef NO_THREADS
 	typedef std::unique_lock<std::mutex> lock_t;
+	typedef std::condition_variable excon_t;
 	static std::mutex read_mutex;
-	static std::condition_variable *extension_condition;
+	static excon_t *extension_condition;
 	lock_t lock(read_mutex);
 	while(x >= primes.size()){
 	    if(extension_condition == nullptr){
-		std::condition_variable& excon = *new std::condition_variable;
-		extension_condition = &excon;
+		extension_condition = new excon_t;
 		lock.unlock();
 		/* extend_primes can safely read primes (but not modify it) because
 		 * only reads will occur so long as extension_condition != nullptr
-		 * (except by this thread, below)
+		 * (except by this thread, below).
+		 * I.e., so long as the lock is released by this thread,
+		 * a) no other thread will write to primes, and
+		 * b) this thread will not write to primes
 		 */
 		b_vec vec = extend_primes();
 		if(primes.size() == 0)
 		    vec[0] = false;
 		lock.lock();
 		primes.push_back(std::move(vec));
+		excon_t *excon = extension_condition;
 		extension_condition = nullptr;
-		excon.notify_all();
-		delete &excon;
+		excon->notify_all();
+		delete excon;
+		// the standard specifically allows deletion of excon even
+		// though other threads will not return from wait(lock) until
+		// we return from get_vec_iter below, but there used to be a
+		// bug in libstdc++ which broke this...
 	    } else {
 		extension_condition->wait(lock);
 	    }
