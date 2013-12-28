@@ -9,7 +9,8 @@
 #include <set>
 #include <bitset>
 
-namespace euler {
+namespace {
+    using namespace euler;
     namespace euler60 {
 	uint constexpr TARGET_DEPTH = 5;
 	struct node;
@@ -331,7 +332,7 @@ namespace euler {
 #include "bigtriangle.include"
     }};
     ulong problem67(){
-	return tri_collapse::triangle_collapse(input67.end(), 100);
+	return triangle_collapse(input67.end(), 100);
     }
     namespace euler68 {
 	typedef std::array<uchar, 10> ring;
@@ -433,6 +434,8 @@ namespace euler {
 	}
 	return mn;
     }
+}
+namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set6
     {{P(60),P(61),P(62),P(63),P(64),P(65),P(66),P(67),P(68),P(69)}};

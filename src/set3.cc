@@ -7,7 +7,8 @@
 #include "util.hh"
 #include "atkin.hh"
 
-namespace euler {
+namespace {
+    using namespace euler;
     std::array<ulong, 10> constexpr five_dig
     {{ 0, 1, 1 << 5, 81 * 3, 1 << 10, 125 * 25, (81 * 3) << 5, 49 * 49 * 7, 1 << 15,
 	 81 * 81 * 9 }};
@@ -194,6 +195,8 @@ bad:;
 	auto iter = std::max_element(arr.cbegin(), arr.cend());
 	return 2 * (iter - arr.cbegin());
     }
+}
+namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set3
     {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37),P(38),P(39)}};

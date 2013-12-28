@@ -7,7 +7,8 @@
 #include <cassert>
 #include <bitset>
 
-namespace euler {
+namespace {
+    using namespace euler;
     bool is_digit_permutation(ulong a, ulong b){
 	std::vector<uchar> digs_a(digit_iterator(a), digit_iterator(0));
 	std::vector<uchar> digs_b(digit_iterator(b), digit_iterator(0));
@@ -291,6 +292,8 @@ namespace euler {
 	}
 	return out;
     }
+}
+namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set7
     {{P(70),P(71),P(72),P(73),P(74),P(75),P(76),P(77),P(78),P(79)}};

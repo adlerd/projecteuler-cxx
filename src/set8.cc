@@ -4,7 +4,8 @@
 #include <array>
 #include <queue>
 
-namespace euler {
+namespace {
+    using namespace euler;
     uint problem80(){
 	uint psr = 2;
 	uint psq = 4;
@@ -142,6 +143,8 @@ namespace euler {
 	using namespace eighty_dijkstra;
 	return dijkstra(&problem83_neighbors);
     }
+}
+namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set8
     {{P(80),P(81),P(82),P(83)}};

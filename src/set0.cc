@@ -6,7 +6,8 @@
 #include "set0.hh"
 #include "atkin.hh"
 
-namespace euler {
+namespace {
+    using namespace euler;
     ulong problem1(){
 	ulong sum = 0;
 	for(ulong i = 0; i < 1000; ++i)
@@ -109,6 +110,8 @@ namespace euler {
 	}
 	throw std::logic_error("problem 9 unsolved");
     }
+}
+namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set0
     {{P(1), P(2), P(3), P(4), P(5), P(6), P(7), P(8), P(9)}};

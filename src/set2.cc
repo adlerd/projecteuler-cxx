@@ -9,7 +9,8 @@
 #include "util.hh"
 #include "atkin.hh"
 
-namespace euler {
+namespace {
+    using namespace euler;
     ulong problem20(){
 	bigint fac;
 	mpz_fac_ui(fac.get_mpz_t(), 100);
@@ -160,6 +161,8 @@ namespace euler {
 	    }
 	return ct;
     }
+}
+namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set2
     {{P(20), P(21), P(22), P(23), P(24), P(25), P(26), P(27), P(28), P(29)}};

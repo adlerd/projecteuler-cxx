@@ -8,7 +8,8 @@
 #include "set0.hh"
 #include "set1.hh"
 
-namespace euler {
+namespace {
+    using namespace euler;
     ulong problem10(){
 	prime_iterator pi;
 	ulong sum = 0;
@@ -265,31 +266,6 @@ namespace euler {
 	}
 	return sum;
     }
-    namespace tri_collapse {
-	typedef std::vector<ulong> ul_vec;
-	typedef ul_vec::iterator iterator;
-	void collapse_row(iterator const upper_row, iterator const next_row){
-	    iterator out = upper_row;
-	    ulong prev = *next_row;
-	    iterator next = next_row + 1;
-	    while(out != next_row){
-		ulong here = *next++;
-		*out++ += std::max(prev, here);
-		prev = here;
-	    }
-	}
-	ulong triangle_collapse(uchar const *end, ulong width){
-	    ul_vec vec(end - (width*(width+1))/2, end);
-	    iterator mark = vec.end() - width;
-	    while(--width > 0){
-		iterator next = mark - width;
-		collapse_row(next, mark);
-		mark = next;
-	    }
-	    assert(mark == vec.begin());
-	    return vec.front();
-	}
-    }
     std::array<uchar const, 120> input18
     {{75,95,64,17,47,82,18,35,87,10,20,4,82,47,65,19,1,23,75,3,34,88,2,77,73,7,
 	 63,67,99,65,4,28,6,16,70,92,41,41,26,56,83,40,80,70,33,41,48,72,33,47,
@@ -297,7 +273,7 @@ namespace euler {
 	 78,39,68,17,57,91,71,52,38,17,14,91,43,58,50,27,29,48,63,66,4,68,89,
 	 53,67,30,73,16,69,87,40,31,4,62,98,27,23,9,70,98,73,93,38,53,60,4,23}};
     ulong problem18(){
-	return tri_collapse::triangle_collapse(input18.end(), 15);
+	return triangle_collapse(input18.end(), 15);
     }
     ulong problem19(){
 	static ulong constexpr lookup[] = {31,0,31,30,31,30,31,31,30,31,30,31};
@@ -353,6 +329,34 @@ namespace euler {
 	    day = (day + *begin++) % 7;
 	}
 	return ct;
+    }
+    namespace tri_collapse {
+	typedef std::vector<ulong> ul_vec;
+	typedef ul_vec::iterator iterator;
+	void collapse_row(iterator const upper_row, iterator const next_row){
+	    iterator out = upper_row;
+	    ulong prev = *next_row;
+	    iterator next = next_row + 1;
+	    while(out != next_row){
+		ulong here = *next++;
+		*out++ += std::max(prev, here);
+		prev = here;
+	    }
+	}
+    }
+}
+namespace euler {
+    ulong triangle_collapse(uchar const *end, ulong width){
+	using namespace tri_collapse;
+	ul_vec vec(end - (width*(width+1))/2, end);
+	iterator mark = vec.end() - width;
+	while(--width > 0){
+	    iterator next = mark - width;
+	    collapse_row(next, mark);
+	    mark = next;
+	}
+	assert(mark == vec.begin());
+	return vec.front();
     }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set1
