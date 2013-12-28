@@ -106,6 +106,8 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
+std::queue<problem const*, std::list<problem const*>> problem_queue;
+
 #ifndef NO_THREADS
 
 bool die_flag = false;
@@ -116,7 +118,6 @@ std::queue<answer, std::list<answer>> answer_queue;
 
 std::mutex problem_mutex;
 std::condition_variable problem_condition;
-std::queue<problem const*, std::list<problem const*>> problem_queue;
 
 void queue_problem(problem const *problem){
     std::unique_lock<std::mutex> lock(problem_mutex);
@@ -175,8 +176,6 @@ void start_threads(uint ct){
 }
 
 #else
-
-std::queue<problem const*, std::list<problem const*>> problem_queue;
 
 void queue_problem(problem const *problem){
     problem_queue.push(problem);
