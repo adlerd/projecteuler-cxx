@@ -384,7 +384,7 @@ namespace {
 	    }
 	}
 	template <>
-	void rec<11>(dset& digs, ring& ring, ulong& best){
+	void rec<11>(dset& digs, ring& ring, ulong& best) noexcept {
 	    std::logic_error("LOGIC ERROR.");
 	}
     }
