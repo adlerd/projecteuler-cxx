@@ -296,9 +296,61 @@ namespace {
 	    out << std::setfill('0') << std::setw(2) << result[i].first;
 	return out.str();
     }
+    namespace euler85 {
+	struct soln {
+	    uint x;
+	    uint y;
+	    int diff;
+	    soln up() const {
+		return soln{x,y+1,0};
+	    }
+	    soln left() const {
+		return soln{x-1,y,0};
+	    }
+	    int get_diff(){
+		if(diff == 0){
+		    uint val = x*(x+1)*y*(y+1)/4;
+		    diff = ((int)val)-2000000;
+		}
+		return diff;
+	    }
+	    uint get_abs_diff(){
+		int d = get_diff();
+		return (uint)(d < 0 ? -d : d);
+	    }
+	    bool operator<(soln& other) {
+		return get_abs_diff() < other.get_abs_diff();
+	    }
+	};
+    }
+    uint problem85(){
+	/* we want to find the first-quadrant lattice point closest to the
+	 * hyperbola xy(x+1)(y+1)/4=2000000. (The LHS describing the number of
+	 * subrectangles of a rectangle x-by-y.) In fact, by symmetry, we can
+	 * limit ourselves to x in [1,2001], y in [1,x]. */
+	using namespace euler85;
+	soln min{2000,1,0};
+	while(min.get_diff() >= 0)
+	    min = min.left();
+	for(soln lbnd = min; lbnd.x >= lbnd.y; lbnd = lbnd.left()){
+	    soln next = lbnd.up();
+	    while(next.get_diff() < 0){
+		assert(next.get_diff() > lbnd.get_diff());
+		lbnd = next;
+		next = next.up();
+	    }
+	    /* now lbnd and next straddle the hyperbola. */
+	    /* std::min and friends require constness... */
+	    if(lbnd < min)
+		min = lbnd;
+	    if(next < min)
+		min = next;
+	}
+	return min.x * min.y;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set8
-    {{P(80),P(81),P(82),P(83),P(84)}};
+    {{P(80),P(81),P(82),P(83),P(84),P(85)}};
 }
