@@ -6,6 +6,7 @@
 #include <memory>
 #include <sstream>
 #include <iomanip>
+#include <unordered_map>
 
 namespace {
     using namespace euler;
@@ -348,9 +349,44 @@ namespace {
 	}
 	return min.x * min.y;
     }
+    namespace euler86 {
+	typedef std::unordered_map<uint,uint> imap_t;
+	typedef std::pair<uint,uint> uu_t;
+	uint constexpr TARGET = 1000000;
+	inline void update_solns(uint ua, uint ub, imap_t& imap){
+	    int b = (int) ub;
+	    int s = ua < ub ? (int)(ua + 1) : b;
+	    s -= b;
+	    s += b / 2;
+	    if(s > 0)
+		imap[ua] += s;
+	}
+    }
+    uint problem86(){
+	using namespace euler86;
+	pythag_iterator pi;
+	imap_t imap;
+	uint running = 0;
+	uint last = 0;
+	while(true){
+	    pythag_iterator::triplet trip = *pi; // skip first
+	    uint const a = trip[0];
+	    uint const b = trip[1];
+	    if(a != last){
+		running += imap[last];
+		if(running >= TARGET)
+		    return last;
+		imap.erase(last);
+	    }
+	    ++pi;
+	    last = a;
+	    update_solns(a,b,imap);
+	    update_solns(b,a,imap);
+	}
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set8
-    {{P(80),P(81),P(82),P(83),P(84),P(85)}};
+    {{P(80),P(81),P(82),P(83),P(84),P(85),P(86)}};
 }

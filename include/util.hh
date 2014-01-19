@@ -6,6 +6,7 @@
 #include <list>
 #include <utility>
 #include <stdint.h>
+#include <array>
 
 #include <gmpxx.h>
 
@@ -203,6 +204,39 @@ problem const *new_problem(ulong n, T (*fun)()) {
     return new typed_problem<T>(n, fun);
 }
 
+class pythag_iterator {
+public:
+    typedef std::array<uint,3> triplet;
+private:
+    struct triplet_data {
+	triplet t;
+	uint prim_ref;
+	triplet_data(triplet const& tt, uint pr) : t(tt), prim_ref(pr) {}
+	triplet_data(uint a, uint b, uint c, uint pr)
+	    : t{{a,b,c}}, prim_ref(pr) {}
+    };
+    typedef std::vector<triplet_data> stor_t;
+    struct triplet_ref_comp {
+	stor_t const& stor;
+	bool operator()(uint b, uint a) const { // intentionally switched a,b
+	    return std::lexicographical_compare(stor[a].t.cbegin(),
+		    stor[a].t.cend(), stor[b].t.cbegin(), stor[b].t.cend());
+	}
+    };
+    stor_t stor;
+    std::priority_queue<uint,std::vector<uint>,triplet_ref_comp const> pq;
+    void advance();
+    bool is_prim(uint ref) const;
+public:
+    pythag_iterator();
+    pythag_iterator& operator++(){
+	advance();
+	return *this;
+    }
+    triplet operator*() const {
+	return stor[pq.top()].t;
+    }
+};
 }
 
 #endif

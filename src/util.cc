@@ -173,4 +173,52 @@ ulong totient(ulong n){
 	}
     return tot;
 }
+
+pythag_iterator::pythag_iterator() : pq(triplet_ref_comp{stor},
+	std::vector<uint>{}) {
+    stor.emplace_back(3,4,5,0);
+    pq.push(0);
+}
+inline bool pythag_iterator::is_prim(uint ref) const {
+    return stor[ref].prim_ref == ref;
+}
+void pythag_iterator::advance() {
+    // mats is 3ct 3 by 3 matrices
+    static const std::array<int,27> mats = {{1,-2,2,2,-1,2,2,-2,3,
+	1,2,2,2,1,2,2,2,3, -1,2,2,-2,1,2,-2,2,3}};
+    uint base_r = pq.top();
+    if(is_prim(base_r)){
+	triplet base = stor[base_r].t;
+	pq.pop(); // have to pop first
+	auto matsi = mats.cbegin();
+	for(uint i = 0; i < 3; ++i){
+	    triplet build;
+	    for(uint j = 0; j < 3; ++j){
+		int v = 0;
+		for(uint k = 0; k < 3; ++k)
+		    v += ((int) base[k]) * *matsi++;
+		build[j] = (uint) v;
+	    }
+	    if(build[0] > build[1])
+		std::swap(build[0],build[1]);
+	    uint ref = stor.size();
+	    stor.emplace_back(build,ref);
+	    pq.push(ref);
+	}
+	for(uint i = 0; i < 3; ++i)
+	    base[i] += base[i];
+	uint ref = stor.size();
+	stor.emplace_back(base,base_r); // we can't reuse a primitive
+	pq.push(ref);
+    } else {
+	pq.pop();
+	// can update stor in place, since nothing refers to non-primitive
+	triplet& upd = stor[base_r].t;
+	triplet const& prim = stor[stor[base_r].prim_ref].t;
+	for(uint i = 0; i < 3; ++i)
+	    upd[i] += prim[i];
+	pq.push(base_r); // same underlying number, different ordering
+    }
+}
+
 }
