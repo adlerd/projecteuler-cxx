@@ -1,6 +1,6 @@
-CC=/usr/bin/gcc --std=c++11
-CXX=/usr/bin/g++ --std=c++11
-ALL_CPPFLAGS=-I./include/ -Wall
+CC=/usr/bin/gcc-4.8.2 --std=c++11 -Wall
+CXX=/usr/bin/g++-4.8.2 --std=c++11 -Wall
+ALL_CPPFLAGS=-I./include/
 ifneq "$(NO_THREADS)" "true"
     CC += -pthread
     CXX += -pthread
