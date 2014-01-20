@@ -284,9 +284,6 @@ namespace {
     std::array<uchar, 1201> const input59 = {{
 #include "cipher1.include"
     }};
-    bool normal_text_char(uchar c){
-	return c <= 'z' && c >= ' ';
-    }
     bool input59_check(uint const offset, uchar const xchar){
 	for(uint i = offset; i < input59.size(); i += 3){
 	    uchar const c = input59[i] xor xchar;
