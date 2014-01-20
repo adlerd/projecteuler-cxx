@@ -1,5 +1,6 @@
 #include "set8.hh"
 #include "util.hh"
+#include "atkin.hh"
 #include <cassert>
 #include <array>
 #include <queue>
@@ -7,6 +8,7 @@
 #include <sstream>
 #include <iomanip>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace {
     using namespace euler;
@@ -384,9 +386,36 @@ namespace {
 	    update_solns(b,a,imap);
 	}
     }
+    uint problem87(){
+	std::unordered_set<uint> set;
+	uint constexpr LIMIT = 50000000;
+	prime_iterator ai;
+	while(true){
+	    uint const ap = *ai++;
+	    uint const a = ap*ap*ap*ap;
+	    if(a >= LIMIT)
+		break;
+	    prime_iterator bi;
+	    while(true){
+		uint const bp = *bi++;
+		uint const b = a + bp*bp*bp;
+		if(b >= LIMIT)
+		    break;
+		prime_iterator ci;
+		while(true){
+		    uint const cp = *ci++;
+		    uint const c = b + (cp*cp);
+		    if(c >= LIMIT)
+			break;
+		    set.insert(c);
+		}
+	    }
+	}
+	return set.size();
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set8
-    {{P(80),P(81),P(82),P(83),P(84),P(85),P(86)}};
+    {{P(80),P(81),P(82),P(83),P(84),P(85),P(86),P(87)}};
 }
