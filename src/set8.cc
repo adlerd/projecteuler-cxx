@@ -371,7 +371,7 @@ namespace {
 	uint running = 0;
 	uint last = 0;
 	while(true){
-	    pythag_iterator::triplet trip = *pi; // skip first
+	    pythag_iterator::triplet trip = *pi;
 	    uint const a = trip[0];
 	    uint const b = trip[1];
 	    if(a != last){
