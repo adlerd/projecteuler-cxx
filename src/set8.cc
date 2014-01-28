@@ -413,9 +413,52 @@ namespace {
 	}
 	return set.size();
     }
+    namespace euler88 {
+	struct state {
+	    uint max_val;
+	    uint product;
+	    uint sum;
+	    uint len;
+	    state append(uint n) const {
+		assert(n >= max_val);
+		return {n,product*n,sum+n,len+1};
+	    }
+	    uint kval() const {
+		assert(product >= sum);
+		return len + product - sum;
+	    }
+	};
+	uint constexpr limit = 12000;
+	typedef std::array<uint, 11999> kmap;
+	bool rec(state const st, kmap& map){
+	    uint k = st.kval();
+	    if(k >= limit)
+		return false;
+	    if(k >= 2){
+		uint old = map[k-2];
+		if(old == 0 || old > st.product)
+		    map[k-2] = st.product;
+	    }
+	    uint n = st.max_val;
+	    while(rec(st.append(n++),map));
+	    return true;
+	}
+    }
+    uint problem88(){
+	using namespace euler88;
+	kmap map{};
+	for(uint i = 2; i < limit; ++i)
+	    rec({i,i,i,1},map);
+	std::unordered_set<uint> set;
+	uint sum = 0;
+	for(uint i : map)
+	    if(set.insert(i).second)
+		sum += i;
+	return sum;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set8
-    {{P(80),P(81),P(82),P(83),P(84),P(85),P(86),P(87)}};
+    {{P(80),P(81),P(82),P(83),P(84),P(85),P(86),P(87),P(88)}};
 }
