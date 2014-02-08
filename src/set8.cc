@@ -456,9 +456,43 @@ namespace {
 		sum += i;
 	return sum;
     }
+    std::array<std::string,1000> input89 = {
+#include "roman.include"
+};
+    uint problem89(){
+	static std::array<std::pair<char,uint>,7> const digits =
+	{{{'M', 1000},{'D',500},{'C',100},{'L',50},{'X',10},{'V',5},{'I',1}}};
+	static std::array<std::pair<uchar, uint>,13> const outs =
+	{{{1, 1000},{2,900},{1,500},{2,400},{1,100},{2,90},
+	     {1,50},{2,40},{1,10},{2,9},{1,5},{2,4},{1,1}}};
+	uint saved = 0;
+	for(std::string in : input89){
+	    uint val = 0;
+	    uint prev = 1000;
+	    for(char c : in){
+		for(auto p : digits){
+		    if(c == p.first){
+			if(prev < p.second)
+			    val -= 2*prev;
+			val += p.second;
+			prev = p.second;
+			break;
+		    }
+		}
+	    }
+	    saved += in.length();
+	    for(auto p : outs){
+		while(val >= p.second){
+		    saved -= p.first;
+		    val -= p.second;
+		}
+	    }
+	}
+	return saved;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set8
-    {{P(80),P(81),P(82),P(83),P(84),P(85),P(86),P(87),P(88)}};
+    {{P(80),P(81),P(82),P(83),P(84),P(85),P(86),P(87),P(88),P(89)}};
 }
