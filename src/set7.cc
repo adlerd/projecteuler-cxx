@@ -1,4 +1,5 @@
 #include "set7.hh"
+#include "atkin.hh"
 #include "util.hh"
 #include <list>
 #include <forward_list>
@@ -16,10 +17,38 @@ namespace {
 	    std::is_permutation(digs_a.begin(), digs_a.end(), digs_b.begin());
     }
     ulong problem70(){
+	uint constexpr LIMIT = 10000000;
 	double min_ratio = 87109.0 / 79180;
 	ulong min_n = 87109;
-	for(ulong n = 3; n < 10000000; ++n){
-	    ulong tot = totient(n);
+	std::vector<ulong> totients;
+	totients.reserve(LIMIT);
+	totients.push_back(1);
+	totients.push_back(1);
+	totients.push_back(1);
+	for(ulong n = 3; n < LIMIT; ++n){
+	    // find first factor
+	    uint p;
+	    for(prime_iterator pi; ; ++pi){
+		p = *pi;
+		if(n % p == 0)
+		    break;
+		if(p*p > n){
+		    p = n;
+		    break;
+		}
+	    }
+	    // now calculate the totient of just the powers of p in n
+	    ulong tot = p-1;
+	    uint nn = n / p;
+	    while(nn % p == 0){
+		nn /= p;
+		tot *= p;
+	    }
+	    // and use the fact that totient(n) is multiplicative
+	    tot *= totients[nn];
+	    // store in totients[n]
+	    totients.push_back(tot);
+
 	    double ratio = ((double) n) / tot;
 	    if(ratio < min_ratio && is_digit_permutation(n,tot)){
 		min_ratio = ratio;
