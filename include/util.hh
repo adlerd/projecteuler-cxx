@@ -237,6 +237,88 @@ public:
 	return stor[pq.top()].t;
     }
 };
+
+namespace util_impl {
+/* efficiently finds the rightmost non-maximal element in [first,middle); i.e.,
+ * the element to the left of the leftmost element in [first,middle) which is
+ * greater than all elements in [middle,end).
+ * also returns the element in [middle,end) which is greater than this element.
+ * If there is no such element, returns {middle,end}
+ */
+template <class BiIter>
+std::pair<BiIter,BiIter> rightmost_non_maximal(BiIter first, BiIter middle,
+	BiIter end){
+    if(middle == end)
+	return {middle,end};
+    BiIter rnm = first;
+    BiIter right = middle;
+    BiIter last_right = end;
+    while(rnm != middle){
+	while(!(*rnm < *right)){
+	    if(++right == end){
+		if(last_right == end)
+		    return {middle,end};
+		else
+		    return {--rnm,last_right};
+	    }
+	}
+	last_right = right;
+	++rnm;
+    }
+    if(last_right == end)
+	return {middle,end};
+    else
+	return {--rnm,last_right};
+}
+template <class BiIter>
+bool shorter(BiIter first1, BiIter last1, BiIter first2, BiIter last2,
+	std::bidirectional_iterator_tag){
+    while(true){
+	if(first2 == last2)
+	    return false;
+	if(first1 == last1)
+	    return true;
+	++first1;
+	++first2;
+    }
+}
+template <class RAIter>
+bool shorter(RAIter first1, RAIter last1, RAIter first2, RAIter last2,
+	std::random_access_iterator_tag){
+    return (last1 - first1) < (last2 - first2);
+}
+template <class BiIter>
+inline bool shorter(BiIter first1, BiIter last1, BiIter first2, BiIter last2){
+    return shorter(first1,last1,first2,last2,typename
+	    std::iterator_traits<BiIter>::iterator_category());
+}
+}
+/* pre: [first,middle) is sorted, [middle,end) is sorted
+ * post: [first,middle) is the next r-combination, [middle,end) is sorted
+ */
+template <class BiIter>
+bool next_rcombination(BiIter first, BiIter middle, BiIter end){
+    using namespace util_impl;
+    typedef std::reverse_iterator<BiIter> RevIter;
+    std::pair<BiIter,BiIter> rnm_p = rightmost_non_maximal(first,middle,end);
+    if(rnm_p.first == middle){
+	std::rotate(first,middle,end);
+	return false;
+    } else {
+	if(shorter(rnm_p.first, middle, rnm_p.second, end)){
+	    BiIter next = std::swap_ranges(rnm_p.first,middle,rnm_p.second);
+	    std::rotate(++rnm_p.second, next, end);
+	} else {
+	    std::iter_swap(rnm_p.first,rnm_p.second);
+	    RevIter r1(end);
+	    RevIter r2(++rnm_p.second);
+	    RevIter r3(middle);
+	    RevIter r4 = std::swap_ranges(r1,r2,r3);
+	    std::rotate(++rnm_p.first, r4.base(), middle);
+	}
+	return true;
+    }
+}
 }
 
 #endif
