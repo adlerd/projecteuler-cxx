@@ -5,33 +5,20 @@
 
 namespace {
     using namespace euler;
-    namespace euler90 {
-	typedef std::bitset<9> cube;
-	template <uint R> //R = left to add
-	void rcubes(cube base, uint start, std::vector<cube>& out){
-	    for(uint i = start; i < 11-R; ++i){
-		cube c(base);
-		c[i] = true;
-		rcubes<R-1>(c,i+1,out);
-	    }
-	}
-	template<>
-	void rcubes<1>(cube base, uint start, std::vector<cube>& out){
-	    for(uint i = start; i < 9; ++i){
-		cube c(base);
-		c[i] = true;
-		out.push_back(c);
-	    }
-	    // simulate adding 9 to a cube, regardless of what's there already
-	    cube c(base);
-	    c[6] = true;
-	    out.push_back(c);
-	}
-    }
     uint problem90(){
-	using namespace euler90;
+	typedef std::bitset<9> cube;
 	std::vector<cube> cubes;
-	rcubes<6>({},0,cubes);
+	std::array<uchar,10> nums{{0,1,2,3,4,5,6,7,8,9}};
+	do {
+	    cube cube;
+	    for(uint i = 0; i < 6; ++i){
+		uint n = nums[i];
+		if(n == 9)
+		    n = 6;
+		cube[n] =true;
+	    }
+	    cubes.push_back(cube);
+	} while(next_rcombination(nums.begin(), nums.begin()+6, nums.end()));
 	uint ct = 0;
 	for(auto i1 = cubes.cbegin(); i1 != cubes.cend(); ++i1){
 	    for(decltype(cubes)::const_iterator i2 = i1; i2 != cubes.cend(); ++i2){
