@@ -22,6 +22,7 @@
 #include "set6.hh"
 #include "set7.hh"
 #include "set8.hh"
+#include "set9.hh"
 
 using namespace euler;
 
@@ -69,6 +70,7 @@ void for_problems(Function f){
     std::for_each(set6.cbegin(), set6.cend(), f);
     std::for_each(set7.cbegin(), set7.cend(), f);
     std::for_each(set8.cbegin(), set8.cend(), f);
+    std::for_each(set9.cbegin(), set9.cend(), f);
 }
 int main(int argc, char* argv[]){
     std::vector<ulong> order;
