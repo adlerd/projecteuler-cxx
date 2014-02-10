@@ -39,7 +39,7 @@ cleanall: clean
 %.d: %.cc Makefile
 	$(CC) -MM $(ALL_CPPFLAGS) $< > $@
 
-include $(if $(filter-out clean cleanall,$(MAKECMDGOALS)),$(sources:%.cc=%.d))
+include $(if $(if $(MAKECMDGOALS),$(filter-out clean cleanall,$(MAKECMDGOALS)),"x"),$(sources:%.cc=%.d))
 #doesn't include *.d if MAKECMDGOALS consists *only* of clean and cleanall
 
 %.o: %.cc
