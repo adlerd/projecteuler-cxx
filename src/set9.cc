@@ -41,9 +41,38 @@ namespace {
 	}
 	return ct;
     }
+    uint problem91(){
+	/* There are three cases: (1) the right angle is at the origin, (2) the
+	 * right angle is at the "greater" of (P,Q), and (3) the right angle is
+	 * at the "lesser" of (P,Q) (for some fixed ordering of points).
+	 * Case 1: P and Q will be on each axis. Case 2: These can be
+	 * enumerated for each possible P (where P is the greater of the two
+	 * points), and enumerating the points on the line from the angle
+	 * "downwards". Case 3: There is a bijection between these and Case 2,
+	 * which cases are disjoint. */
+	uint constexpr LIMIT = 50;
+	uint ct = LIMIT * LIMIT; // Case 1: 50C1 * 50C1
+	for(uint px = 0; px <= LIMIT; ++px){
+	    for(uint py = 1; py <= LIMIT; ++py){
+		// Find the gcd of px and py and use these as increments
+		uint g = gcd(px,py);
+		uint gx = py / g; // (x,y) swapped
+		uint gy = px / g;
+		uint qx = px;
+		uint qy = py;
+		while(qx <= (LIMIT - gx) && qy >= gy){
+		    // we count the "next" iteration to avoid unsigned 0 issues
+		    ct += 2;
+		    qx += gx;
+		    qy -= gy;
+		}
+	    }
+	}
+	return ct;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90)}};
+    {{P(90),P(91)}};
 }
