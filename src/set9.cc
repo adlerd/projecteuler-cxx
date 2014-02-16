@@ -2,6 +2,7 @@
 #include "util.hh"
 
 #include <bitset>
+#include <forward_list>
 
 namespace {
     using namespace euler;
@@ -70,9 +71,46 @@ namespace {
 	}
 	return ct;
     }
+    uint problem92(){
+	uint constexpr LIMIT = 10000000;
+	std::vector<bool> bits(2*LIMIT); // pairs: (valid, 89)
+	bits[2*1] = true;
+	bits[2*89] = true;
+	bits[2*89+1] = true;
+	uint ct = 0;
+	for(uint i = 1; i < LIMIT; ++i){
+	    if(!bits[2*i]){
+		std::forward_list<uint> stack;
+		uint n = i;
+		while(true){
+		    if(n < LIMIT){
+			if(bits[2*n])
+			    break;
+			bits[2*n] = true;
+			/* we're guaranteed that we won't hit n in a loop
+			 * again, so go ahead and set valid here so if the loop
+			 * hits 1, we don't even have to iterate through stack
+			 * to set valid bits */
+			stack.push_front(n);
+		    }
+		    uint next = 0;
+		    for(digit_iterator di(n); di != digit_iterator(); ++di)
+			next += *di * *di;
+		    n = next;
+		}
+		if(bits[2*n+1]){
+		    for(uint nn : stack)
+			bits[2*nn + 1] = true;
+		}
+	    }
+	    if(bits[2*i+1])
+		++ct;
+	}
+	return ct;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91)}};
+    {{P(90),P(91),P(92)}};
 }
