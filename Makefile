@@ -19,11 +19,12 @@ OBJDUMP_FLAGS=-dCSr
 empty:=
 space:= $(empty) $(empty)
 
-libsources = atkin.cc util.cc set0.cc set1.cc set2.cc set3.cc set4.cc set5.cc \
-	     set6.cc set7.cc set8.cc set9.cc
-sources = $(libsources) main.cc
+libsources = atkin.cc util.cc
+setsources = set0.cc set1.cc set2.cc set3.cc set4.cc set5.cc set6.cc set7.cc \
+	     set8.cc set9.cc
+sources = $(libsources) $(setsources) main.cc
 
-hlibs = $(subst $(space),|,$(basename $(libsources)))
+SETS = $(patsubst set%.cc,%,$(setsources))
 
 vpath %.cc src/
 vpath %.hh include/
@@ -36,6 +37,7 @@ clean:
 	rm -f *.?ps
 	rm -f *.o
 	rm -rf bin
+	rm -f sets.cc.gen
 
 cleanall: clean
 	rm -f *.d
@@ -50,7 +52,13 @@ include $(if $(if $(MAKECMDGOALS),$(filter-out clean cleanall,$(MAKECMDGOALS)),"
 %.o: %.cc
 	$(CXX) -o $@ $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
 
-bin/euler: $(subst .cc,.o,$(sources))
+sets.cc.gen::
+	src/sets.cc.zsh $(SETS) > $@
+
+sets.o: sets.cc.gen
+	$(CXX) -o $@ -x 'c++' $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
+
+bin/euler: $(subst .cc,.o,$(libsources)) main.o $(patsubst %,set%.o,$(SETS)) sets.o
 	mkdir -p bin
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) 2>&1
 

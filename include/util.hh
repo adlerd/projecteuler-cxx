@@ -319,6 +319,9 @@ bool next_rcombination(BiIter first, BiIter middle, BiIter end){
 	return true;
     }
 }
+
+extern std::list<std::list<problem const*> const*> const sets;
+
 }
 
 #endif
