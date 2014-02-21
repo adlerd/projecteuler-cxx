@@ -94,8 +94,10 @@ namespace {
 			stack.push_front(n);
 		    }
 		    uint next = 0;
-		    for(digit_iterator di(n); di != digit_iterator(); ++di)
-			next += *di * *di;
+		    for(digit_iterator di(n); di != digit_iterator(); ++di){
+			uchar const d = *di;
+			next += d * d;
+		    }
 		    n = next;
 		}
 		if(bits[2*n+1]){
