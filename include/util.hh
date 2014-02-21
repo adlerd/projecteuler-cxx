@@ -16,7 +16,7 @@ typedef uint32_t uint;
 typedef uint64_t ulong;
 typedef mpz_class bigint;
 typedef std::string (*problem_fun)();
-typedef std::pair<ulong, std::string> answer;
+typedef std::pair<uint, std::string> answer;
 
 extern problem_fun NYI_problem;
 
@@ -163,11 +163,11 @@ ulong gcd(ulong a, ulong b);
 ulong totient(ulong n);
 
 class problem {
-    ulong number;
+    uint number;
 public:
-    problem(ulong n) : number(n) {}
+    problem(uint n) : number(n) {}
     virtual ~problem() {}
-    ulong get_number() const { return number; }
+    uint get_number() const { return number; }
     virtual std::string run() const = 0;
     bool operator<(problem const& other) const {
 	return number < other.number;

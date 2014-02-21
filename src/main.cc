@@ -4,6 +4,7 @@
 #include <set>
 #include <algorithm>
 #include <cassert>
+#include <regex>
 
 #ifndef NO_THREADS
 #include <mutex>
@@ -23,29 +24,49 @@ answer retrieve_answer();
 void die();
 void start_threads(uint ct);
 
-void print_answer(answer const& a){
-    std::cout << a.first << ": " << a.second << std::endl;
-}
-void print_in_order(std::vector<ulong> const& order){
-    std::map<ulong, std::string> map;
-    auto o_iter = order.cbegin();
-    if(o_iter == order.cend())
+struct problem_harness {
+    problem const *runner;
+    uint number;
+    std::string result;
+    bool required;
+    bool queued;
+};
+
+struct problem_table {
+    std::deque<problem_harness> items;
+    std::map<uint,problem_harness*> map;
+    std::list<problem_harness*> order;
+    problem_harness& add(uint number, bool required = true){
+	problem_harness* ph = map[number];
+	if(ph == nullptr){
+	    items.push_back({nullptr,number,"",required,false});
+	    ph = &items.back();
+	    map[number] = ph;
+	} else {
+	    ph->required |= required;
+	}
+	order.push_back(ph);
+	return *ph;
+    }
+};
+
+void print_in_order(problem_table& pt){
+    auto o_iter = pt.order.cbegin();
+    if(o_iter == pt.order.cend())
 	return;
     while(true){
-	answer a = retrieve_answer();
-	if(a.first == *o_iter){
-	    print_answer(a);
-	    while(true){
-		if(++o_iter == order.cend())
-		    return;
-		auto const place = map.find(*o_iter);
-		if(place == map.cend())
-		    break;
-		print_answer(*place);
-		map.erase(place);
-	    }
-	} else {
-	    map.insert(std::move(a));
+	{
+	    answer a = retrieve_answer();
+	    problem_harness& ph = *pt.map[a.first];
+	    assert(ph.queued);
+	    ph.result = a.second;
+	    ph.queued = false;
+	}
+	while(!(**o_iter).queued){
+	    problem_harness& ph = **o_iter++;
+	    std::cout << ph.number << ": " << ph.result << std::endl;
+	    if(o_iter == pt.order.cend())
+		return;
 	}
     }
 }
@@ -56,37 +77,67 @@ void for_problems(Function f){
 	for(auto p : *s)
 	    f(p);
 }
-int main(int argc, char* argv[]){
-    std::vector<ulong> order;
+
+uint mtoi(char const *start, char const *const end){
+    uint s = 0;
+    while(start != end){
+	s *= 10;
+	s += *start++ - '0';
+    }
+    return s;
+}
+
+void parse_selectors(int argc, char *argv[], problem_table& pt){
+    std::regex rx("c(\\d+)|(\\d+)");
+    std::match_results<char const*> m;
+    for(int i = 1; i < argc; ++i){
+	if(!std::regex_match(argv[i], m, rx))
+	    throw std::invalid_argument("invalid program argument");
+	if(m[1].matched){
+	    uint century = 100*mtoi(m[1].first, m[1].second);
+	    for(uint j = 0; j < 100; ++j)
+		pt.add(century + j, false);
+	} else {
+	    pt.add(mtoi(m[2].first, m[2].second));
+	}
+    }
+}
+
+int main(int argc, char *argv[]){
+    problem_table pt;
     if(argc == 1){
 	start_threads(THREAD_COUNT);
-	for_problems([&order](problem const *p)
-		{ order.push_back(p->get_number());
-		  queue_problem(p); });
+	for_problems([&pt](problem const *p)
+		{ problem_harness& ph = pt.add(p->get_number());
+		  ph.runner = p; });
     } else {
-	std::set<ulong> set;
-	for(int i = 1; i < argc; ++i){
-	    std::string str(argv[i]);
-	    size_t idx;
-	    ulong ul = stoul(str,&idx);
-	    if(idx != str.size())
-		throw std::invalid_argument("invalid input");
-	    if(set.find(ul) == set.cend()){
-		order.push_back(stoul(str,&idx));
-		set.insert(ul);
-	    }
-	}
-	start_threads(std::min(THREAD_COUNT, set.size()));
-	for_problems([&set](problem const *p)
-		{ auto const place = set.find(p->get_number());
-		  if(place != set.cend()){
-		      queue_problem(p);
-		      set.erase(place);
-		  } });
-	if(!set.empty())
-	    throw std::invalid_argument("Could not find problem");
+	parse_selectors(argc, argv, pt);
+	for_problems([&pt](problem const *p)
+	      { decltype(pt.map.cend()) iter = pt.map.find(p->get_number());
+	        if(iter != pt.map.cend())
+		    iter->second->runner = p;
+	      });
+	start_threads(std::min(THREAD_COUNT, pt.items.size()));
     }
-    print_in_order(order);
+    auto iter = pt.order.begin();
+    while(iter != pt.order.end()){
+	auto place = iter;
+	++iter;
+	problem_harness& ph = **place;
+	if(ph.queued) {
+	} else if(ph.runner == nullptr){
+	    if(ph.required){
+		std::cerr << "could not find problem " << ph.number <<
+		    std::endl;
+		return 5;
+	    }
+	    pt.order.erase(place);
+	} else {
+	    queue_problem(ph.runner);
+	    ph.queued = true;
+	}
+    }
+    print_in_order(pt);
     die();
     for_problems([](problem const *p) { delete p; });
     return 0;
