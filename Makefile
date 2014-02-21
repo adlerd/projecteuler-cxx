@@ -1,4 +1,4 @@
-EXTRA_FLAGS=--std=c++11 -Wall
+EXTRA_FLAGS=--std=c++11 -Wall -stdlib=libc++
 ALL_CPPFLAGS=-I./include/
 ifneq "$(NO_THREADS)" "true"
     EXTRA_FLAGS += -pthread
