@@ -1,12 +1,17 @@
-CC=/usr/bin/clang --std=c++11 -Wall
-CXX=/usr/bin/clang++ --std=c++11 -Wall
+EXTRA_FLAGS=--std=c++11 -Wall
 ALL_CPPFLAGS=-I./include/
 ifneq "$(NO_THREADS)" "true"
-    CC += -pthread
-    CXX += -pthread
+    EXTRA_FLAGS += -pthread
 else
     ALL_CPPFLAGS += -DNO_THREADS
 endif
+
+CC=/usr/bin/clang
+CXX=/usr/bin/clang++
+
+CC+=$(EXTRA_FLAGS)
+CXX+=$(EXTRA_FLAGS)
+
 LDLIBS=-lgmp -lgmpxx
 ALL_CPPFLAGS += $(CPPFLAGS)
 OBJDUMP_FLAGS=-dCSr
