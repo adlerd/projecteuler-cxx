@@ -240,9 +240,54 @@ namespace {
 	    }
 	}
     }
+    uint problem95(){
+	uint constexpr LIMIT = 1000000;
+	std::vector<bool> hit(LIMIT+1);
+	hit[0] = true;
+	hit[1] = true;
+	uint maxlen = 0;
+	uint maxmin = 0;
+	/* i only matters as the starting point for our loop-search to ensure
+	 * we search everywhere; the found loop might not contain i if it was
+	 * on a 'tail' */
+	for(uint i = 2; i <= LIMIT; ++i){
+	    if(hit[i])
+		continue;
+	    std::forward_list<uint> stack;
+	    uint found = 0;
+	    for(uint n = i; n <= LIMIT; n = divisor_sum(n) - n){
+		if(hit[n]){
+		    found = n;
+		    break;
+		}
+		stack.push_front(n);
+		hit[n] = true;
+	    }
+	    if(found != 0){
+		uint min = found;
+		uint ct = 0;
+		/* if we're in a loop, it contains found */
+		for(uint n : stack){
+		    if(n < min)
+			min = n;
+		    ++ct;
+		    if(n == found){
+			/* then we've found a new loop, with min elt. min and
+			 * length ct */
+			if(ct > maxlen){
+			    maxlen = ct;
+			    maxmin = min;
+			}
+			break;
+		    }
+		}
+	    }
+	}
+	return maxmin;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91),P(92),P(93),P(94)}};
+    {{P(90),P(91),P(92),P(93),P(94),P(95)}};
 }
