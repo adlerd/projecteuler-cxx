@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <forward_list>
+#include <set>
 
 namespace {
     using namespace euler;
@@ -110,9 +111,111 @@ namespace {
 	}
 	return ct;
     }
+    namespace euler93 {
+	struct small;
+	typedef small (*op)(small const, uchar const);
+	struct small {
+	    /* always in lowest terms; d=0 indicates invalid */
+	    int16_t n;
+	    int16_t d;
+	    typedef decltype(n*d) extended;
+	    small(extended nn, extended dd) : n(nn), d(dd) {}
+	    void normalize(){
+		if(d == 0){
+		    n = 0;
+		    return;
+		}
+		bool sgn = false;
+		if(d < 0){
+		    sgn = !sgn;
+		    d = -d;
+		}
+		if(n < 0){
+		    sgn = !sgn;
+		    n = -n;
+		}
+		ulong g = gcd(n,d);
+		if(sgn)
+		    n = -n;
+		if(g == 1)
+		    return;
+		n /= g;
+		d /= g;
+	    }
+	    small with_op(op const f, uchar const x) const {
+		small ret(f(*this,x));
+		ret.normalize();
+		return ret;
+	    }
+	    bool operator<(small const other) const {
+		if(n != other.n)
+		    return n < other.n;
+		else
+		    return d < other.d;
+	    }
+	};
+	small mult(small const a, uchar const x){
+	    return {a.n * x, a.d};
+	}
+	small div(small const a, uchar const x){
+	    return {a.n, a.d * x};
+	}
+	small flipdiv(small const a, uchar const x){
+	    // if a is in normal form, a.d == 0 -> a.n == 0
+	    return {a.d * x, a.n};
+	}
+	small plus(small const a, uchar const x){
+	    return {a.n + x * a.d, a.d};
+	}
+	small minus(small const a, uchar const x){
+	    return {a.n - x * a.d, a.d};
+	}
+	small flipminus(small const a, uchar const x){
+	    return {x * a.d - a.n, a.d};
+	}
+	std::array<op, 6> constexpr ops{{&div, &flipdiv, &mult, &plus, &minus,
+	    &flipminus}};
+    }
+    uint problem93(){
+	using namespace euler93;
+	std::array<uchar,9> digs{{1,2,3,4,5,6,7,8,9}};
+	uint maxval = 0;
+	uint maxtag = 0;
+	do {
+	    std::set<uint> res;
+	    do {
+		small const s0{digs[0],1};
+		for(auto o1 : ops){
+		    small const s1 = s0.with_op(o1,digs[1]);
+		    for(auto o2 : ops){
+			small const s2 = s1.with_op(o2,digs[2]);
+			if(s2.d == 0)
+			    continue;
+			for(auto o3 : ops){
+			    small const s3 = s2.with_op(o3,digs[3]);
+			    if(s3.d == 1 && s3.n > 0)
+				res.insert(s3.n);
+			}
+		    }
+		}
+	    } while(std::next_permutation(digs.begin(), digs.begin()+4));
+	    uint n = 1;
+	    for(uint s : res){
+		if(s != n)
+		    break;
+		else
+		    ++n;
+	    }
+	    if(n > maxval){
+		maxval = n;
+		maxtag = 1000*digs[0] + 100*digs[1] + 10*digs[2] + digs[3];
+	    }
+	} while(next_rcombination(digs.begin(), digs.begin()+4, digs.end()));
+	return maxtag;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91),P(92)}};
+    {{P(90),P(91),P(92),P(93)}};
 }
