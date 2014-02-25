@@ -26,6 +26,8 @@ bool is_prime(ulong x);
 std::vector<ulong> factors(ulong x);
 std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x);
 
+/* isqrt and isqrt_part return the square root of perfect squares. for
+ * non-squares, isqrt returns 0 and isqrt_part returns floor(sqrt) */
 uint isqrt(ulong x);
 uint isqrt_part(ulong x);
 

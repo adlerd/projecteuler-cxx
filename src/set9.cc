@@ -213,9 +213,36 @@ namespace {
 	} while(next_rcombination(digs.begin(), digs.begin()+4, digs.end()));
 	return maxtag;
     }
+    uint problem94(){
+	uint constexpr LIMIT = 1000000000;
+	uint l0 = 1;
+	uint l1 = 1;
+	bool up = true;
+	ulong sum = 0;
+	while(true){
+	    // generate the sequence
+	    uint ab = 4*l1 - l0;
+	    if(up)
+		ab += 2;
+	    else
+		ab -= 2;
+	    up = !up;
+	    l0 = l1;
+	    l1 = ab;
+	    // use the value
+	    for(uint c : {ab-1,ab+1}){
+		ulong const s = (ulong) ab + c / 2;
+		ulong const add = 2*s;
+		if(add > LIMIT)
+		    return sum;
+		if(isqrt(s*(s-c)) != 0)
+		    sum += add;
+	    }
+	}
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91),P(92),P(93)}};
+    {{P(90),P(91),P(92),P(93),P(94)}};
 }
