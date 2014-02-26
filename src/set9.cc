@@ -1,9 +1,12 @@
 #include "set9.hh"
 #include "util.hh"
+#include "algx.hh"
 
 #include <bitset>
 #include <forward_list>
 #include <set>
+#include <algorithm>
+#include <cassert>
 
 namespace {
     using namespace euler;
@@ -285,9 +288,75 @@ namespace {
 	}
 	return maxmin;
     }
+    namespace euler96 {
+	void sudoku_base(algx_state& st){
+	    for(uint s_val = 0; s_val < 9; ++s_val){
+		for(uint s_row = 0; s_row < 9; ++s_row){
+		    st.push_required();
+		    for(uint s_col = 0; s_col < 9; ++s_col)
+			st.add_required_entry(81*s_row + 9*s_col + s_val);
+		}
+		for(uint s_col = 0; s_col < 9; ++s_col){
+		    st.push_required();
+		    for(uint s_row = 0; s_row < 9; ++s_row)
+			st.add_required_entry(81*s_row + 9*s_col + s_val);
+		}
+		for(uint s_box_r = 0; s_box_r < 3; ++s_box_r){
+		    for(uint s_box_c = 0; s_box_c < 3; ++s_box_c){
+			st.push_required();
+			for(uint s_idx_r = 0; s_idx_r < 3; ++s_idx_r)
+			    for(uint s_idx_c = 0; s_idx_c < 3; ++s_idx_c)
+				st.add_required_entry(81*(3*s_box_r+s_idx_r) +
+					9*(3*s_box_c+s_idx_c) + s_val);
+		    }
+		}
+	    }
+	    for(uint s_unit = 0; s_unit < 81; ++s_unit){
+		st.push_required();
+		for(uint s_val = 0; s_val < 9; ++s_val)
+		    st.add_required_entry(9*s_unit + s_val);
+	    }
+	}
+	std::array<char const *const, 50> input96 = {{
+#include "sudoku.include"
+	}};
+    }
+    uint problem96(){
+	using namespace euler96;
+	algx_state st(81*9);
+	sudoku_base(st);
+	uint ct = 0;
+	uint sum = 0;
+	for(char const *c : input96){
+	    st.clean();
+	    while(ct > 0){
+		st.pop_required();
+		--ct;
+	    }
+	    for(uint s_unit = 0; s_unit < 81; ++s_unit){
+		if(*c != '0'){
+		    ++ct;
+		    st.push_required();
+		    st.add_required_entry(9*s_unit + *c-'1');
+		}
+		++c;
+	    }
+	    assert(*c == '\0');
+	    if(!st.next_solution()) {
+		return 0;
+	    } else {
+		std::vector<uint> s = st.read_solution();
+		std::partial_sort(s.begin(),s.begin()+3,s.end());
+		sum += 100*(s[0]%9+1);
+		sum += 10*(s[1]%9+1);
+		sum += 1*(s[2]%9+1);
+	    }
+	}
+	return sum;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91),P(92),P(93),P(94),P(95)}};
+    {{P(90),P(91),P(92),P(93),P(94),P(95),P(96)}};
 }
