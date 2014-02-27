@@ -1,5 +1,5 @@
 EXTRA_FLAGS=--std=c++11 -Wall -stdlib=libc++
-ALL_CPPFLAGS=-I./include/
+ALL_CPPFLAGS=-I./include/ -I./gmp
 ifneq "$(NO_THREADS)" "true"
     EXTRA_FLAGS += -pthread
 else
@@ -9,10 +9,7 @@ endif
 CC=/usr/bin/clang
 CXX=/usr/bin/clang++
 
-CC+=$(EXTRA_FLAGS)
-CXX+=$(EXTRA_FLAGS)
-
-LDLIBS=-lgmp -lgmpxx
+LDLIBS=-L./gmp -lgmp -lgmpxx
 ALL_CPPFLAGS += $(CPPFLAGS)
 OBJDUMP_FLAGS=-dCSr
 
@@ -44,32 +41,48 @@ cleanall: clean
 	rm -f *.d.????
 
 %.d: %.cc Makefile
-	$(CC) -MM $(ALL_CPPFLAGS) $< > $@
+	$(CC) $(EXTRA_FLAGS) -MM $(ALL_CPPFLAGS) $< > $@
 
 include $(if $(if $(MAKECMDGOALS),$(filter-out clean cleanall,$(MAKECMDGOALS)),"x"),$(sources:%.cc=%.d))
 #doesn't include *.d if MAKECMDGOALS consists *only* of clean and cleanall
 
-%.o: %.cc
-	$(CXX) -o $@ $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
+%.o: %.cc gmp/gmpxx.h
+	$(CXX) $(EXTRA_FLAGS) -o $@ $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
 
 sets.cc.gen::
 	src/sets.cc.zsh $(SETS) > $@
 
 sets.o: sets.cc.gen
-	$(CXX) -o $@ -x 'c++' $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
+	$(CXX) $(EXTRA_FLAGS) -o $@ -x 'c++' $< -c $(ALL_CPPFLAGS) $(CXXFLAGS) 2>&1
 
-bin/euler: $(subst .cc,.o,$(libsources)) main.o $(patsubst %,set%.o,$(SETS)) sets.o
+bin/euler: $(subst .cc,.o,$(libsources)) main.o $(patsubst %,set%.o,$(SETS)) sets.o \
+    | gmp/libgmp.a gmp/libgmpxx.a
 	mkdir -p bin
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) 2>&1
+	$(CXX) $(EXTRA_FLAGS) -o $@ $^ $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) 2>&1
 
 %.cps: %.cc
-	$(CXX) -S $(ALL_CPPFLAGS) $(CXXFLAGS) $< -o $@
+	$(CXX) $(EXTRA_FLAGS) -S $(ALL_CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 %.dps: %.o
 	objdump $(OBJDUMP_FLAGS) $< > $@
 
 %.pps: %.cc
-	$(CC) -E $(ALL_CPPFLAGS) $< -o $@
+	$(CC) $(EXTRA_FLAGS) -E $(ALL_CPPFLAGS) $< -o $@
 
 %.hps: %.hh
-	$(CC) -E $(ALL_CPPFLAGS) $< -o $@
+	$(CC) $(EXTRA_FLAGS) -E $(ALL_CPPFLAGS) $< -o $@
+
+gmp-5.1.3.txz:
+	curl 'https://ftp.gnu.org/gnu/gmp/gmp-5.1.3.tar.xz' > $@
+
+gmp/gmpxx.h gmp/gmp.h gmp/libgmp.a gmp/libgmpxx.a: gmp
+
+gmp: gmp-5.1.3.txz
+	mkdir -p gmp
+	mkdir -p gmp-build-tmp/build
+	xzcat $< | tar -x -C gmp-build-tmp
+	cd gmp-build-tmp/build && ../gmp-5.1.3/configure CC="$(CC)" CXX="$(CXX) -stdlib=libc++" --enable-cxx --disable-shared --prefix=$(CURDIR)/gmp-build-tmp/install
+	cd gmp-build-tmp/build && $(MAKE)
+	cd gmp-build-tmp/build && $(MAKE) install
+	cd gmp-build-tmp/install && mv include/gmp.h include/gmpxx.h lib/libgmp.a lib/libgmpxx.a ../../gmp
+	rm -rf gmp-build-tmp
