@@ -354,9 +354,19 @@ namespace {
 	}
 	return sum;
     }
+    bigint problem97(){
+	bigint mod;
+	mpz_ui_pow_ui(mod.get_mpz_t(), 10, 10);
+	bigint b(2);
+	mpz_powm_ui(b.get_mpz_t(), b.get_mpz_t(), 7830457, mod.get_mpz_t());
+	b *= 28433;
+	b += 1;
+	b %= mod;
+	return b;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91),P(92),P(93),P(94),P(95),P(96)}};
+    {{P(90),P(91),P(92),P(93),P(94),P(95),P(96),P(97)}};
 }
