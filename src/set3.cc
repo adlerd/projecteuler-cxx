@@ -3,7 +3,6 @@
 #include <set>
 #include <bitset>
 
-#include "set3.hh"
 #include "util.hh"
 #include "atkin.hh"
 

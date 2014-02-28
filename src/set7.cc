@@ -1,4 +1,3 @@
-#include "set7.hh"
 #include "atkin.hh"
 #include "util.hh"
 #include <list>

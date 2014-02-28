@@ -1,14 +1,12 @@
 #!/bin/zsh
 
-printf '#include "util.hh"\n\n'
+printf '#include "util.hh"\n\nnamespace euler {\n'
 
 for s in $*; do
-    printf '#include "set%s.hh"\n' $s
+    printf 'extern std::list<problem const*> set%s;\n' $s
 done
 
-printf '\nusing namespace euler;\n\n'
-
-printf 'std::list<std::list<problem const*> const*> const euler::sets'
+printf 'std::list<std::list<problem const*> const*> const sets'
 
 if [[ ! -z $* ]]; then
     printf '{{'
@@ -18,4 +16,4 @@ if [[ ! -z $* ]]; then
     printf '}}'
 fi
 
-printf ';\n'
+printf ';\n}\n'

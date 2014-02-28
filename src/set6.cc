@@ -1,6 +1,6 @@
-#include "set6.hh"
-#include "set1.hh"
+#include "util.hh"
 #include "atkin.hh"
+
 #include <map>
 #include <list>
 #include <forward_list>

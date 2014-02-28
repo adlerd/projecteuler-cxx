@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <array>
 
-#include "set5.hh"
 #include "util.hh"
 #include "atkin.hh"
 

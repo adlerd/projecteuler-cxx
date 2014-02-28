@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <bitset>
 
-#include "set4.hh"
 #include "util.hh"
 
 #include "atkin.hh"

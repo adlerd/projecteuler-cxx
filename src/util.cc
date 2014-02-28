@@ -221,4 +221,37 @@ void pythag_iterator::advance() {
     }
 }
 
+namespace {
+    namespace tri_collapse {
+	typedef std::vector<ulong> ul_vec;
+	typedef ul_vec::iterator iterator;
+	void collapse_row(iterator const upper_row, iterator const next_row){
+	    iterator out = upper_row;
+	    ulong prev = *next_row;
+	    iterator next = next_row + 1;
+	    while(out != next_row){
+		ulong here = *next++;
+		*out++ += std::max(prev, here);
+		prev = here;
+	    }
+	}
+    }
+}
+ulong triangle_collapse(uchar const *end, ulong width){
+    using namespace tri_collapse;
+    ul_vec vec(end - (width*(width+1))/2, end);
+    iterator mark = vec.end() - width;
+    while(--width > 0){
+	iterator next = mark - width;
+	collapse_row(next, mark);
+	mark = next;
+    }
+    assert(mark == vec.begin());
+    return vec.front();
+}
+
+std::array<char const *const, 1786> input_words = {{
+#include "words.include"
+}};
+
 }

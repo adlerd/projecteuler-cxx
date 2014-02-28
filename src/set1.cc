@@ -5,8 +5,6 @@
 
 #include "atkin.hh"
 #include "util.hh"
-#include "set0.hh"
-#include "set1.hh"
 
 namespace {
     using namespace euler;
@@ -330,34 +328,8 @@ namespace {
 	}
 	return ct;
     }
-    namespace tri_collapse {
-	typedef std::vector<ulong> ul_vec;
-	typedef ul_vec::iterator iterator;
-	void collapse_row(iterator const upper_row, iterator const next_row){
-	    iterator out = upper_row;
-	    ulong prev = *next_row;
-	    iterator next = next_row + 1;
-	    while(out != next_row){
-		ulong here = *next++;
-		*out++ += std::max(prev, here);
-		prev = here;
-	    }
-	}
-    }
 }
 namespace euler {
-    ulong triangle_collapse(uchar const *end, ulong width){
-	using namespace tri_collapse;
-	ul_vec vec(end - (width*(width+1))/2, end);
-	iterator mark = vec.end() - width;
-	while(--width > 0){
-	    iterator next = mark - width;
-	    collapse_row(next, mark);
-	    mark = next;
-	}
-	assert(mark == vec.begin());
-	return vec.front();
-    }
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set1
     {{P(10),P(11), P(12), P(13), P(14), P(15), P(16), P(17), P(18), P(19)}};

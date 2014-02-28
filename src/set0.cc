@@ -3,7 +3,6 @@
 #include <array>
 
 #include "util.hh"
-#include "set0.hh"
 #include "atkin.hh"
 
 namespace {

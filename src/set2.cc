@@ -5,7 +5,6 @@
 
 #include <set>
 
-#include "set2.hh"
 #include "util.hh"
 #include "atkin.hh"
 

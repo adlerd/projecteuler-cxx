@@ -1,4 +1,3 @@
-#include "set8.hh"
 #include "util.hh"
 #include "atkin.hh"
 #include <cassert>
