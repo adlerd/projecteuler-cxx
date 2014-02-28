@@ -4,6 +4,7 @@
 #include <bitset>
 #include <forward_list>
 #include <set>
+#include <map>
 #include <algorithm>
 #include <cassert>
 
@@ -363,9 +364,79 @@ namespace {
 	b %= mod;
 	return b;
     }
+    namespace euler98 {
+	typedef std::vector<uchar> arrangement;
+	typedef std::array<uchar,26> anagram_class;
+	typedef std::map<anagram_class, std::list<arrangement>> anagram_map;
+	ulong largest_square(std::list<arrangement> const& list){
+	    if(list.size() < 2)
+		return 0;
+	    uint const n = 1 + *std::max_element(list.front().cbegin(),
+		    list.front().cend());
+	    if(n > 9)
+		return 0;
+	    std::array<uchar, 9> digs = {{1,2,3,4,5,6,7,8,9}};
+	    std::vector<uchar> out(list.front().size());
+	    ulong max = 0;
+	    do {
+		do {
+		    ulong first = 0;
+		    bool two = false;
+		    for(auto& arr : list) {
+			assert(arr.size() == out.size());
+			auto ai = arr.cbegin();
+			auto oi = out.begin();
+			while(ai != arr.cend())
+			    *oi++ = digs.at(*ai++);
+			ulong val = from_digits(out.cbegin(), out.cend());
+			if(two){
+			    if(val > max && isqrt(val) != 0)
+				max = val;
+			} else if(isqrt(val) != 0){
+			    if(first == 0) {
+				first = val;
+			    } else {
+				two = true;
+				max = std::max({val,first,max});
+			    }
+			}
+		    }
+		} while(std::next_permutation(digs.begin(), digs.begin()+n));
+	    } while(next_rcombination(digs.begin(), digs.begin()+n,
+			digs.end()));
+	    return max;
+	}
+	void classify_anagram(std::string const& str, anagram_map& into){
+	    anagram_class cl = {};
+	    for(char c : str)
+		cl[c-'A']++;
+	    std::map<char, uint> indices;
+	    uint x = 0;
+	    for(uint c = 0; c < 26; ++c)
+		if(cl[c] != 0)
+		    indices[c+'A'] = x++;
+	    arrangement arr;
+	    for(char c : str)
+		arr.push_back(indices[c]);
+	    into[cl].push_back(arr);
+	}
+    }
+    ulong problem98(){
+	using namespace euler98;
+	anagram_map map;
+	for(std::string const& str : input_words)
+	    classify_anagram(str, map);
+	ulong max = 0;
+	for(auto const& p : map){
+	    ulong s = largest_square(p.second);
+	    if(s > max)
+		max = s;
+	}
+	return max;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91),P(92),P(93),P(94),P(95),P(96),P(97)}};
+    {{P(90),P(91),P(92),P(93),P(94),P(95),P(96),P(97),P(98)}};
 }

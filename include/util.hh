@@ -357,6 +357,8 @@ ulong high_subseq_prod(Iter first, Iter const last, ulong len){
     return high;
 }
 
+extern std::array<char const *const, 1786> input_words;
+
 extern std::list<std::list<problem const*> const*> const sets;
 
 }

@@ -39,12 +39,9 @@ namespace {
 		return std::to_string(n);
 	}
     }
-    std::array<char const *const, 1786> words = {{
-#include "words.include"
-	    }};
     std::string problem42(){
 	ulong ct = 0;
-	for(std::string str : words){
+	for(std::string str : input_words){
 	    ulong csum = 0;
 	    for(char c : str)
 		csum += c + 1 - 'A';
