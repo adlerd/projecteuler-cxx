@@ -7,6 +7,7 @@
 #include <map>
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 namespace {
     using namespace euler;
@@ -434,9 +435,29 @@ namespace {
 	}
 	return max;
     }
+    std::array<uint, 2000> input99 = {{
+#include "base_exp.include"
+    }};
+    ulong problem99(){
+	auto iter = input99.cbegin();
+	uint n = 1;
+	uint maxn = 0;
+	double maxv = 0.0;
+	while(iter != input99.cend()){
+	    double const b = *iter++;
+	    double const e = *iter++;
+	    double const v = e * log(b);
+	    if(v > maxv){
+		maxv = v;
+		maxn = n;
+	    }
+	    ++n;
+	}
+	return maxn;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set9
-    {{P(90),P(91),P(92),P(93),P(94),P(95),P(96),P(97),P(98)}};
+    {{P(90),P(91),P(92),P(93),P(94),P(95),P(96),P(97),P(98),P(99)}};
 }
