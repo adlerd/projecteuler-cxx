@@ -9,7 +9,7 @@ endif
 CC=/usr/bin/clang
 CXX=/usr/bin/clang++
 
-LDLIBS=-L./gmp -lgmp -lgmpxx
+LDLIBS=-L./gmp -lgmpxx -lgmp
 ALL_CPPFLAGS += $(CPPFLAGS)
 OBJDUMP_FLAGS=-dCSr
 
@@ -78,11 +78,11 @@ gmp-5.1.3.txz:
 gmp/gmpxx.h gmp/gmp.h gmp/libgmp.a gmp/libgmpxx.a: gmp
 
 gmp: gmp-5.1.3.txz
-	mkdir -p gmp
 	mkdir -p gmp-build-tmp/build
 	xzcat $< | tar -x -C gmp-build-tmp
-	cd gmp-build-tmp/build && ../gmp-5.1.3/configure CC="$(CC)" CXX="$(CXX) -stdlib=libc++" --enable-cxx --disable-shared --prefix=$(CURDIR)/gmp-build-tmp/install
+	cd gmp-build-tmp/build && ../gmp-5.1.3/configure ABI=64 CC="$(CC)" CXX="$(CXX) -stdlib=libc++" CFLAGS="-O2" --enable-cxx --disable-shared --prefix=$(CURDIR)/gmp-build-tmp/install
 	cd gmp-build-tmp/build && $(MAKE)
 	cd gmp-build-tmp/build && $(MAKE) install
+	mkdir -p gmp
 	cd gmp-build-tmp/install && mv include/gmp.h include/gmpxx.h lib/libgmp.a lib/libgmpxx.a ../../gmp
 	rm -rf gmp-build-tmp
