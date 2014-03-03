@@ -20,7 +20,6 @@ typedef int32_t i32;
 typedef int64_t i64;
 typedef mpz_class bigint;
 typedef std::string (*problem_fun)();
-typedef std::pair<u32, std::string> answer;
 
 extern problem_fun NYI_problem;
 

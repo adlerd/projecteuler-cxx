@@ -19,11 +19,6 @@ using namespace euler;
 
 u64 constexpr THREAD_COUNT = 5;
 
-void queue_problem(problem const *fun);
-answer retrieve_answer();
-void die();
-void start_threads(u32 ct);
-
 struct problem_harness {
     problem const *runner;
     u32 number;
@@ -50,18 +45,22 @@ struct problem_table {
     }
 };
 
+void queue_problem(problem_harness& ph);
+void unqueue_problem();
+void die();
+void start_threads(u32 ct);
+
+
 void print_in_order(problem_table& pt){
     auto o_iter = pt.order.cbegin();
     if(o_iter == pt.order.cend())
 	return;
     while(true){
-	{
-	    answer a = retrieve_answer();
-	    problem_harness& ph = *pt.map[a.first];
-	    assert(ph.queued);
-	    ph.result = a.second;
-	    ph.queued = false;
-	}
+	/* using threaded implementation: only the main thread uses ph.queued.
+	 * The runner threads write ph.result once, but this happens-before the
+	 * main thread sets ph.queued to false, which happens-before the main
+	 * thread reads ph.result. */
+	unqueue_problem();
 	while(!(**o_iter).queued){
 	    problem_harness& ph = **o_iter++;
 	    std::cout << ph.number << ": " << ph.result << std::endl;
@@ -133,8 +132,7 @@ int main(int argc, char *argv[]){
 	    }
 	    pt.order.erase(place);
 	} else {
-	    queue_problem(ph.runner);
-	    ph.queued = true;
+	    queue_problem(ph);
 	}
     }
     print_in_order(pt);
@@ -143,51 +141,57 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-std::queue<problem const*, std::list<problem const*>> problem_queue;
+std::queue<problem_harness *, std::list<problem_harness*>> problem_queue;
 
 #ifndef NO_THREADS
 
 bool die_flag = false;
 
-std::mutex answer_mutex;
-std::condition_variable answer_condition;
-std::queue<answer, std::list<answer>> answer_queue;
+std::mutex done_mutex;
+std::condition_variable done_condition;
+std::queue<problem_harness *, std::list<problem_harness *>> done_queue;
 
 std::mutex problem_mutex;
 std::condition_variable problem_condition;
 
-void queue_problem(problem const *problem){
+void queue_problem(problem_harness& ph){
+    ph.queued = true;
     std::unique_lock<std::mutex> lock(problem_mutex);
-    problem_queue.push(problem);
+    problem_queue.push(&ph);
     problem_condition.notify_one();
 }
-answer retrieve_answer(){
-    std::unique_lock<std::mutex> lock(answer_mutex);
-    while(answer_queue.empty())
-	answer_condition.wait(lock);
+void unqueue_problem(){
+    std::unique_lock<std::mutex> lock(done_mutex);
+    while(done_queue.empty())
+	done_condition.wait(lock);
     assert(lock.owns_lock());
-    answer ans = answer_queue.front();
-    answer_queue.pop();
-    return ans;
+    problem_harness& ph = *done_queue.front();
+    done_queue.pop();
+    ph.queued = false;
 }
 
+problem_harness *select_problem(){
+    std::unique_lock<std::mutex> lock(problem_mutex);
+    while(problem_queue.empty()){
+	if(die_flag)
+	    return nullptr;
+	if(problem_queue.empty())
+	    problem_condition.wait(lock);
+    }
+    problem_harness *const p = problem_queue.front();
+    problem_queue.pop();
+    return p;
+}
 void problems_runner(){
     while(true){
-	std::unique_lock<std::mutex> lock(problem_mutex);
-	if(die_flag)
+	problem_harness *const ph = select_problem();
+	if(ph == nullptr)
 	    return;
-	if(problem_queue.empty()) {
-	    problem_condition.wait(lock);
-	} else {
-	    problem const *p = problem_queue.front();
-	    problem_queue.pop();
-	    lock.unlock();
-	    std::string const str = p->run();
-	    lock = std::unique_lock<std::mutex>(answer_mutex);
-	    assert(lock.owns_lock());
-	    answer_queue.push({p->get_number(), str});
-	    answer_condition.notify_all();
-	}
+	ph->result = ph->runner->run();
+	std::unique_lock<std::mutex> lock(done_mutex);
+	assert(lock.owns_lock());
+	done_queue.push(ph);
+	done_condition.notify_all();
     }
 }
 
@@ -195,7 +199,7 @@ std::list<std::thread*> threads;
 
 void die(){
     {
-	std::unique_lock<std::mutex> lock1(problem_mutex);
+	std::unique_lock<std::mutex> lock(problem_mutex);
 	assert(problem_queue.empty());
 	die_flag = true;
 	problem_condition.notify_all();
@@ -204,7 +208,7 @@ void die(){
 	t->join();
 	delete t;
     }
-    assert(answer_queue.empty());
+    assert(done_queue.empty());
 }
 
 void start_threads(u32 ct){
@@ -214,13 +218,15 @@ void start_threads(u32 ct){
 
 #else
 
-void queue_problem(problem const *problem){
-    problem_queue.push(problem);
+void queue_problem(problem_harness& ph){
+    problem_queue.push(&ph);
+    ph.queued = true;
 }
-answer retrieve_answer(){
-    problem const *p = problem_queue.front();
+void unqueue_problem(){
+    problem_harness& ph = *problem_queue.front();
     problem_queue.pop();
-    return {p->get_number(), p->run()};
+    ph.result = ph.runner->run();
+    ph.queued = false;
 }
 
 void die(){

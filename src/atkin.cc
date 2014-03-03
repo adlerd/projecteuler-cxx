@@ -265,7 +265,8 @@ done:
 		// the standard specifically allows deletion of excon even
 		// though other threads will not return from wait(lock) until
 		// we return from get_vec_iter below, but there used to be a
-		// bug in libstdc++ which broke this...
+		// bug in libstdc++ which broke this... and valgrind
+		// complains...
 	    } else {
 		extension_condition->wait(lock);
 	    }
