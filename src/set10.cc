@@ -3,12 +3,12 @@
 namespace {
     using namespace euler;
     bigint problem100(){
-	ulong a0 = 1;
-	ulong a1 = 4;
-	ulong a2 = 21;
+	u64 a0 = 1;
+	u64 a1 = 4;
+	u64 a2 = 21;
 	while(true){
 	    // 7*a(n-1)-7*a(n-2)+a(n-3)
-	    ulong an = 7*(a2 - a1) + a0;
+	    u64 an = 7*(a2 - a1) + a0;
 	    if(an > 1000000000000){
 		bigint v = an;
 		v = v*(v-1) * 2 + 1;

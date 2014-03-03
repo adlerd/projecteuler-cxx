@@ -10,19 +10,19 @@
 
 namespace {
     using namespace euler;
-    ulong problem20(){
+    u64 problem20(){
 	bigint fac;
 	mpz_fac_ui(fac.get_mpz_t(), 100);
 	return digit_sum(fac);
     }
-    ulong problem21(){
-	ulong constexpr limit = 10000;
-	std::vector<ulong> vec(1);
-	for(ulong i = 1; i < limit; ++i)
+    u64 problem21(){
+	u64 constexpr limit = 10000;
+	std::vector<u64> vec(1);
+	for(u64 i = 1; i < limit; ++i)
 	    vec.push_back(divisor_sum(i) - i);
-	ulong sum = 0;
-	for(ulong i = 1; i < limit; ++i){
-	    ulong const ds = vec[i];
+	u64 sum = 0;
+	for(u64 i = 1; i < limit; ++i){
+	    u64 const ds = vec[i];
 	    if(ds != i && (ds < limit ? vec[ds] == i : divisor_sum(ds) == i))
 		sum += i;
 	}
@@ -31,23 +31,23 @@ namespace {
     std::array<char const *const, 5163> input22 {{
 #include "names.include"
     }};
-    ulong problem22(){
-	ulong sum = 0;
-	ulong pos = 0;
+    u64 problem22(){
+	u64 sum = 0;
+	u64 pos = 0;
 	std::vector<std::string> names(input22.cbegin(), input22.cend());
 	std::sort(names.begin(), names.end());
 	for(auto str : names){
-	    ulong psum = 0;
+	    u64 psum = 0;
 	    for(char ch : str)
 		psum += ch + 1 - 'A';
 	    sum += psum * ++pos;
 	}
 	return sum;
     }
-    ulong problem23(){
-	static ulong constexpr limit = 28124;
-	std::vector<ulong> abundant;
-	for(ulong i = 1; i < limit; ++i)
+    u64 problem23(){
+	static u64 constexpr limit = 28124;
+	std::vector<u64> abundant;
+	for(u64 i = 1; i < limit; ++i)
 	    if(divisor_sum(i) - i > i)
 		abundant.push_back(i);
 	std::vector<bool> isSum(limit, false);
@@ -55,39 +55,39 @@ namespace {
 	while(outer != abundant.cend()){
 	    auto inner = outer;
 	    do {
-		ulong const v = *inner + *outer;
+		u64 const v = *inner + *outer;
 		if(v < limit)
 		    isSum[v] = true;
 	    } while(++inner != abundant.cend());
 	    ++outer;
 	}
-	ulong sum = 0;
-	for(ulong i = 0; i < limit; ++i)
+	u64 sum = 0;
+	for(u64 i = 0; i < limit; ++i)
 	    if(!isSum[i])
 		sum += i;
 	return sum;
     }
     std::string problem24(){
 	std::array<char, 10> arr {{'0','1','2','3','4','5','6','7','8','9'}};
-	for(int i = 1; i < 1000000; ++i){
+	for(u32 i = 1; i < 1000000; ++i){
 	    if(!std::next_permutation(arr.begin(), arr.end()))
 		assert(false);
 	}
 	return { arr.begin(), arr.end() };
     }
-    ulong problem25(){
+    u64 problem25(){
 	bigint a = 0;
 	bigint b = 1;
 	bigint target;
 	mpz_ui_pow_ui(target.get_mpz_t(), 10, 999);
-	ulong i;
+	u64 i;
 	for(i = 0; a < target; ++i){
 	    mpz_swap(a.get_mpz_t(), b.get_mpz_t());
 	    b += a;
 	}
 	return i;
     }
-    ulong rec_rep(ulong x){
+    u64 rec_rep(u64 x){
 	//remove 2s and 5s
 	while(x % 2 == 0)
 	    x /= 2;
@@ -95,23 +95,23 @@ namespace {
 	    x /= 5;
 	if(x == 1)
 	    return 0;
-	ulong start = 1;
-	ulong const n = x;
+	u64 start = 1;
+	u64 const n = x;
 	while(start < x)
 	    start *= 10;
 	x = start;
-	ulong i = 0;
+	u64 i = 0;
 	do {
 	    ++i;
 	    x = (x % n) * 10;
 	} while(x != start);
 	return i;
     }
-    ulong problem26(){
-	ulong max = 0;
-	ulong v = 0;
-	for(ulong i = 2; i < 1000; ++i){
-	    ulong const rr = rec_rep(i);
+    u64 problem26(){
+	u64 max = 0;
+	u64 v = 0;
+	for(u64 i = 2; i < 1000; ++i){
+	    u64 const rr = rec_rep(i);
 	    if(rr > max){
 		max = rr;
 		v = i;
@@ -127,7 +127,7 @@ namespace {
 	    for(long a = -999; a < 1000; ++a){
 		long n = 1; // case n=0 is implied by b being prime
 		long quad = 1 + a + b;
-		while(quad > 0 && factors((ulong)quad).size() == 1)
+		while(quad > 0 && factors((u64)quad).size() == 1)
 		    quad += a + 2*n++ + 1;
 		if(n > max){
 		    max = n; //actually one more than satisfying conditions
@@ -137,20 +137,20 @@ namespace {
 	}
 	return val;
     }
-    ulong problem28(){
-	ulong sum = 0;
-	for(uint n = 1; n <= 500; ++n)
+    u64 problem28(){
+	u64 sum = 0;
+	for(u32 n = 1; n <= 500; ++n)
 	    sum += 4*n*n+n+1;
 	sum *= 4;
 	sum += 1;
 	return sum;
     }
-    ulong problem29(){
-	ulong ct = 0;
+    u64 problem29(){
+	u64 ct = 0;
 	std::set<bigint> set;
 	bigint p;
-	for(ulong a = 2; a <= 100; ++a)
-	    for(ulong b = 2; b <= 100; ++b){
+	for(u64 a = 2; a <= 100; ++a)
+	    for(u64 b = 2; b <= 100; ++b){
 		mpz_ui_pow_ui(p.get_mpz_t(), a, b);
 		auto iter = set.find(p);
 		if(iter == set.cend()){

@@ -6,12 +6,12 @@
 
 namespace {
     using namespace euler;
-    ulong problem50(){
-	ulong max_ct = 0;
-	ulong max_prime = 0;
+    u64 problem50(){
+	u64 max_ct = 0;
+	u64 max_prime = 0;
 	for(prime_iterator start; *start < 1000; ++start){
-	    ulong sum = 0;
-	    ulong ct = 0;
+	    u64 sum = 0;
+	    u64 ct = 0;
 	    for(prime_iterator end(start); sum < 1000000; ++end){
 		if(ct > max_ct && is_prime(sum)){
 		    max_ct = ct;
@@ -24,37 +24,37 @@ namespace {
 	return max_prime;
     }
     template <class Iterator, class Object>
-    std::list<ulong> find_all(Iterator begin, Iterator end, Object what){
-	std::list<ulong> indices;
+    std::list<u64> find_all(Iterator begin, Iterator end, Object what){
+	std::list<u64> indices;
 	for(auto iter = std::find(begin, end, what);
 		iter != end;
 		iter = std::find(iter + 1, end, what))
 	    indices.push_back(std::distance(begin, iter));
 	return indices;
     }
-    ulong problem51(){
+    u64 problem51(){
 	for(prime_iterator pi(10); true; ++pi){
-	    std::vector<uchar> digits(digit_iterator(*pi), digit_iterator(0));
+	    std::vector<u8> digits(digit_iterator(*pi), digit_iterator(0));
 	    std::reverse(digits.begin(), digits.end());
-	    for(uchar base_digit : {0, 1, 2}){
-		std::list<ulong> indices =
+	    for(u8 base_digit : {0, 1, 2}){
+		std::list<u64> indices =
 		    find_all(digits.begin(), digits.end(), base_digit);
-		ulong const limit = 1 << indices.size();
-		for(uint i = 1; i < limit; ++i){
-		    uchar count = 1;
-		    std::list<ulong> effective_indices;
+		u64 const limit = 1 << indices.size();
+		for(u32 i = 1; i < limit; ++i){
+		    u8 count = 1;
+		    std::list<u64> effective_indices;
 		    {
-			uint j = i;
-			for(ulong x : indices){
+			u32 j = i;
+			for(u64 x : indices){
 			    if(j & 1)
 				effective_indices.push_back(x);
 			    j >>= 1;
 			}
 		    }
-		    std::vector<uchar> new_digits(digits);
-		    for(uchar new_digit = base_digit + 1;
+		    std::vector<u8> new_digits(digits);
+		    for(u8 new_digit = base_digit + 1;
 			    new_digit < 10; ++new_digit){
-			for(ulong x : effective_indices)
+			for(u64 x : effective_indices)
 			    new_digits[x] = new_digit;
 			if(is_prime(from_digits(new_digits.begin(), new_digits.end()))){
 			    ++count;
@@ -68,14 +68,14 @@ namespace {
 	    }
 	}
     }
-    ulong problem52(){
-	for(ulong i = 1; true; ++i){
-	    std::vector<uchar> one(digit_iterator(i), digit_iterator(0));
-	    std::vector<uchar> other(digit_iterator(6*i), digit_iterator(0));
+    u64 problem52(){
+	for(u64 i = 1; true; ++i){
+	    std::vector<u8> one(digit_iterator(i), digit_iterator(0));
+	    std::vector<u8> other(digit_iterator(6*i), digit_iterator(0));
 	    if(one.size() == other.size()){
 		std::sort(one.begin(), one.end());
 		std::sort(other.begin(), other.end());
-		ulong n = 6;
+		u64 n = 6;
 		while(std::equal(one.begin(), one.end(), other.begin())){
 		    if(--n == 1)
 			return i;
@@ -85,12 +85,12 @@ namespace {
 	    }
 	}
     }
-    ulong problem53(){
-	ulong ct = 0;
-	for(ulong n = 23; n <= 100; ++n){
-	    ulong first_r = 0;
-	    ulong ncr = 1;
-	    for(ulong r = 1; first_r == 0; ++r){
+    u64 problem53(){
+	u64 ct = 0;
+	for(u64 n = 23; n <= 100; ++n){
+	    u64 first_r = 0;
+	    u64 ncr = 1;
+	    for(u64 r = 1; first_r == 0; ++r){
 		ncr *= (n - r + 1);
 		ncr /= r;
 		if(ncr > 1000000)
@@ -100,9 +100,9 @@ namespace {
 	}
 	return ct;
     }
-    uchar constexpr bad_card_lookup = 255;
+    u8 constexpr bad_card_lookup = 255;
 #define B bad_card_lookup
-    std::array<uchar, 85> const char_lookup = {{
+    std::array<u8, 85> const char_lookup = {{
 	B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B,
 	B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B,
 	B, B, B, B, B, B, B, B, B, B, B, B, B, B, B, B,
@@ -110,19 +110,19 @@ namespace {
 	B,12, B, 0, 1, B, B, B, 2, B, 9,11, B, B, B, B,
 	B,10, B, 3, 8 }};
 #undef B
-    ulong next_hand_value(char const *input){
-	uchar value_counts[13] {0,0,0,0,0,0,0,0,0,0,0,0,0};
-	uchar suit_counts[4] {0,0,0,0};
-	uchar four = 13;
-	uchar trip = 13;
-	uchar doub = 13;
-	uchar second_doub = 13;
+    u64 next_hand_value(char const *input){
+	u8 value_counts[13] {0,0,0,0,0,0,0,0,0,0,0,0,0};
+	u8 suit_counts[4] {0,0,0,0};
+	u8 four = 13;
+	u8 trip = 13;
+	u8 doub = 13;
+	u8 second_doub = 13;
 	bool straight = true;
 	bool flush = false;
-	for(uint c = 0; c < 5; ++c){
+	for(u32 c = 0; c < 5; ++c){
 	    char ch = *input++;
 	    assert(ch >= 0 && ch <= 'T');
-	    uchar v = char_lookup[ch];
+	    u8 v = char_lookup[ch];
 	    assert(v < 13);
 	    ++value_counts[v];
 	    ch = *input++;
@@ -133,10 +133,10 @@ namespace {
 	    ch = *input++;
 	    assert(ch == ' ');
 	}
-	uint more = 5;
-	for(uint v = 0; more; ++v){
+	u32 more = 5;
+	for(u32 v = 0; more; ++v){
 	    assert(v < 13);
-	    uint const ct = value_counts[v];
+	    u32 const ct = value_counts[v];
 	    switch(ct){
 	    case 0:
 		if(more != 5)
@@ -170,15 +170,15 @@ namespace {
 	    }
 	    more -= ct;
 	}
-	for(uint s = 0; s < 4; ++s){
-	    uint const ct = suit_counts[s];
+	for(u32 s = 0; s < 4; ++s){
+	    u32 const ct = suit_counts[s];
 	    if(ct == 5)
 		flush = true;
 	    if(ct != 0)
 		break;
 	}
 	// value is a 8-digit base 13 number, with these digits:
-	ulong value;
+	u64 value;
 	if(flush && straight)
 	    value = 12 * 13 * 13;
 	else if(four != 13)
@@ -197,10 +197,10 @@ namespace {
 	    value = (5 * 13 + doub) * 13;
 	else
 	    value = 0;
-	uint extras = 0;
-	uint seen = 0;
-	for(int v = 12; seen < 5; --v){
-	    uint ct = value_counts[v];
+	u32 extras = 0;
+	u32 seen = 0;
+	for(u32 v = 12; seen < 5; --v){
+	    u32 ct = value_counts[v];
 	    if(ct > 0){
 		value *= 13;
 		value += v;
@@ -208,31 +208,31 @@ namespace {
 		seen += ct;
 	    }
 	}
-	for(uint i = 0; i < extras; ++i)
+	for(u32 i = 0; i < extras; ++i)
 	    value *= 13;
 	return value;
     }
     char const *const input54 =
 #include "poker.include"
 	;
-    ulong problem54(){
+    u64 problem54(){
 	char const *input = input54;
-	uint one_count = 0;
-	for(uint i = 0; i < 1000; ++i){
-	    ulong const one = next_hand_value(input);
+	u32 one_count = 0;
+	for(u32 i = 0; i < 1000; ++i){
+	    u64 const one = next_hand_value(input);
 	    input += 15;
-	    ulong const two = next_hand_value(input);
+	    u64 const two = next_hand_value(input);
 	    input += 15;
 	    if(one > two)
 		++one_count;
 	}
 	return one_count;
     }
-    ulong problem55(){
-	ulong lychrel_count = 0;
-	for(ulong i = 1; i < 10000; ++i){
-	    ulong n = i;
-	    for(uint c = 0; true; ++c){
+    u64 problem55(){
+	u64 lychrel_count = 0;
+	for(u64 i = 1; i < 10000; ++i){
+	    u64 n = i;
+	    for(u32 c = 0; true; ++c){
 		auto nstr = n;
 		if(c > 0 && is_palindrome(std::to_string(nstr))){
 		    break;
@@ -245,32 +245,32 @@ namespace {
 	}
 	return lychrel_count;
     }
-    ulong problem56(){
+    u64 problem56(){
 	bigint big;
-	ulong max_sum = 0;
-	for(uint a = 1; a < 100; ++a)
-	    for(uint b = 1; b < 100; ++b){
+	u64 max_sum = 0;
+	for(u32 a = 1; a < 100; ++a)
+	    for(u32 b = 1; b < 100; ++b){
 		mpz_ui_pow_ui(big.get_mpz_t(), a, b);
 		max_sum = std::max(max_sum, digit_sum(big));
 	    }
 	return max_sum;
     }
-    ulong problem57(){
+    u64 problem57(){
 	typedef mpq_class bigq;
 	bigq q(1);
-	ulong ct = 0;
-	for(uint i = 0; i < 1000; ++i){
+	u64 ct = 0;
+	for(u32 i = 0; i < 1000; ++i){
 	    q = 1 + 1 / (1 + q);
 	    if(q > 1 && q.get_num().get_str().size() > q.get_den().get_str().size())
 		++ct;
 	}
 	return ct;
     }
-    ulong problem58(){
-	ulong prime_ct = 0;
-	for(uint n = 1; true; ++n){
-	    ulong base = 1+2*n*(2*n-1);
-	    for(uint rep = 0; rep < 3; ++rep){
+    u64 problem58(){
+	u64 prime_ct = 0;
+	for(u32 n = 1; true; ++n){
+	    u64 base = 1+2*n*(2*n-1);
+	    for(u32 rep = 0; rep < 3; ++rep){
 		if(is_prime(base))
 		    ++prime_ct;
 		base += 2*n;
@@ -280,40 +280,40 @@ namespace {
 	}
     }
     std::array<std::string, 5> const common_words = {{"the", "and", "of", "to", "in"}};
-    std::array<uchar, 1201> const input59 = {{
+    std::array<u8, 1201> const input59 = {{
 #include "cipher1.include"
     }};
-    bool input59_check(uint const offset, uchar const xchar){
-	for(uint i = offset; i < input59.size(); i += 3){
-	    uchar const c = input59[i] xor xchar;
+    bool input59_check(u32 const offset, u8 const xchar){
+	for(u32 i = offset; i < input59.size(); i += 3){
+	    u8 const c = input59[i] xor xchar;
 	    if(c > 'z' || c < ' ')
 		return false;
 	}
 	return true;
     }
-    void input59_transform(uint const offset, uchar const xchar, std::array<uchar, 1201>& out){
-	for(uint i = offset; i < input59.size(); i += 3)
+    void input59_transform(u32 const offset, u8 const xchar, std::array<u8, 1201>& out){
+	for(u32 i = offset; i < input59.size(); i += 3)
 	    out[i] = input59[i] xor xchar;
     }
-    ulong problem59(){
-	std::vector<uchar> c1s;
-	for(uchar c1 = 'a'; c1 <= 'z'; ++c1)
+    u64 problem59(){
+	std::vector<u8> c1s;
+	for(u8 c1 = 'a'; c1 <= 'z'; ++c1)
 	    if(input59_check(0, c1))
 		c1s.push_back(c1);
-	std::vector<uchar> c2s;
-	for(uchar c2 = 'a'; c2 <= 'z'; ++c2)
+	std::vector<u8> c2s;
+	for(u8 c2 = 'a'; c2 <= 'z'; ++c2)
 	    if(input59_check(1, c2))
 		c2s.push_back(c2);
-	std::vector<uchar> c3s;
-	for(uchar c3 = 'a'; c3 <= 'z'; ++c3)
+	std::vector<u8> c3s;
+	for(u8 c3 = 'a'; c3 <= 'z'; ++c3)
 	    if(input59_check(2, c3))
 		c3s.push_back(c3);
-	std::array<uchar, 1201> check;
-	for(uchar c1 : c1s){
+	std::array<u8, 1201> check;
+	for(u8 c1 : c1s){
 	    input59_transform(0, c1, check);
-	    for(uchar c2 : c2s){
+	    for(u8 c2 : c2s){
 		input59_transform(1, c2, check);
-		for(uchar c3 : c3s){
+		for(u8 c3 : c3s){
 		    input59_transform(2, c3, check);
 		    bool good = true;
 		    for(auto word : common_words){
@@ -323,8 +323,8 @@ namespace {
 			}
 		    }
 		    if(good){
-			ulong ret = 0;
-			for(uchar ch : check)
+			u64 ret = 0;
+			for(u8 ch : check)
 			    ret += ch;
 			return ret;
 		    }

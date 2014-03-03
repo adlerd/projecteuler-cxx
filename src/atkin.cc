@@ -12,12 +12,12 @@
 
 namespace euler {
     struct fg_pair {
-	unsigned char f;
-	unsigned char g;
+	u8 f;
+	u8 g;
     };
-    template <int pair_ct>
+    template <i32 pair_ct>
 	struct fg_info {
-	    unsigned char d;
+	    u8 d;
 	    std::array<fg_pair, pair_ct> pairs;
 	};
     std::array<fg_info<16>, 8> constexpr a_info
@@ -72,7 +72,7 @@ namespace euler {
 		      {6, 13}, {6, 17}, {6, 23}, {9, 2}, {9, 8}, {9, 22},
 		      {9, 28}, {10, 1}, {10, 11}, {10, 19}, {10, 29}}}}}};
 #define B bad_delta
-    unsigned char const prime_iterator::delta_iterator::table[] =
+    u8 const prime_iterator::delta_iterator::table[] =
 //	  0  1  2  3  4  5  6  7
 	{ B, 7, 3, 5, B, 1, B,11,
 	  B, B, B,13, B,17, B, B,
@@ -82,7 +82,7 @@ namespace euler {
 	  B,43, B,47, B, B, B,49,
 	  B,53, B, B, B,59, B, B,
 	  B, B, B, 1};
-    unsigned char const prime_iterator::delta_iterator::delta_index_table[] =
+    u8 const prime_iterator::delta_iterator::delta_index_table[] =
 //	  0  1  2  3  4  5  6  7
 	{ B, 0, B, B, B, B, B, 1,
 	  B, B, B, 2, B, 3, B, B,
@@ -96,7 +96,7 @@ namespace euler {
 #define D_X_TAB delta_iterator::delta_index_table
     auto prime_iterator::extend_primes() -> b_vec {
 	b_vec vec(ks_per_cycle * 16, false);
-	ulong const start = ks_per_cycle * primes.size();
+	u64 const start = ks_per_cycle * primes.size();
 	for(auto const& info : a_info)
 	    for(auto const& pair : info.pairs){
 		long x = pair.f;
@@ -119,7 +119,7 @@ namespace euler {
 		    long k = k0;
 		    long y = y0;
 		    while(k < (long) (start + ks_per_cycle)){
-			ulong const index = 16*(k-start)+D_X_TAB[info.d];
+			u64 const index = 16*(k-start)+D_X_TAB[info.d];
 			vec[index] = !vec[index];
 			k += y + 15;
 			y += 30;
@@ -148,7 +148,7 @@ namespace euler {
 		    long k = k0;
 		    long y = y0;
 		    while(k < (long) (start + ks_per_cycle)){
-			ulong const index = 16*(k-start)+D_X_TAB[info.d];
+			u64 const index = 16*(k-start)+D_X_TAB[info.d];
 			vec[index] = !vec[index];
 			k += y + 15;
 			y += 30;
@@ -171,7 +171,7 @@ namespace euler {
 		    long k = k0;
 		    long y = y0;
 		    while(k >= (long) start && y < x){
-			ulong const index = 16*(k-start)+D_X_TAB[info.d];
+			u64 const index = 16*(k-start)+D_X_TAB[info.d];
 			vec[index] = !vec[index];
 			k -= y + 15;
 			y += 30;
@@ -181,9 +181,9 @@ namespace euler {
 		}
                 break_scan:;
 	    }
-	ulong const bottom = start * 60;
-	ulong const top = (start + ks_per_cycle) * 60;
-	ulong k = 0;
+	u64 const bottom = start * 60;
+	u64 const top = (start + ks_per_cycle) * 60;
+	u64 k = 0;
 	delta_iterator delta(1);
 	auto outer = primes.cbegin();
 	if(start == 0)
@@ -194,15 +194,15 @@ namespace euler {
 	    assert(k % ks_per_cycle == 0 && *delta == 1);
 	    while(iter != old_vec.cend()){
 		if(*iter){
-		    ulong p = k * 60 + *delta;
-		    ulong const p_sq = p * p;
+		    u64 p = k * 60 + *delta;
+		    u64 const p_sq = p * p;
 		    if(p_sq >= top)
 			goto done;
 		    p = (bottom/p_sq + 1)*p_sq;
 		    while(p < top){
-			ulong const d_x = D_X_TAB[p % 60];
+			u64 const d_x = D_X_TAB[p % 60];
 			if(d_x != delta_iterator::bad_delta){
-			    ulong const k_x = p / 60 - start;
+			    u64 const k_x = p / 60 - start;
 			    assert(p / 60 >= start && k_x < ks_per_cycle);
 			    vec[k_x * 16 + d_x] = false;
 			}
@@ -235,7 +235,7 @@ done:
 	    }
 	} while(!*vec_iter);
     }
-    auto prime_iterator::get_vec_iter(ulong x) -> b_vec::const_iterator {
+    auto prime_iterator::get_vec_iter(u64 x) -> b_vec::const_iterator {
 #ifndef NO_THREADS
 	typedef std::unique_lock<std::mutex> lock_t;
 	typedef std::condition_variable excon_t;
@@ -281,7 +281,7 @@ done:
 	assert(primes[x].size() == ks_per_cycle * 16);
 	return primes[x].cbegin();
     }
-    void prime_iterator::assign(ulong lower){
+    void prime_iterator::assign(u64 lower){
 	if(lower <= 5){
 	    *this = prime_iterator();
 	    if(lower > 2){
@@ -293,7 +293,7 @@ done:
 		}
 	    }
 	} else {
-	    ulong l_d = lower % 60;
+	    u64 l_d = lower % 60;
 	    while(delta_iterator::delta_index_table[l_d] ==
 		    delta_iterator::bad_delta)
 		++l_d;

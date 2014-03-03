@@ -68,7 +68,7 @@ struct euler::algx_impl {
 	relink_lr(e);
 	e->size = 0;
     }
-    static void insert_key(elt const head, elt const fresh, uint const key,
+    static void insert_key(elt const head, elt const fresh, u32 const key,
 	    bool on_left_end){
 	typedef algx_state::element ee;
 	elt ee::*const dir = on_left_end ? &ee::left : &ee::right;
@@ -89,10 +89,10 @@ struct euler::algx_impl {
     }
 };
 
-algx_state::algx_state(uint rowcount) : store(rowcount+1),
+algx_state::algx_state(u32 rowcount) : store(rowcount+1),
     origin(&store.front()), state() {
     origin->left = origin->right = origin;
-    for(uint i = 0; i < rowcount; ++i){
+    for(u32 i = 0; i < rowcount; ++i){
 	store[i].down = &store[i+1];
 	store[i+1].up = &store[i];
 	store[i+1].header = origin;
@@ -123,8 +123,8 @@ void algx_state::push_optional(){
 void algx_state::pop_required(){
     assert(is_clean());
     elt const header = store.back().header;
-    uint const size = header->size;
-    for(uint i = 0; i <= size; ++i){
+    u32 const size = header->size;
+    for(u32 i = 0; i <= size; ++i){
 	elt const e = &store.back();
 	assert(i == size ? e == header : true);
 	algx_impl::unlink_lr(e);
@@ -134,30 +134,30 @@ void algx_state::pop_required(){
 void algx_state::pop_optional(){
     assert(is_clean());
     elt const header = store.front().header;
-    uint const size = header->size;
-    for(uint i = 0; i <= size; ++i){
+    u32 const size = header->size;
+    for(u32 i = 0; i <= size; ++i){
 	elt const e = &store.front();
 	assert(i == size ? e == header : true);
 	algx_impl::unlink_lr(e);
 	store.pop_front();
     }
 }
-void algx_state::add_required_entry(uint key){
+void algx_state::add_required_entry(u32 key){
     assert(is_clean());
     elt const header = store.back().header;
     store.emplace_back();
     algx_impl::insert_key(header, &store.back(), key, true);
 }
-void algx_state::add_optional_entry(uint key){
+void algx_state::add_optional_entry(u32 key){
     assert(is_clean());
     elt const header = store.front().header;
     store.emplace_front();
     algx_impl::insert_key(header, &store.front(), key, false);
 }
 
-std::vector<uint> algx_state::read_solution() const {
+std::vector<u32> algx_state::read_solution() const {
     assert(!is_clean());
-    std::vector<uint> ret;
+    std::vector<u32> ret;
     for(elt e : state){
 	while(e->header != origin)
 	    e = e->right;
@@ -210,7 +210,7 @@ bool algx_state::search_down(){
 	return !is_clean();
     } else {
 	elt minc = origin->right;
-	uint minsize = minc->size;
+	u32 minsize = minc->size;
 	if(minsize >= 2){
 	    elt c = minc->right;
 	    /* never select an optional, it's not productive */

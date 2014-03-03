@@ -11,13 +11,13 @@
 
 namespace {
     using namespace euler;
-    uint problem80(){
-	uint psr = 2;
-	uint psq = 4;
-	uint sum = 0;
+    u32 problem80(){
+	u32 psr = 2;
+	u32 psq = 4;
+	u32 sum = 0;
 	bigint mult;
 	mpz_ui_pow_ui(mult.get_mpz_t(), 100, 100);
-	for(uint i = 2; i < 100; ++i){
+	for(u32 i = 2; i < 100; ++i){
 	    if(i == psq){
 		psr++;
 		psq = psr*psr;
@@ -26,23 +26,23 @@ namespace {
 		x = sqrt(x);
 		auto str = x.get_str();
 		assert(str.size() >= 100);
-		for(uint k = 0; k < 100; ++k)
+		for(u32 k = 0; k < 100; ++k)
 		    sum += str[k] - '0';
 	    }
 	}
 	return sum;
     }
     namespace eighty_dijkstra {
-	std::array<uint, 80*80> const input81 = {{
+	std::array<u32, 80*80> const input81 = {{
 #include <matrix.include>
 	}};
 	struct matloc {
-	    uchar x;
-	    uchar y;
+	    u8 x;
+	    u8 y;
 	};
 	struct place {
 	    matloc xy;
-	    uint value;
+	    u32 value;
 	    bool operator>(place const&) const;
 	};
 	bool place::operator>(place const& o) const {
@@ -56,13 +56,13 @@ namespace {
 	    return xy.y > o.xy.y;
 	}
 	typedef void (*neighborfun)(matloc, std::vector<matloc>&);
-	auto locref(std::vector<uint>& v, matloc m) -> decltype(v[0]) {
+	auto locref(std::vector<u32>& v, matloc m) -> decltype(v[0]) {
 	    assert((m.x < 80 && m.y < 80) || (m.x == 80 && m.y < 2));
 	    return v[80*m.x+m.y];
 	}
-	uint dijkstra(neighborfun nborf){
+	u32 dijkstra(neighborfun nborf){
 	    std::priority_queue<place, std::vector<place>, std::greater<place>> pq;
-	    std::vector<uint> vec(input81.cbegin(), input81.cend());
+	    std::vector<u32> vec(input81.cbegin(), input81.cend());
 	    std::vector<matloc> nbors;
 	    vec.push_back(1);
 	    vec.push_back(1);
@@ -80,7 +80,7 @@ namespace {
 		    locref(vec,top.xy) = 0;
 		    (*nborf)(top.xy, nbors);
 		    for(matloc& m : nbors){
-			uint v = locref(vec,m);
+			u32 v = locref(vec,m);
 			if(v != 0)
 			    pq.push({m,v + top.value});
 		    }
@@ -90,30 +90,30 @@ namespace {
 	}
 	void problem81_neighbors(matloc m, std::vector<matloc>& v){
 	    if(m.x < 79){
-		v.push_back({(uchar)(m.x+1),m.y});
+		v.push_back({(u8)(m.x+1),m.y});
 		if(m.y < 79)
-		    v.push_back({m.x,(uchar)(m.y+1)});
+		    v.push_back({m.x,(u8)(m.y+1)});
 	    } else if(m.x == 80){
 		if(m.y == 0)
 		    v.push_back({0,0});
 	    } else if(m.x == 79 && m.y == 79){
 		v.push_back({80,1});
 	    } else {
-		v.push_back({m.x,(uchar)(m.y+1)});
+		v.push_back({m.x,(u8)(m.y+1)});
 	    }
 	}
 	void problem82_neighbors(matloc m, std::vector<matloc>& v){
 	    if(m.x == 80){
 		if(m.y == 0){
-		    for(int i = 0; i < 80; ++i)
-			v.push_back({(uchar)i,0});
+		    for(u8 i = 0; i < 80; ++i)
+			v.push_back({i,0});
 		}
 	    } else if(m.y < 79){
-		v.push_back({m.x,(uchar)(m.y+1)});
+		v.push_back({m.x,(u8)(m.y+1)});
 		if(m.x > 0)
-		    v.push_back({(uchar)(m.x-1),m.y});
+		    v.push_back({(u8)(m.x-1),m.y});
 		if(m.x < 79)
-		    v.push_back({(uchar)(m.x+1),m.y});
+		    v.push_back({(u8)(m.x+1),m.y});
 	    } else { // m.y == 79
 		v.push_back({80,1});
 	    }
@@ -126,60 +126,60 @@ namespace {
 		v.push_back({80,1});
 	    } else {
 		if(m.x > 0)
-		    v.push_back({(uchar)(m.x-1),m.y});
+		    v.push_back({(u8)(m.x-1),m.y});
 		if(m.x < 79)
-		    v.push_back({(uchar)(m.x+1),m.y});
+		    v.push_back({(u8)(m.x+1),m.y});
 		if(m.y > 0)
-		    v.push_back({m.x,(uchar)(m.y-1)});
+		    v.push_back({m.x,(u8)(m.y-1)});
 		if(m.y < 79)
-		    v.push_back({m.x,(uchar)(m.y+1)});
+		    v.push_back({m.x,(u8)(m.y+1)});
 	    }
 	}
     }
-    uint problem81(){
+    u32 problem81(){
 	using namespace eighty_dijkstra;
 	return dijkstra(&problem81_neighbors);
     }
-    uint problem82(){
+    u32 problem82(){
 	using namespace eighty_dijkstra;
 	return dijkstra(&problem82_neighbors);
     }
-    uint problem83(){
+    u32 problem83(){
 	using namespace eighty_dijkstra;
 	return dijkstra(&problem83_neighbors);
     }
     namespace monopoly {
-	uint constexpr width = 40*3;
-	uint constexpr die_side_ct = 4;
-	uint constexpr roll_ways = die_side_ct * die_side_ct;
+	u32 constexpr width = 40*3;
+	u32 constexpr die_side_ct = 4;
+	u32 constexpr roll_ways = die_side_ct * die_side_ct;
 	typedef double val_t;
 	typedef std::array<val_t,width> col_t; // each elt is a dest
 	typedef std::array<col_t, width> mat_t; // each elt (column) is a src
 	void mat_square_into(mat_t& into, mat_t const& from){
-	    for(uint i = 0; i < width; ++i){
-		for(uint j = 0; j < width; ++j){
+	    for(u32 i = 0; i < width; ++i){
+		for(u32 j = 0; j < width; ++j){
 		    val_t accum = 0;
-		    for(uint k = 0; k < width; ++k)
+		    for(u32 k = 0; k < width; ++k)
 			accum += from[i][k] * from[k][j];
 		    into[i][j] = accum;
 		}
 	    }
 	}
-	inline uint modforty(uint x){
+	inline u32 modforty(u32 x){
 	    /* divisionless simple modulo forty. of course, this introduces a
 	     * branch... */
 	    return (x < 40 ? x : x - 40);
 	}
 	struct state {
-	    uchar square;
-	    uchar doubles;
-	    uint to_index(){
+	    u8 square;
+	    u8 doubles;
+	    u32 to_index(){
 		assert(square < 40 && doubles < 3);
 		return square + 40 * doubles;
 	    }
-	    state with_roll(uint val, bool dbl){
-		state ret{(uchar)modforty(val + square),
-		          (uchar)(dbl ? 1+doubles : 0)};
+	    state with_roll(u32 val, bool dbl){
+		state ret{(u8)modforty(val + square),
+		          (u8)(dbl ? 1+doubles : 0)};
 		if(ret.doubles > 2)
 		    return {10,0};
 		else
@@ -193,14 +193,14 @@ namespace {
 	    vec[dest.to_index()] += 14 * small;
 	}
 	struct ch_vars {
-	    uchar next_rr;
-	    uchar next_u;
-	    uchar back_3;
+	    u8 next_rr;
+	    u8 next_u;
+	    u8 back_3;
 	    bool trigger_cc;
 	};
 	void resolve_ch(col_t& vec, state dest, val_t chance, ch_vars vars){
 	    val_t small = chance / 16;
-	    uchar dbls = dest.doubles;
+	    u8 dbls = dest.doubles;
 	    vec[state{0,dbls}.to_index()] += small;
 	    vec[state{10,0}.to_index()] += small;
 	    vec[state{11,dbls}.to_index()] += small;
@@ -217,7 +217,7 @@ namespace {
 		vec[target.to_index()] += small;
 	}
 	void resolve(col_t& vec, state dest, val_t chance){
-	    uchar sq = dest.square;
+	    u8 sq = dest.square;
 	    if(sq == 2 || sq == 18 || sq == 33){
 		resolve_cc(vec,dest,chance);
 	    } else if(sq == 7){
@@ -232,32 +232,32 @@ namespace {
 		vec[dest.to_index()] += chance;
 	    }
 	}
-	std::vector<std::pair<uint, val_t>> s_rolls(){
+	std::vector<std::pair<u32, val_t>> s_rolls(){
 	    std::vector<val_t> vec(2*die_side_ct);
-	    for(uint x = 1; x <= die_side_ct; ++x)
-		for(uint y = x+1; y <= die_side_ct; ++y)
+	    for(u32 x = 1; x <= die_side_ct; ++x)
+		for(u32 y = x+1; y <= die_side_ct; ++y)
 		    vec[x+y] += 2;
 	    decltype(s_rolls()) ret;
-	    for(uint i = 0; i < vec.size(); ++i){
+	    for(u32 i = 0; i < vec.size(); ++i){
 		if(vec[i] != 0)
 		    ret.push_back({i, vec[i] / roll_ways});
 	    }
 	    return ret;
 	}
-	std::vector<std::pair<uint, val_t>> run_alg(){
+	std::vector<std::pair<u32, val_t>> run_alg(){
 	    std::unique_ptr<mat_t> a(new mat_t);
-	    for(uint i = 0; i < width; ++i)
-		for(uint j = 0; j < width; ++j)
+	    for(u32 i = 0; i < width; ++i)
+		for(u32 j = 0; j < width; ++j)
 		    (*a)[i][j] = 0;
 	    auto srolls = s_rolls();
 	    // fill matrix for single state transition
-	    for(uint sq = 0; sq < 40; ++sq){
-		for(uint dbls = 0; dbls < 3; ++dbls){
-		    state src{(uchar)sq,(uchar)dbls};
+	    for(u32 sq = 0; sq < 40; ++sq){
+		for(u32 dbls = 0; dbls < 3; ++dbls){
+		    state src{(u8)sq,(u8)dbls};
 		    auto& col = (*a)[src.to_index()];
 		    for(auto p : srolls)
 			resolve(col,src.with_roll(p.first,false),p.second);
-		    for(uint d = 1; d <= die_side_ct; ++d)
+		    for(u32 d = 1; d <= die_side_ct; ++d)
 			resolve(col,src.with_roll(d*2,true),1.0/roll_ways);
 		}
 	    }
@@ -272,9 +272,9 @@ namespace {
 		mat_square_into(*a,*b);//64
 	    }
 	    decltype(run_alg()) ret;
-	    for(uint dest = 0; dest < 40; ++dest){
+	    for(u32 dest = 0; dest < 40; ++dest){
 		val_t ch = 0;
-		for(uint src = 0; src < width; ++src){
+		for(u32 src = 0; src < width; ++src){
 		    ch += (*a)[src][dest];
 		    ch += (*a)[src][dest+40];
 		    ch += (*a)[src][dest+80];
@@ -294,38 +294,38 @@ namespace {
 	std::partial_sort(result.begin(), result.begin()+3,
 		result.end(),&comp_result);
 	std::ostringstream out;
-	for(int i = 0; i < 3; ++i)
+	for(u8 i = 0; i < 3; ++i)
 	    out << std::setfill('0') << std::setw(2) << result[i].first;
 	return out.str();
     }
     namespace euler85 {
 	struct soln {
-	    uint x;
-	    uint y;
-	    int diff;
+	    u32 x;
+	    u32 y;
+	    i32 diff;
 	    soln up() const {
 		return soln{x,y+1,0};
 	    }
 	    soln left() const {
 		return soln{x-1,y,0};
 	    }
-	    int get_diff(){
+	    i32 get_diff(){
 		if(diff == 0){
-		    uint val = x*(x+1)*y*(y+1)/4;
-		    diff = ((int)val)-2000000;
+		    u32 val = x*(x+1)*y*(y+1)/4;
+		    diff = ((i32)val)-2000000;
 		}
 		return diff;
 	    }
-	    uint get_abs_diff(){
-		int d = get_diff();
-		return (uint)(d < 0 ? -d : d);
+	    u32 get_abs_diff(){
+		i32 d = get_diff();
+		return (u32)(d < 0 ? -d : d);
 	    }
 	    bool operator<(soln& other) {
 		return get_abs_diff() < other.get_abs_diff();
 	    }
 	};
     }
-    uint problem85(){
+    u32 problem85(){
 	/* we want to find the first-quadrant lattice point closest to the
 	 * hyperbola xy(x+1)(y+1)/4=2000000. (The LHS describing the number of
 	 * subrectangles of a rectangle x-by-y.) In fact, by symmetry, we can
@@ -351,28 +351,28 @@ namespace {
 	return min.x * min.y;
     }
     namespace euler86 {
-	typedef std::unordered_map<uint,uint> imap_t;
-	typedef std::pair<uint,uint> uu_t;
-	uint constexpr TARGET = 1000000;
-	inline void update_solns(uint ua, uint ub, imap_t& imap){
-	    int b = (int) ub;
-	    int s = ua < ub ? (int)(ua + 1) : b;
+	typedef std::unordered_map<u32,u32> imap_t;
+	typedef std::pair<u32,u32> uu_t;
+	u32 constexpr TARGET = 1000000;
+	inline void update_solns(u32 ua, u32 ub, imap_t& imap){
+	    i32 b = (i32) ub;
+	    i32 s = ua < ub ? (i32)(ua + 1) : b;
 	    s -= b;
 	    s += b / 2;
 	    if(s > 0)
 		imap[ua] += s;
 	}
     }
-    uint problem86(){
+    u32 problem86(){
 	using namespace euler86;
 	pythag_iterator pi;
 	imap_t imap;
-	uint running = 0;
-	uint last = 0;
+	u32 running = 0;
+	u32 last = 0;
 	while(true){
 	    pythag_iterator::triplet trip = *pi;
-	    uint const a = trip[0];
-	    uint const b = trip[1];
+	    u32 const a = trip[0];
+	    u32 const b = trip[1];
 	    if(a != last){
 		running += imap[last];
 		if(running >= TARGET)
@@ -385,25 +385,25 @@ namespace {
 	    update_solns(b,a,imap);
 	}
     }
-    uint problem87(){
-	std::unordered_set<uint> set;
-	uint constexpr LIMIT = 50000000;
+    u32 problem87(){
+	std::unordered_set<u32> set;
+	u32 constexpr LIMIT = 50000000;
 	prime_iterator ai;
 	while(true){
-	    uint const ap = *ai++;
-	    uint const a = ap*ap*ap*ap;
+	    u32 const ap = *ai++;
+	    u32 const a = ap*ap*ap*ap;
 	    if(a >= LIMIT)
 		break;
 	    prime_iterator bi;
 	    while(true){
-		uint const bp = *bi++;
-		uint const b = a + bp*bp*bp;
+		u32 const bp = *bi++;
+		u32 const b = a + bp*bp*bp;
 		if(b >= LIMIT)
 		    break;
 		prime_iterator ci;
 		while(true){
-		    uint const cp = *ci++;
-		    uint const c = b + (cp*cp);
+		    u32 const cp = *ci++;
+		    u32 const c = b + (cp*cp);
 		    if(c >= LIMIT)
 			break;
 		    set.insert(c);
@@ -414,43 +414,43 @@ namespace {
     }
     namespace euler88 {
 	struct state {
-	    uint max_val;
-	    uint product;
-	    uint sum;
-	    uint len;
-	    state append(uint n) const {
+	    u32 max_val;
+	    u32 product;
+	    u32 sum;
+	    u32 len;
+	    state append(u32 n) const {
 		assert(n >= max_val);
 		return {n,product*n,sum+n,len+1};
 	    }
-	    uint kval() const {
+	    u32 kval() const {
 		assert(product >= sum);
 		return len + product - sum;
 	    }
 	};
-	uint constexpr limit = 12000;
-	typedef std::array<uint, 11999> kmap;
+	u32 constexpr limit = 12000;
+	typedef std::array<u32, 11999> kmap;
 	bool rec(state const st, kmap& map){
-	    uint k = st.kval();
+	    u32 k = st.kval();
 	    if(k >= limit)
 		return false;
 	    if(k >= 2){
-		uint old = map[k-2];
+		u32 old = map[k-2];
 		if(old == 0 || old > st.product)
 		    map[k-2] = st.product;
 	    }
-	    uint n = st.max_val;
+	    u32 n = st.max_val;
 	    while(rec(st.append(n++),map));
 	    return true;
 	}
     }
-    uint problem88(){
+    u32 problem88(){
 	using namespace euler88;
 	kmap map{};
-	for(uint i = 2; i < limit; ++i)
+	for(u32 i = 2; i < limit; ++i)
 	    rec({i,i,i,1},map);
-	std::unordered_set<uint> set;
-	uint sum = 0;
-	for(uint i : map)
+	std::unordered_set<u32> set;
+	u32 sum = 0;
+	for(u32 i : map)
 	    if(set.insert(i).second)
 		sum += i;
 	return sum;
@@ -458,16 +458,16 @@ namespace {
     std::array<std::string,1000> input89 = {
 #include "roman.include"
 };
-    uint problem89(){
-	static std::array<std::pair<char,uint>,7> const digits =
+    u32 problem89(){
+	static std::array<std::pair<char,u32>,7> const digits =
 	{{{'M', 1000},{'D',500},{'C',100},{'L',50},{'X',10},{'V',5},{'I',1}}};
-	static std::array<std::pair<uchar, uint>,13> const outs =
+	static std::array<std::pair<u8, u32>,13> const outs =
 	{{{1, 1000},{2,900},{1,500},{2,400},{1,100},{2,90},
 	     {1,50},{2,40},{1,10},{2,9},{1,5},{2,4},{1,1}}};
-	uint saved = 0;
+	u32 saved = 0;
 	for(std::string in : input89){
-	    uint val = 0;
-	    uint prev = 1000;
+	    u32 val = 0;
+	    u32 prev = 1000;
 	    for(char c : in){
 		for(auto p : digits){
 		    if(c == p.first){

@@ -16,7 +16,7 @@ class algx_state {
 	element *header;
 	// size and optional only set in header; size does not include header
 	// size is actually row id in row headers
-	uint size : 31;
+	u32 size : 31;
 	bool optional : 1;
     };
     typedef element *elt;
@@ -31,7 +31,7 @@ class algx_state {
 
 public:
     /* constructors */
-    explicit algx_state(uint rowcount);
+    explicit algx_state(u32 rowcount);
     algx_state(algx_state const&) = delete;
     algx_state(algx_state&&) = delete;
     void operator=(algx_state const&) = delete;
@@ -47,8 +47,8 @@ public:
     void pop_required();
     void push_optional();
     void pop_optional();
-    void add_required_entry(uint key);
-    void add_optional_entry(uint key);
+    void add_required_entry(u32 key);
+    void add_optional_entry(u32 key);
 
     /* next_solution can be called when dirty or clean, and dirty status is
      * indicated by return */
@@ -59,7 +59,7 @@ public:
 	    return search_up();
     }
     /* read_solution must be called when dirty */
-    std::vector<uint> read_solution() const;
+    std::vector<u32> read_solution() const;
     void clean() {
 	while(!is_clean()){
 	    clean_one();

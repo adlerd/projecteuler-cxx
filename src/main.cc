@@ -17,16 +17,16 @@
 
 using namespace euler;
 
-ulong constexpr THREAD_COUNT = 5;
+u64 constexpr THREAD_COUNT = 5;
 
 void queue_problem(problem const *fun);
 answer retrieve_answer();
 void die();
-void start_threads(uint ct);
+void start_threads(u32 ct);
 
 struct problem_harness {
     problem const *runner;
-    uint number;
+    u32 number;
     std::string result;
     bool required;
     bool queued;
@@ -34,9 +34,9 @@ struct problem_harness {
 
 struct problem_table {
     std::deque<problem_harness> items;
-    std::map<uint,problem_harness*> map;
+    std::map<u32,problem_harness*> map;
     std::list<problem_harness*> order;
-    problem_harness& add(uint number, bool required = true){
+    problem_harness& add(u32 number, bool required = true){
 	problem_harness* ph = map[number];
 	if(ph == nullptr){
 	    items.push_back({nullptr,number,"",required,false});
@@ -78,8 +78,8 @@ void for_problems(Function f){
 	    f(p);
 }
 
-uint mtoi(char const *start, char const *const end){
-    uint s = 0;
+u32 mtoi(char const *start, char const *const end){
+    u32 s = 0;
     while(start != end){
 	s *= 10;
 	s += *start++ - '0';
@@ -94,8 +94,8 @@ void parse_selectors(int argc, char *argv[], problem_table& pt){
 	if(!std::regex_match(argv[i], m, rx))
 	    throw std::invalid_argument("invalid program argument");
 	if(m[1].matched){
-	    uint century = 100*mtoi(m[1].first, m[1].second);
-	    for(uint j = 0; j < 100; ++j)
+	    u32 century = 100*mtoi(m[1].first, m[1].second);
+	    for(u32 j = 0; j < 100; ++j)
 		pt.add(century + j, false);
 	} else {
 	    pt.add(mtoi(m[2].first, m[2].second));
@@ -207,8 +207,8 @@ void die(){
     assert(answer_queue.empty());
 }
 
-void start_threads(uint ct){
-    for(uint i = 0; i < ct; ++i)
+void start_threads(u32 ct){
+    for(u32 i = 0; i < ct; ++i)
 	threads.push_back(new std::thread(&problems_runner));
 }
 
@@ -226,6 +226,6 @@ answer retrieve_answer(){
 void die(){
     assert(problem_queue.empty());
 }
-void start_threads(uint){}
+void start_threads(u32){}
 
 #endif

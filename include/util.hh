@@ -12,44 +12,46 @@
 #include <gmpxx.h>
 
 namespace euler {
-typedef uint8_t uchar;
-typedef uint32_t uint;
-typedef uint64_t ulong;
+typedef uint8_t u8;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef int16_t i16;
+typedef int32_t i32;
 typedef mpz_class bigint;
 typedef std::string (*problem_fun)();
-typedef std::pair<uint, std::string> answer;
+typedef std::pair<u32, std::string> answer;
 
 extern problem_fun NYI_problem;
 
 bool is_palindrome(std::string const& str);
 
-bool is_prime(ulong x);
-std::vector<ulong> factors(ulong x);
-std::vector<std::pair<ulong, unsigned char>> ct_factors(ulong x);
+bool is_prime(u64 x);
+std::vector<u64> factors(u64 x);
+std::vector<std::pair<u64, u8>> ct_factors(u64 x);
 
 /* isqrt and isqrt_part return the square root of perfect squares. for
  * non-squares, isqrt returns 0 and isqrt_part returns floor(sqrt) */
-uint isqrt(ulong x);
-uint isqrt_part(ulong x);
+u32 isqrt(u64 x);
+u32 isqrt_part(u64 x);
 
-ulong divisor_ct(ulong x);
-std::vector<ulong> divisors(ulong x);
-ulong divisor_sum(ulong x);
+u64 divisor_ct(u64 x);
+std::vector<u64> divisors(u64 x);
+u64 divisor_sum(u64 x);
 
-template <uint sides>
+template <u32 sides>
     struct figurate_constants {
-	static ulong constexpr bsq = 16 + sides*sides - 8*sides;
-	static ulong constexpr eight_a = 8 * sides - 16;
-	static ulong constexpr two_a = 2 * sides - 4;
-	static ulong constexpr mod = (two_a - ((sides - 4) % two_a)) % two_a;
+	static u64 constexpr bsq = 16 + sides*sides - 8*sides;
+	static u64 constexpr eight_a = 8 * sides - 16;
+	static u64 constexpr two_a = 2 * sides - 4;
+	static u64 constexpr mod = (two_a - ((sides - 4) % two_a)) % two_a;
     };
-template <uint sides>
+template <u32 sides>
     class figurate_iterator {
-	ulong f;
-	ulong d;
+	u64 f;
+	u64 d;
     public:
 	figurate_iterator() : f(1), d(sides-1) {}
-	explicit figurate_iterator(ulong n)
+	explicit figurate_iterator(u64 n)
 	    : f(n*((sides-2)*n+4-sides)/2), d(n*(sides-2)+1) {}
 	figurate_iterator(figurate_iterator const&) = default;
 	figurate_iterator(figurate_iterator&&) = default;
@@ -63,27 +65,27 @@ template <uint sides>
 	    operator++();
 	    return tmp;
 	}
-	ulong operator*() const {
+	u64 operator*() const {
 	    return f;
 	}
-	ulong next_diff() const {
+	u64 next_diff() const {
 	    return d;
 	}
-	static figurate_iterator at_least(ulong p){
+	static figurate_iterator at_least(u64 p){
 	    typedef figurate_constants<sides> fcs;
-	    ulong const ipart = isqrt_part((p - 1) * fcs::eight_a + fcs::bsq);
-	    ulong const numer = ipart + sides - 4;
+	    u64 const ipart = isqrt_part((p - 1) * fcs::eight_a + fcs::bsq);
+	    u64 const numer = ipart + sides - 4;
 	    return figurate_iterator(1 + numer/fcs::two_a);
 	}
     };
-template <uint sides>
-    bool is_figurate(ulong p){
+template <u32 sides>
+    bool is_figurate(u64 p){
 	typedef figurate_constants<sides> fcs;
-	ulong const sqrt = isqrt(p * fcs::eight_a + fcs::bsq);
+	u64 const sqrt = isqrt(p * fcs::eight_a + fcs::bsq);
 	return sqrt != 0 && sqrt % fcs::two_a == fcs::mod;
     }
 template <>
-    inline bool is_figurate<4>(ulong p){
+    inline bool is_figurate<4>(u64 p){
 	return isqrt(p) != 0;
     }
 namespace figurate {
@@ -93,15 +95,15 @@ namespace figurate {
     typedef figurate_iterator<6> hex_iter;
 }
 
-class big_digit_iterator : public std::iterator<std::forward_iterator_tag, unsigned char> {
+class big_digit_iterator : public std::iterator<std::forward_iterator_tag, u8> {
     bigint source;
-    unsigned char current;
+    u8 current;
 public:
     big_digit_iterator() : source(0), current(0) {}
     explicit big_digit_iterator(bigint const& s) : source(s) {
 	operator++();
     }
-    unsigned char operator*() const {
+    u8 operator*() const {
 	return current;
     }
     big_digit_iterator& operator++() noexcept {
@@ -120,15 +122,15 @@ public:
 	return !operator==(o);
     }
 };
-class digit_iterator : public std::iterator<std::forward_iterator_tag, unsigned char> {
-    ulong source;
-    unsigned char current;
+class digit_iterator : public std::iterator<std::forward_iterator_tag, u8> {
+    u64 source;
+    u8 current;
 public:
     digit_iterator() : source(0), current(0) {}
-    explicit digit_iterator(ulong const& s) : source(s) {
+    explicit digit_iterator(u64 const& s) : source(s) {
 	operator++();
     }
-    unsigned char operator*() const {
+    u8 operator*() const {
 	return current;
     }
     digit_iterator& operator++() noexcept {
@@ -149,11 +151,11 @@ public:
     }
 };
 
-ulong digit_sum(bigint const& b) noexcept;
+u64 digit_sum(bigint const& b) noexcept;
 
 template <class Iter>
-    ulong from_digits(Iter begin, Iter end){
-	ulong s = 0;
+    u64 from_digits(Iter begin, Iter end){
+	u64 s = 0;
 	while(begin != end){
 	    s *= 10;
 	    s += *begin++;
@@ -161,16 +163,16 @@ template <class Iter>
 	return s;
     }
 
-ulong gcd(ulong a, ulong b);
+u64 gcd(u64 a, u64 b);
 
-ulong totient(ulong n);
+u64 totient(u64 n);
 
 class problem {
-    uint number;
+    u32 number;
 public:
-    problem(uint n) : number(n) {}
+    problem(u32 n) : number(n) {}
     virtual ~problem() {}
-    uint get_number() const { return number; }
+    u32 get_number() const { return number; }
     virtual std::string run() const = 0;
     bool operator<(problem const& other) const {
 	return number < other.number;
@@ -196,40 +198,40 @@ class typed_problem : public problem {
     typedef T (*fun_t)();
     fun_t fun;
 public:
-    typed_problem(ulong n, fun_t f) : problem(n), fun(f) {}
+    typed_problem(u64 n, fun_t f) : problem(n), fun(f) {}
     virtual std::string run() const {
 	return euler_to_string(fun());
     }
 };
 
 template <class T>
-problem const *new_problem(ulong n, T (*fun)()) {
+problem const *new_problem(u64 n, T (*fun)()) {
     return new typed_problem<T>(n, fun);
 }
 
 class pythag_iterator {
 public:
-    typedef std::array<uint,3> triplet;
+    typedef std::array<u32,3> triplet;
 private:
     struct triplet_data {
 	triplet t;
-	uint prim_ref;
-	triplet_data(triplet const& tt, uint pr) : t(tt), prim_ref(pr) {}
-	triplet_data(uint a, uint b, uint c, uint pr)
+	u32 prim_ref;
+	triplet_data(triplet const& tt, u32 pr) : t(tt), prim_ref(pr) {}
+	triplet_data(u32 a, u32 b, u32 c, u32 pr)
 	    : t{{a,b,c}}, prim_ref(pr) {}
     };
     typedef std::vector<triplet_data> stor_t;
     struct triplet_ref_comp {
 	stor_t const& stor;
-	bool operator()(uint b, uint a) const { // intentionally switched a,b
+	bool operator()(u32 b, u32 a) const { // intentionally switched a,b
 	    return std::lexicographical_compare(stor[a].t.cbegin(),
 		    stor[a].t.cend(), stor[b].t.cbegin(), stor[b].t.cend());
 	}
     };
     stor_t stor;
-    std::priority_queue<uint,std::vector<uint>,triplet_ref_comp const> pq;
+    std::priority_queue<u32,std::vector<u32>,triplet_ref_comp const> pq;
     void advance();
-    bool is_prim(uint ref) const;
+    bool is_prim(u32 ref) const;
 public:
     pythag_iterator();
     pythag_iterator& operator++(){
@@ -323,26 +325,26 @@ bool next_rcombination(BiIter first, BiIter middle, BiIter end){
     }
 }
 
-ulong triangle_collapse(uchar const *start, ulong width);
+u64 triangle_collapse(u8 const *start, u64 width);
 template <class Iter>
-ulong high_subseq_prod(Iter first, Iter const last, ulong len){
-    ulong zct = 0;
-    ulong prod = 1;
+u64 high_subseq_prod(Iter first, Iter const last, u64 len){
+    u64 zct = 0;
+    u64 prod = 1;
     typename std::remove_reference<Iter>::type middle(first);
-    for(ulong i = 0; i < len; ++i){
+    for(u64 i = 0; i < len; ++i){
 	if(middle == last)
 	    return 0;
-	ulong const p = *middle++;
+	u64 const p = *middle++;
 	if(p == 0)
 	    ++zct;
 	else
 	    prod *= p;
     }
     assert(middle != first);
-    ulong high = zct == 0 ? prod : 0;
+    u64 high = zct == 0 ? prod : 0;
     while(middle != last){
-	ulong const p = *middle++;
-	ulong const d = *first++;
+	u64 const p = *middle++;
+	u64 const d = *first++;
 	if(d == 0)
 	    --zct;
 	else

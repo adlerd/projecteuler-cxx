@@ -9,12 +9,12 @@
 namespace {
     using namespace euler;
     std::string problem40(){
-	ulong p = 1;
-	std::vector<uchar> rdigs = {0};
+	u64 p = 1;
+	std::vector<u8> rdigs = {0};
 	auto iter = rdigs.rbegin();
-	ulong n = 0;
-	ulong i = 0;
-	ulong target = 1;
+	u64 n = 0;
+	u64 i = 0;
+	u64 target = 1;
 	while(target <= 1000000){
 	    while(i < target){
 		if(++iter == rdigs.rend()){
@@ -29,20 +29,20 @@ namespace {
 	return std::to_string(p);
     }
     std::string problem41(){
-	std::array<uchar, 9> digs = {{ 9, 8, 7, 6, 5, 4, 3, 2, 1 }};
-	ulong r_ct = 0;
+	std::array<u8, 9> digs = {{ 9, 8, 7, 6, 5, 4, 3, 2, 1 }};
+	u64 r_ct = 0;
 	while(true){
 	    if(!std::prev_permutation(digs.begin() + r_ct, digs.end()))
 		++r_ct;
-	    ulong n = from_digits(digs.begin() + r_ct, digs.end());
+	    u64 n = from_digits(digs.begin() + r_ct, digs.end());
 	    if(is_prime(n))
 		return std::to_string(n);
 	}
     }
     std::string problem42(){
-	ulong ct = 0;
+	u64 ct = 0;
 	for(std::string str : input_words){
-	    ulong csum = 0;
+	    u64 csum = 0;
 	    for(char c : str)
 		csum += c + 1 - 'A';
 	    if(is_figurate<3>(csum))
@@ -52,10 +52,10 @@ namespace {
     }
     std::string problem43(){
 	// use 1, 0, 2... to skip 0, 1, 2 through 0, 9, 8
-	std::array<uchar, 10> digs = {{1, 0, 2, 3, 4, 5, 6, 7, 8, 9}};
-	ulong sum = 0;
+	std::array<u8, 10> digs = {{1, 0, 2, 3, 4, 5, 6, 7, 8, 9}};
+	u64 sum = 0;
 	do {
-	    ulong rsum;
+	    u64 rsum;
 	    if(digs[3] % 2 != 0)
 		goto next;
 	    if((digs[2] + digs[3] + digs[4]) % 3 != 0)
@@ -80,11 +80,11 @@ next:;
 	return std::to_string(sum);
     }
     std::string problem44(){
-	std::vector<ulong> lowers;
+	std::vector<u64> lowers;
 	for(figurate::pent_iter upper; true; ++upper){
-	    for(ulong lower : lowers){
-		ulong const diff = *upper - lower;
-		ulong const sum = *upper + lower;
+	    for(u64 lower : lowers){
+		u64 const diff = *upper - lower;
+		u64 const sum = *upper + lower;
 		if(is_figurate<5>(diff) && is_figurate<5>(sum))
 		    return std::to_string(diff);
 	    }
@@ -109,10 +109,10 @@ next:;
 	}
     }
     std::string problem46(){
-	for(ulong i = 35; true; i += 2){
+	for(u64 i = 35; true; i += 2){
 	    bool good = false;
 	    for(figurate::square_iter si(0); !good && (*si)*2 < i; ++si){
-		ulong diff = i - (*si)*2;
+		u64 diff = i - (*si)*2;
 		if(is_prime(diff))
 		    good = true;
 	    }
@@ -122,7 +122,7 @@ next:;
     }
     std::string problem47(){
 	std::bitset<4> bits(0);
-	for(ulong i = 1; true; ++i){
+	for(u64 i = 1; true; ++i){
 	    bits <<= 1;
 	    bits[0] = (ct_factors(i).size() == 4);
 	    if(bits.all())
@@ -130,11 +130,11 @@ next:;
 	}
     }
     std::string problem48(){
-	ulong constexpr mod = 10000000000;
+	u64 constexpr mod = 10000000000;
 	bigint mod_bi(mod);
 	bigint base;
-	ulong sum = 0;
-	for(ulong i = 1; i < 1001; ++i){
+	u64 sum = 0;
+	for(u64 i = 1; i < 1001; ++i){
 	    base = i;
 	    mpz_powm_ui(base.get_mpz_t(), base.get_mpz_t(), i,
 		    mod_bi.get_mpz_t());
@@ -144,9 +144,9 @@ next:;
     }
     std::string problem49(){
 	for(prime_iterator pi(1000); *pi < 3340; ++pi){
-	    ulong const p1 = *pi;
-	    ulong const p2 = p1 + 3330;
-	    ulong const p3 = p2 + 3330;
+	    u64 const p1 = *pi;
+	    u64 const p2 = p1 + 3330;
+	    u64 const p3 = p2 + 3330;
 	    if(p1 != 1487 && is_prime(p2) && is_prime(p3)
 		    && is_permutation(digit_iterator(p1), digit_iterator(0),
 			digit_iterator(p2))

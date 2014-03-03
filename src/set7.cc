@@ -9,24 +9,24 @@
 
 namespace {
     using namespace euler;
-    bool is_digit_permutation(ulong a, ulong b){
-	std::vector<uchar> digs_a(digit_iterator(a), digit_iterator(0));
-	std::vector<uchar> digs_b(digit_iterator(b), digit_iterator(0));
+    bool is_digit_permutation(u64 a, u64 b){
+	std::vector<u8> digs_a(digit_iterator(a), digit_iterator(0));
+	std::vector<u8> digs_b(digit_iterator(b), digit_iterator(0));
 	return digs_a.size() == digs_b.size() &&
 	    std::is_permutation(digs_a.begin(), digs_a.end(), digs_b.begin());
     }
-    ulong problem70(){
-	uint constexpr LIMIT = 10000000;
+    u64 problem70(){
+	u32 constexpr LIMIT = 10000000;
 	double min_ratio = 87109.0 / 79180;
-	ulong min_n = 87109;
-	std::vector<ulong> totients;
+	u64 min_n = 87109;
+	std::vector<u64> totients;
 	totients.reserve(LIMIT);
 	totients.push_back(1);
 	totients.push_back(1);
 	totients.push_back(1);
-	for(ulong n = 3; n < LIMIT; ++n){
+	for(u64 n = 3; n < LIMIT; ++n){
 	    // find first factor
-	    uint p;
+	    u32 p;
 	    for(prime_iterator pi; ; ++pi){
 		p = *pi;
 		if(n % p == 0)
@@ -37,8 +37,8 @@ namespace {
 		}
 	    }
 	    // now calculate the totient of just the powers of p in n
-	    ulong tot = p-1;
-	    uint nn = n / p;
+	    u64 tot = p-1;
+	    u32 nn = n / p;
 	    while(nn % p == 0){
 		nn /= p;
 		tot *= p;
@@ -56,19 +56,19 @@ namespace {
 	}
 	return min_n;
     }
-    uint problem71(){
-	uint target_n = 3;
-	uint target_d = 7;
-	uint max_d = 1000000;
-	uint best_n = target_n - 1;
-	uint best_d = target_d;
+    u32 problem71(){
+	u32 target_n = 3;
+	u32 target_d = 7;
+	u32 max_d = 1000000;
+	u32 best_n = target_n - 1;
+	u32 best_d = target_d;
 	{
-	    uint g = gcd(best_n, best_d);
+	    u32 g = gcd(best_n, best_d);
 	    best_n /= g;
 	    best_d /= g;
 	}
-	for(uint d = 2; d <= max_d; ++d){
-	    uint n = d * target_n / target_d;
+	for(u32 d = 2; d <= max_d; ++d){
+	    u32 n = d * target_n / target_d;
 	    if(gcd(n, d) == 1 && n*best_d > best_n * d){
 		if(d == target_d)
 		    continue;
@@ -78,36 +78,36 @@ namespace {
 	}
 	return best_n;
     }
-    ulong problem72(){
-	ulong sum = 0;
-	for(uint i = 2; i <= 1000000; ++i)
+    u64 problem72(){
+	u64 sum = 0;
+	for(u32 i = 2; i <= 1000000; ++i)
 	    sum += totient(i);
 	return sum;
     }
-    uint problem73(){
-	uint ct = 0;
-	for(uint d = 1; d <= 12000; ++d){
-	    uint n = d/3;
+    u32 problem73(){
+	u32 ct = 0;
+	for(u32 d = 1; d <= 12000; ++d){
+	    u32 n = d/3;
 	    while(2*++n < d)
 		if(gcd(n,d) == 1)
 		    ++ct;
 	}
 	return ct;
     }
-    uint problem74(){
-	std::vector<uchar> lens(2178000);
-	std::array<uint, 10> facts;
+    u32 problem74(){
+	std::vector<u8> lens(2178000);
+	std::array<u32, 10> facts;
 	facts[0] = 1;
-	for(uint i = 1, n = 1; i < 10; ++i)
+	for(u32 i = 1, n = 1; i < 10; ++i)
 	    facts[i] = (n *= i);
 	lens[169] = lens[363601] = lens[1545] = 3;
 	lens[871] = lens[45361] = 2;
 	lens[872] = lens[45362] = 2;
-	uint ct = 0;
-	for(uint i = 1; i < 1000000; ++i){
-	    uint n = i;
-	    uint l = lens[n];
-	    std::forward_list<uint> stack;
+	u32 ct = 0;
+	for(u32 i = 1; i < 1000000; ++i){
+	    u32 n = i;
+	    u32 l = lens[n];
+	    std::forward_list<u32> stack;
 	    while(l == 0){
 		stack.push_front(n);
 		digit_iterator di(n);
@@ -134,15 +134,15 @@ namespace {
 	}
 	return ct;
     }
-    uint problem75(){
+    u32 problem75(){
 	class tset {
-	    uint a;
-	    uint b;
+	    u32 a;
+	    u32 b;
 	public:
 	    tset() : a(0), b(0) {}
 	    tset(tset const&) = default;
 	    tset(tset&&) = default;
-	    void add(uint x, uint y){
+	    void add(u32 x, u32 y){
 		if(a == 0){
 		    if(b == 0){
 			a = x;
@@ -157,22 +157,22 @@ namespace {
 		return a != 0;
 	    }
 	};
-	uint constexpr limit = 1500000;
+	u32 constexpr limit = 1500000;
 	//std::array<tset,limit> zom;
 	std::vector<tset> zom(limit);
-	for(uint m = 1; m < 867; ++m){
-	    for(uint n = 1; n < m; ++n){
-		uint const p = 2*m*(n+m);
+	for(u32 m = 1; m < 867; ++m){
+	    for(u32 n = 1; n < m; ++n){
+		u32 const p = 2*m*(n+m);
 		if(p > limit)
 		    break;
 		if(gcd(m,n) == 1){
-		    uint x = m*m-n*n;
-		    uint y = 2*m*n;
+		    u32 x = m*m-n*n;
+		    u32 y = 2*m*n;
 		    if(x > y)
 			std::swap(x,y);
-		    uint pp = p;
-		    uint xx = x;
-		    uint yy = y;
+		    u32 pp = p;
+		    u32 xx = x;
+		    u32 yy = y;
 		    do {
 			zom[pp-1].add(xx,yy);
 			pp+=p;
@@ -182,7 +182,7 @@ namespace {
 		}
 	    }
 	}
-	uint ct = 0;
+	u32 ct = 0;
 	for(auto& z : zom){
 	    if(z.one())
 		++ct;
@@ -191,31 +191,31 @@ namespace {
     }
 
     class partitions {
-	std::vector<uint> memo;
-	uint size;
-	static uint trinum(uint n){
+	std::vector<u32> memo;
+	u32 size;
+	static u32 trinum(u32 n){
 	    return (n*(n+1))/2;
 	}
-	uint parts(uint n, uint k);
-	typedef bool (* const validt)(ulong);
+	u32 parts(u32 n, u32 k);
+	typedef bool (* const validt)(u64);
     public:
 	explicit partitions(validt v) : memo(0), size(0), valid(v) {}
 	partitions(partitions const&) = default;
 	partitions(partitions&&) = default;
 	validt valid;
-	uint operator[](uint i);
+	u32 operator[](u32 i);
     };
-    uint partitions::operator[](uint i){
+    u32 partitions::operator[](u32 i){
 	if(i >= size){
 	    size = i+1;
 	    memo.resize(trinum(size));
 	}
 	return parts(i, 1);
     }
-    uint partitions::parts(uint n, uint k){
+    u32 partitions::parts(u32 n, u32 k){
 	if(k > n)
 	    return 0;
-	uint& a = memo[trinum(n)+k];
+	u32& a = memo[trinum(n)+k];
 	if(!a) {
 	    if(k == n)
 		a = (*valid)(n) ? 1 : 0;
@@ -227,32 +227,32 @@ namespace {
 	return a;
     }
 
-    bool always_true(ulong){
+    bool always_true(u64){
 	return true;
     }
-    uint problem76(){
+    u32 problem76(){
 	return partitions(&always_true)[100]-1;
     }
-    uint problem77(){
-	uint x = 11;
+    u32 problem77(){
+	u32 x = 11;
 	partitions p(&is_prime);
 	while(p[x] <= 5000)
 	    ++x;
 	return x;
     }
-    uint problem78(){
+    u32 problem78(){
 	using namespace figurate;
-	uint constexpr lim = 1000000;
-	std::vector<uint> memo(60000);
-	uint n = 1;
+	u32 constexpr lim = 1000000;
+	std::vector<u32> memo(60000);
+	u32 n = 1;
 	memo[0] = 1;
 	do {
 	    assert(n < memo.size());
 	    pent_iter pi;
-	    uint x = 1;
-	    uint summod = 0;
+	    u32 x = 1;
+	    u32 summod = 0;
 	    while(true){
-		uint i = *pi++;
+		u32 i = *pi++;
 		if(i > n)
 		    break;
 		summod += memo[n - i];
@@ -278,18 +278,18 @@ namespace {
 	return n-1;
     }
     char const *const input79 = "319680180690129620762689762318368710720710629168160689716731736729316729729710769290719680318389162289162718729319790680890362319760316729380319728716";
-    uint problem79(){
+    u32 problem79(){
 	std::array<std::bitset<10>,10> follows;
-	uint out = 0;
+	u32 out = 0;
 	std::bitset<10> found;
 	for(auto i = input79; *i; i += 3){
 	    assert(i - input79 < 150);
 	    assert('0' <= i[0] && i[0] <= '9');
 	    assert('0' <= i[1] && i[1] <= '9');
 	    assert('0' <= i[2] && i[2] <= '9');
-	    uint x = i[0]-'0';
-	    uint y = i[1]-'0';
-	    uint z = i[2]-'0';
+	    u32 x = i[0]-'0';
+	    u32 y = i[1]-'0';
+	    u32 z = i[2]-'0';
 	    follows[y][x] = true;
 	    follows[z][y] = true;
 	    follows[z][x] = true;
@@ -297,19 +297,19 @@ namespace {
 	    found[y] = true;
 	    found[z] = true;
 	}
-	for(uint i = 0; i < 10; ++i)
+	for(u32 i = 0; i < 10; ++i)
 	    if(!found[i])
 		follows[i][i] = true;
-	uint i = 0;
+	u32 i = 0;
 	while(i < 10){
 	   if(follows[i].none()){
 	       found.reset();
 	       found[i] = true;
 	       follows[i] = found;
 	       found.flip();
-	       for(uint j = 0; j < i; ++j)
+	       for(u32 j = 0; j < i; ++j)
 		   follows[j] &= found;
-	       for(uint j = i+1; j < 10; ++j)
+	       for(u32 j = i+1; j < 10; ++j)
 		   follows[j] &= found;
 	       out *= 10;
 	       out += i;

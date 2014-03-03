@@ -7,34 +7,34 @@
 
 namespace {
     using namespace euler;
-    ulong problem1(){
-	ulong sum = 0;
-	for(ulong i = 0; i < 1000; ++i)
+    u64 problem1(){
+	u64 sum = 0;
+	for(u64 i = 0; i < 1000; ++i)
 	    if((i%3) * (i%5) == 0)
 		sum += i;
 	return sum;
     }
-    ulong problem2(){
-	ulong a = 0;
-	ulong b = 1;
-	ulong sum = 0;
+    u64 problem2(){
+	u64 a = 0;
+	u64 b = 1;
+	u64 sum = 0;
 	while(a < 4000000){
 	    if(a%2 == 0)
 		sum += a;
-	    ulong const t = a + b;
+	    u64 const t = a + b;
 	    a = b;
 	    b = t;
 	}
 	return sum;
     }
-    ulong problem3(){
+    u64 problem3(){
 	return factors(600851475143).back();
     }
-    ulong problem4(){
-	ulong high = 0;
-	for(ulong i = 999; i > 100; --i)
-	    for(ulong j = 999; j >= i; --j){
-		ulong const p = i * j;
+    u64 problem4(){
+	u64 high = 0;
+	for(u64 i = 999; i > 100; --i)
+	    for(u64 j = 999; j >= i; --j){
+		u64 const p = i * j;
 		if(p <= high) 
 		    break;
 		auto str = std::to_string(i*j);
@@ -43,29 +43,29 @@ namespace {
 	    }
 	return high;
     }
-    ulong problem5(){
-	ulong g = 1;
-	for(ulong i = 2; i <= 20; ++i)
+    u64 problem5(){
+	u64 g = 1;
+	for(u64 i = 2; i <= 20; ++i)
 	    g = (g * i) / gcd(g, i);
 	return g;
     }
-    ulong problem6(){
-	ulong sum = 0;
-	ulong sum_sq = 0;
-	for(ulong i = 1; i <= 100; ++i){
+    u64 problem6(){
+	u64 sum = 0;
+	u64 sum_sq = 0;
+	for(u64 i = 1; i <= 100; ++i){
 	    sum += i;
 	    sum_sq += i * i;
 	}
 	sum *= sum;
 	return sum > sum_sq ? sum - sum_sq : sum_sq - sum;
     }
-    ulong problem7(){
+    u64 problem7(){
 	prime_iterator pi;
-	for(int i = 0; i < 10000; ++i)
+	for(u32 i = 0; i < 10000; ++i)
 	    ++pi;
 	return *pi;
     }
-    std::array<uchar, 1000> constexpr input8 {{
+    std::array<u8, 1000> constexpr input8 {{
 	7,3,1,6,7,1,7,6,5,3,1,3,3,0,6,2,4,9,1,9,2,2,5,1,1,9,6,7,4,4,2,6,5,7,4,
 	7,4,2,3,5,5,3,4,9,1,9,4,9,3,4,9,6,9,8,3,5,2,0,3,1,2,7,7,4,5,0,6,3,2,6,
 	2,3,9,5,7,8,3,1,8,0,1,6,9,8,4,8,0,1,8,6,9,4,7,8,8,5,1,8,4,3,8,5,8,6,1,
@@ -95,14 +95,14 @@ namespace {
 	7,1,0,9,4,0,5,0,7,7,5,4,1,0,0,2,2,5,6,9,8,3,1,5,5,2,0,0,0,5,5,9,3,5,7,
 	2,9,7,2,5,7,1,6,3,6,2,6,9,5,6,1,8,8,2,6,7,0,4,2,8,2,5,2,4,8,3,6,0,0,8,
 	2,3,2,5,7,5,3,0,4,2,0,7,5,2,9,6,3,4,5,0}};
-    ulong problem8(){
+    u64 problem8(){
 	return high_subseq_prod(input8.cbegin(), input8.cend(), 5);
     }
-    ulong problem9(){
-	for(ulong b = 1; b < 1000; ++b){
-	    ulong const lim = b > 500 ? 1000 - b : b;
-	    for(ulong a = 1; a < lim; ++a){
-		ulong const c = 1000 - b - a;
+    u64 problem9(){
+	for(u64 b = 1; b < 1000; ++b){
+	    u64 const lim = b > 500 ? 1000 - b : b;
+	    for(u64 a = 1; a < lim; ++a){
+		u64 const c = 1000 - b - a;
 		if(a*a + b*b == c*c)
 		    return a*b*c;
 	    }

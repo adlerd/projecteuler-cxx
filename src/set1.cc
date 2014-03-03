@@ -8,21 +8,21 @@
 
 namespace {
     using namespace euler;
-    ulong problem10(){
+    u64 problem10(){
 	prime_iterator pi;
-	ulong sum = 0;
+	u64 sum = 0;
 	while(*pi < 2000000){
-	    ulong p = *pi++;
+	    u64 p = *pi++;
 	    sum += p;
 	}
 	return sum;
     }
-    template <int d_i, int d_j, int l_i, class Iter>
+    template <i32 d_i, i32 d_j, i32 l_i, class Iter>
 	struct grid_iterator {
 	    typedef grid_iterator<d_i, d_j, l_i, Iter> type;
-	    static constexpr int diff = d_i * l_i + d_j;
+	    static constexpr i32 diff = d_i * l_i + d_j;
 	    Iter iter;
-	    grid_iterator(Iter const base, int i0, int j0)
+	    grid_iterator(Iter const base, i32 i0, i32 j0)
 		: iter(base + i0 * l_i + j0) {}
 	    decltype(*iter) operator*() const {
 		return *iter;
@@ -43,7 +43,7 @@ namespace {
 		return iter == other.iter;
 	    }
 	};
-    std::array<uchar, 400> constexpr input11 {{
+    std::array<u8, 400> constexpr input11 {{
 	8,2,22,97,38,15,0,40,0,75,4,5,7,78,52,12,50,77,91,8,
 	    49,49,99,40,17,81,18,57,60,87,17,40,98,43,69,48,4,56,62,0,
 	    81,49,31,73,55,79,14,29,93,71,40,67,53,88,30,3,49,13,36,65,
@@ -66,29 +66,29 @@ namespace {
 	    1,70,54,71,83,51,54,69,16,92,33,48,61,43,52,1,89,19,67,48}};
     typedef decltype(input11) input11_t;
     typedef input11_t::const_iterator input11_iter_t;
-    ulong problem11(){
-	ulong high = 0;
+    u64 problem11(){
+	u64 high = 0;
 #define HSP(di,dj,i0,j0,iX,jX)\
 	high_subseq_prod(grid_iterator<di,dj,20,input11_iter_t>\
 		(input11.cbegin(), i0, j0),\
 		grid_iterator<di,dj,20,input11_iter_t>\
 		(input11.cbegin(), iX, jX), 4)
-	for(int i = 0; i < 20; ++i) //left-right
+	for(i32 i = 0; i < 20; ++i) //left-right
 	    high = std::max(high, HSP(0,1,i,0,i,20));
-	for(int j = 0; j < 20; ++j) //up-down
+	for(i32 j = 0; j < 20; ++j) //up-down
 	    high = std::max(high, HSP(1,0,0,j,20,j));
-	for(int i0 = 0; i0 < 20; ++i0) // NW-SE, diagonal & below
+	for(i32 i0 = 0; i0 < 20; ++i0) // NW-SE, diagonal & below
 	    high = std::max(high, HSP(1,1,i0,0,20,20-i0));
-	for(int j0 = 1; j0 < 20; ++j0) // NW-SE, above diagonal
+	for(i32 j0 = 1; j0 < 20; ++j0) // NW-SE, above diagonal
 	    high = std::max(high, HSP(1,1,0,j0,20-j0,20));
-	for(int j0 = 0; j0 < 20; ++j0) //NE-SW, diagonal & above
+	for(i32 j0 = 0; j0 < 20; ++j0) //NE-SW, diagonal & above
 	    high = std::max(high, HSP(1,-1,0,j0,j0+1,-1));
-	for(int j0 = 1; j0 < 20; ++j0) //NE-SW, below diagonal
+	for(i32 j0 = 1; j0 < 20; ++j0) //NE-SW, below diagonal
 	    high = std::max(high, HSP(-1,1,19,j0,j0-1,20));
 #undef HSP
 	return high;
     }
-    ulong problem12(){
+    u64 problem12(){
 	figurate::tri_iter ti;
 	while(divisor_ct(*ti) <= 500)
 	    ++ti;
@@ -202,10 +202,10 @@ namespace {
 	auto out = sum.get_str();
 	return out.substr(0,10);
     }
-    ulong collatz_find(std::vector<ulong>& map, ulong n, ulong add = 0){
+    u64 collatz_find(std::vector<u64>& map, u64 n, u64 add = 0){
 	if(n >= map.size())
 	    return collatz_find(map, n % 2 == 0 ? n / 2 : 3 * n + 1, add + 1);
-	ulong val = map[n];
+	u64 val = map[n];
 	if(val == 0){
 	    if(n == 1)
 		return add;
@@ -216,13 +216,13 @@ namespace {
 	    return add + val;
 	}
     }
-    ulong problem14(){
-	std::vector<ulong> collatz_map(1000000);
+    u64 problem14(){
+	std::vector<u64> collatz_map(1000000);
 	collatz_map[1] = 0;
-	ulong max = 0;
-	ulong ans = 0;
-	for(ulong i = 1; i < 1000000; ++i){
-	    ulong const len = collatz_find(collatz_map, i);
+	u64 max = 0;
+	u64 ans = 0;
+	for(u64 i = 1; i < 1000000; ++i){
+	    u64 const len = collatz_find(collatz_map, i);
 	    if(len > max){
 		max = len;
 		ans = i;
@@ -233,25 +233,25 @@ namespace {
     std::string problem15(){
 	// 40 choose 20
 	bigint v = 1;
-	for(ulong i = 40; i > 20; --i)
+	for(u64 i = 40; i > 20; --i)
 	    v *= i;
-	for(ulong i = 20; i > 0; --i)
+	for(u64 i = 20; i > 0; --i)
 	    v /= i;
 	return v.get_str();
     }
-    ulong problem16(){
+    u64 problem16(){
 	bigint b;
 	mpz_ui_pow_ui(b.get_mpz_t(), 2, 1000);
 	return digit_sum(b);
     }
-    ulong problem17(){
-	static ulong constexpr ones[10] = {0, 3, 3, 5, 4, 4, 3, 5, 5, 4};
-	static ulong constexpr tens[10] = {0, 3, 6, 6, 5, 5, 5, 7, 6, 6};
-	static ulong constexpr hundred = 7;
-	static ulong constexpr thousand = 8;
-	static ulong constexpr and_ct = 3;
-	ulong sum = thousand + ones[1];
-	for(int i = 1; i < 1000; ++i){
+    u64 problem17(){
+	static u64 constexpr ones[10] = {0, 3, 3, 5, 4, 4, 3, 5, 5, 4};
+	static u64 constexpr tens[10] = {0, 3, 6, 6, 5, 5, 5, 7, 6, 6};
+	static u64 constexpr hundred = 7;
+	static u64 constexpr thousand = 8;
+	static u64 constexpr and_ct = 3;
+	u64 sum = thousand + ones[1];
+	for(u32 i = 1; i < 1000; ++i){
 	    sum += ones[i % 10];
 	    sum += tens[(i / 10) % 10];
 	    switch(i % 100) case 14: case 16: case 17: case 19: sum += 1;
@@ -264,22 +264,22 @@ namespace {
 	}
 	return sum;
     }
-    std::array<uchar const, 120> input18
+    std::array<u8 const, 120> input18
     {{75,95,64,17,47,82,18,35,87,10,20,4,82,47,65,19,1,23,75,3,34,88,2,77,73,7,
 	 63,67,99,65,4,28,6,16,70,92,41,41,26,56,83,40,80,70,33,41,48,72,33,47,
 	 32,37,16,94,29,53,71,44,65,25,43,91,52,97,51,14,70,11,33,28,77,73,17,
 	 78,39,68,17,57,91,71,52,38,17,14,91,43,58,50,27,29,48,63,66,4,68,89,
 	 53,67,30,73,16,69,87,40,31,4,62,98,27,23,9,70,98,73,93,38,53,60,4,23}};
-    ulong problem18(){
+    u64 problem18(){
 	return triangle_collapse(input18.end(), 15);
     }
-    ulong problem19(){
-	static ulong constexpr lookup[] = {31,0,31,30,31,30,31,31,30,31,30,31};
+    u64 problem19(){
+	static u64 constexpr lookup[] = {31,0,31,30,31,30,31,31,30,31,30,31};
 	class month_len_iterator{
-	    ulong month;
-	    ulong year;
+	    u64 month;
+	    u64 year;
 	public:
-	    month_len_iterator(ulong m, ulong y) : month(m), year(y) {
+	    month_len_iterator(u64 m, u64 y) : month(m), year(y) {
 		assert(m < 12);
 	    }
 	    month_len_iterator& operator++(){
@@ -294,8 +294,8 @@ namespace {
 		operator++();
 		return tmp;
 	    }
-	    ulong operator*() const {
-		ulong const l = lookup[month];
+	    u64 operator*() const {
+		u64 const l = lookup[month];
 		if(l != 0)
 		    return l;
 		if(year % 4 == 0)
@@ -314,8 +314,8 @@ namespace {
 		return !operator==(mln);
 	    }
 	};
-	ulong day = 1;
-	ulong ct = 0;
+	u64 day = 1;
+	u64 ct = 0;
 	month_len_iterator const end(0, 2001);
 	month_len_iterator begin(0, 1900);
 	month_len_iterator const century(0, 1901);
