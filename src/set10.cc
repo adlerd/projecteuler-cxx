@@ -85,9 +85,35 @@ namespace {
 	}
 	return sum;
     }
+    std::array<i32,6000> const input102{{
+#include "triangles.include"
+    }};
+    u32 problem102(){
+	u32 ct = 0;
+	for(u32 i = 0; i < 1000; ++i){
+	    i32 const *const tri = input102.cbegin()+6*i;
+	    i32 const ax = tri[0], ay = tri[1];
+	    i32 const bx_a = tri[2] - ax, by_a = tri[3] - ay;
+	    i32 const cx_a = tri[4] - ax, cy_a = tri[5] - ay;
+	    // find the coordinates of the origin in a coordinate system
+	    // with (ax,ay) as the origin and bx,by cx,cy as basis vectors
+	    // the coordinates are ox_d/d, oy_d/d.
+	    // To do this, multiply the inverse of the matrix
+	    // {{cx_a,bx_a},{cy_a,by_a}} by {-ax,-ay}
+	    i32 const d = by_a*cx_a-bx_a*cy_a; // determinant of matrix
+	    i32 const ox_d = -ax*by_a +ay*bx_a; // d*first elt of origin vec
+	    i32 const oy_d = ax*cy_a -ay*cx_a; // d*second elt of origin vec
+	    // finally, test ox_d/d > 0, oy_d/d > 0, ox_d/d+oy_d/d<1
+	    // don't use short-circuiting for efficiency
+	    if(d > 0 ? (ox_d > 0 & oy_d > 0 & ox_d+oy_d < d) :
+		    (ox_d < 0 & oy_d < 0 & ox_d+oy_d > d))
+		++ct;
+	}
+	return ct;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {{P(100),P(101)}};
+    {{P(100),P(101),P(102)}};
 }
