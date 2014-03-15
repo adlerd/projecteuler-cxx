@@ -290,32 +290,46 @@ namespace {
 	return maxmin;
     }
     namespace euler96 {
+	//sudoku constraint
+	inline u32 scon(u8 unit, u8 val){
+	    return 9*unit + val;
+	}
+	inline u32 scon(u8 row, u8 col, u8 val){
+	    return scon(9*row+col, val);
+	}
+	inline u32 scon(u8 box_row, u8 box_col, u8 in_row, u8 in_col, u8 val){
+	    return scon(3*box_row + in_row, 3*box_col + in_col, val);
+	}
 	void sudoku_base(algx_state& st){
 	    for(u32 s_val = 0; s_val < 9; ++s_val){
+		// val unique in row
 		for(u32 s_row = 0; s_row < 9; ++s_row){
 		    st.push_required();
 		    for(u32 s_col = 0; s_col < 9; ++s_col)
-			st.add_required_entry(81*s_row + 9*s_col + s_val);
+			st.add_required_entry(scon(s_row,s_col,s_val));
 		}
+		// val unique in col
 		for(u32 s_col = 0; s_col < 9; ++s_col){
 		    st.push_required();
 		    for(u32 s_row = 0; s_row < 9; ++s_row)
-			st.add_required_entry(81*s_row + 9*s_col + s_val);
+			st.add_required_entry(scon(s_row,s_col,s_val));
 		}
+		// val unique in box
 		for(u32 s_box_r = 0; s_box_r < 3; ++s_box_r){
 		    for(u32 s_box_c = 0; s_box_c < 3; ++s_box_c){
 			st.push_required();
 			for(u32 s_idx_r = 0; s_idx_r < 3; ++s_idx_r)
 			    for(u32 s_idx_c = 0; s_idx_c < 3; ++s_idx_c)
-				st.add_required_entry(81*(3*s_box_r+s_idx_r) +
-					9*(3*s_box_c+s_idx_c) + s_val);
+				st.add_required_entry(scon(s_box_r, s_box_c,
+					    s_idx_r, s_idx_c, s_val));
 		    }
 		}
 	    }
+	    // one val per unit
 	    for(u32 s_unit = 0; s_unit < 81; ++s_unit){
 		st.push_required();
 		for(u32 s_val = 0; s_val < 9; ++s_val)
-		    st.add_required_entry(9*s_unit + s_val);
+		    st.add_required_entry(scon(s_unit, s_val));
 	    }
 	}
 	std::array<char const *const, 50> input96 = {{
@@ -330,15 +344,17 @@ namespace {
 	u32 sum = 0;
 	for(char const *c : input96){
 	    st.clean();
+	    // clear old singletons
 	    while(ct > 0){
 		st.pop_required();
 		--ct;
 	    }
+	    // singleton constraints at already-filled values
 	    for(u32 s_unit = 0; s_unit < 81; ++s_unit){
 		if(*c != '0'){
 		    ++ct;
 		    st.push_required();
-		    st.add_required_entry(9*s_unit + *c-'1');
+		    st.add_required_entry(scon(s_unit, *c-'1'));
 		}
 		++c;
 	    }
@@ -347,6 +363,10 @@ namespace {
 		return 0;
 	    } else {
 		std::vector<u32> s = st.read_solution();
+		/* the row indices are computed with highest base-9 digits as
+		 * row, then as column, then value, so sorting them gives
+		 * row-major sort of units, and the bottom mod-9 segment gives
+		 * the value */
 		std::partial_sort(s.begin(),s.begin()+3,s.end());
 		sum += 100*(s[0]%9+1);
 		sum += 10*(s[1]%9+1);
