@@ -247,9 +247,45 @@ namespace {
 	    }
 	    return true;
 	}
+	struct state103 {
+	    u32 best_bnd;
+	    u32 min;
+	    std::vector<u32> best;
+	    std::vector<u32> current;
+	    std::vector<u16> const code;
+	    state103(u32 size, u32 m, u32 bnd)
+		: best_bnd(bnd), min(m), best(size), current(size),
+		  code(gen_check_bitcode(size)) {}
+	};
+	void level103(u32 const level, u32 const psum, state103& state){
+	    u32 size = state.current.size();
+	    if(level == size){
+		if(psum <= state.best_bnd && check_sss(state.code,
+			    state.current)){
+		    state.best_bnd = psum;
+		    state.best = state.current;
+		}
+	    } else {
+		u32 n = level == 0 ? state.min : state.current[level-1]+1;
+		while((size - level)*n+psum <= state.best_bnd){
+		    state.current[level] = n;
+		    level103(level+1, psum+n, state);
+		    ++n;
+		}
+	    }
+	}
 	std::array<std::vector<u32>,100> const input105 = {{
 #include <subsets.include>
 	}};
+    }
+    std::string problem103(){
+	using namespace euler103;
+	state103 state(7, 20, 115 + 7*20);
+	level103(0, 0, state);
+	std::ostringstream out;
+	for(u32 v : state.best)
+	    out << v;
+	return out.str();
     }
     u64 problem105(){
 	using namespace euler103;
@@ -281,5 +317,5 @@ namespace {
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {{P(100),P(101),P(102),P(105),P(106)}};
+    {{P(100),P(101),P(102),P(103),P(105),P(106)}};
 }
