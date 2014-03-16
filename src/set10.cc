@@ -1,6 +1,10 @@
 #include "util.hh"
 
 #include <vector>
+#include <array>
+#include <forward_list>
+#include <bitset>
+#include <sstream>
 
 namespace {
     using namespace euler;
@@ -111,9 +115,162 @@ namespace {
 	}
 	return ct;
     }
+    namespace euler103 {
+	std::vector<u16> gen_subs(u32 const size) noexcept {
+	    std::vector<std::forward_list<u16>> stacks(size-1);
+	    u32 const xsize = 1 << size;
+	    for(u16 i = 1; i < xsize - 1; ++i){
+		u64 const pop_ct = std::bitset<16>(i).count();
+		stacks[pop_ct - 1].push_front(i);
+	    }
+	    std::vector<u16> ret(xsize - 2 + size - 1);
+	    auto iter = ret.begin();
+	    auto prev = iter;
+	    for(auto const& stack : stacks){
+		for(u16 i : stack)
+		    *iter++ = i;
+		std::sort(prev, iter);
+		*iter++ = 0;
+		prev = iter;
+	    }
+	    assert(iter == ret.end());
+	    return ret;
+	}
+	bool dominates(u16 const a, u16 const b, u32 const size){
+	    u32 count = 0;
+	    u16 mask = 1 << (size - 1);
+	    while(mask){
+		if(mask & a)
+		    ++count;
+		if(mask & b){
+		    if(count == 0)
+			return false;
+		    --count;
+		}
+		mask >>= 1;
+	    }
+	    return true;
+	}
+	/* bitcode: each instruction is a u16.
+	 * MSB[0:pad][sum left:size][1:2]LSB
+	 * MSB[0:pad][sum right:size][ordered:1][0:1]LSB
+	 */
+	std::vector<u16> gen_check_bitcode(u32 const size){
+	    auto const subs = gen_subs(size);
+	    auto iter0 = subs.cbegin();
+	    std::vector<u16> ret;
+	    while(true){
+		if(*iter0 == 0){
+		    ++iter0;
+		    if(iter0 == subs.cend())
+			return ret;
+		}
+		u16 const left = *iter0++;
+		bool need_left = true;
+		bool ordered = false;
+		auto iter1 = iter0;
+		while(true){
+		    if(*iter1 == 0){
+			ordered = true;
+			++iter1;
+			if(iter1 == subs.cend())
+			    break;
+		    }
+		    u16 const right = *iter1++;
+		    if((left & right) == 0 && !dominates(right,left,size)){
+			if(need_left){
+			    ret.push_back((left << 2) | 0x1);
+			    need_left = false;
+			}
+			ret.push_back((right << 2) | (ordered ? 0x2 : 0x0));
+		    }
+		}
+	    }
+	}
+#if 0
+	std::string dump_bitcode(std::vector<u16> const& code, u32 const size){
+	    std::ostringstream ret_out;
+	    std::ostringstream left_out;
+	    ret_out << "SIZE = " << size;
+	    for(u16 elt : code){
+		std::ostringstream *out;
+		if(elt & 0x1){
+		    out = &left_out;
+		    left_out.str("");
+		} else {
+		    out = &ret_out;
+		    ret_out << std::endl << left_out.str();
+		    if(elt & 0x2)
+			ret_out << "\t<  ";
+		    else
+			ret_out << "\t!= ";
+		}
+		elt >>= 2;
+		for(char c = 'a'; c < 'a' + size; ++c){
+		    if(elt & 0x1)
+			*out << c;
+		    elt >>= 1;
+		}
+	    }
+	    ret_out << std::endl;
+	    return ret_out.str();
+	}
+#endif
+	bool check_sss(std::vector<u16> const& code, std::vector<u32> const&
+		vals){
+	    assert(std::is_sorted(vals.cbegin(), vals.cend()));
+	    u32 sum_left = 0;
+	    for(u16 const instr : code){
+		u32 sum = 0;
+		u16 sub = instr >> 2;
+		auto val_iter = vals.cbegin();
+		while(sub != 0){
+		    assert(val_iter != vals.cend());
+		    if(sub & 0x1)
+			sum += *val_iter;
+		    ++val_iter;
+		    sub >>= 1;
+		}
+		switch(instr & 0x3){
+		case 0:
+		    if(sum == sum_left)
+			return false;
+		    break;
+		case 2:
+		    if(sum <= sum_left)
+			return false;
+		    break;
+		default:
+		    sum_left = sum;
+		}
+		assert(sum_left); // first instr should set
+	    }
+	    return true;
+	}
+	std::array<std::vector<u32>,100> const input105 = {{
+#include <subsets.include>
+	}};
+    }
+    u64 problem105(){
+	using namespace euler103;
+	std::vector<std::vector<u16>> code_store(6);
+	for(u32 size = 7; size <= 12; ++size)
+	    code_store[size - 7] = gen_check_bitcode(size);
+	u64 sum = 0;
+	for(auto vals : input105){ // copy vector!
+	    std::sort(vals.begin(), vals.end());
+	    u32 const size = vals.size();
+	    assert(size >= 7 && size <= 12);
+	    std::vector<u16> const& code = code_store[size - 7];
+	    if(check_sss(code, vals))
+		for(u32 v : vals)
+		    sum += v;
+	}
+	return sum;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {{P(100),P(101),P(102)}};
+    {{P(100),P(101),P(102),P(105)}};
 }
