@@ -268,9 +268,18 @@ namespace {
 	}
 	return sum;
     }
+    u32 problem106(){
+	using namespace euler103;
+	auto const code = gen_check_bitcode(12);
+	u32 ct = 0;
+	for(u16 instr : code)
+	    if((instr & 0x3) == 0)
+		++ct;
+	return ct;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {{P(100),P(101),P(102),P(105)}};
+    {{P(100),P(101),P(102),P(105),P(106)}};
 }
