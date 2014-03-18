@@ -287,6 +287,47 @@ namespace {
 	    out << v;
 	return out.str();
     }
+    namespace euler104 {
+	u64 constexpr tennine = (u64)(100000)*(u64)(100000) / 10;
+	bool pandigital(u64 b){
+	    if(b < tennine/10 || b >= tennine)
+		return false;
+	    digit_iterator di(b);
+	    std::bitset<9> found;
+	    while(di != digit_iterator(0)){
+		u8 const d = *di;
+		if(d == 0)
+		    return false;
+		if(found[d-1])
+		    return false;
+		found[d-1] = true;
+		++di;
+	    }
+	    return true;
+	}
+    }
+    u32 problem104(){
+	using namespace euler104;
+	bigint a = 0;
+	bigint b = 1;
+	bigint ten_den = tennine;
+	bigint c;
+	u32 n = 1;
+	while(true){
+	    mpz_swap(a.get_mpz_t(), b.get_mpz_t());
+	    b += a;
+	    ++n;
+	    if(!pandigital(mpz_fdiv_ui(b.get_mpz_t(), tennine)))
+		continue;
+	    c = b / ten_den;
+	    while(c > tennine){
+		c /= 10;
+		ten_den *= 10;
+	    }
+	    if(pandigital(c.get_ui()))
+		return n;
+	}
+    }
     u64 problem105(){
 	using namespace euler103;
 	std::vector<std::vector<u16>> code_store(6);
@@ -317,5 +358,5 @@ namespace {
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {{P(100),P(101),P(102),P(103),P(105),P(106)}};
+    {{P(100),P(101),P(102),P(103),P(104),P(105),P(106)}};
 }
