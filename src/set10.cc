@@ -354,9 +354,50 @@ namespace {
 		++ct;
 	return ct;
     }
+    namespace euler107 {
+	u16 constexpr SIZE = 40;
+	std::array<u16, SIZE*SIZE> input107 = {{
+#include<network.include>
+	}};
+	struct edge {
+	    u16 weight;
+	    u16 connects;
+	    edge(u16 w, u16 c) : weight(w), connects(c) {}
+	    bool operator<(edge const e) const {
+		if(weight != e.weight)
+		    return weight > e.weight;
+		else
+		    return connects > e.connects;
+	    }
+	};
+    }
+    u32 problem107(){
+	using namespace euler107;
+	u32 weight = 0;
+	for(u32 i = 0; i < SIZE; ++i)
+	    for(u32 j = 0; j <= i; ++j)
+		weight += input107[i*SIZE + j];
+	std::bitset<SIZE> connected;
+	std::priority_queue<edge> pq;
+	pq.emplace(0,0);
+	do {
+	    edge top = pq.top();
+	    pq.pop();
+	    if(!connected[top.connects]) {
+		weight -= top.weight;
+		connected[top.connects] = true;
+		u32 const base = SIZE * top.connects;
+		for(u32 i = 0; i < SIZE; ++i)
+		    if(input107[base + i] != 0)
+			pq.emplace(input107[base + i], i);
+	    }
+	} while(!pq.empty());
+	assert(connected.all());
+	return weight;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {{P(100),P(101),P(102),P(103),P(104),P(105),P(106)}};
+    {{P(100),P(101),P(102),P(103),P(104),P(105),P(106),P(107)}};
 }
