@@ -1,3 +1,5 @@
+// Copyright 2014 David Adler
+
 #include "algx.hh"
 
 #include <cassert>

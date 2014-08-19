@@ -1,3 +1,5 @@
+// Copyright 2014 David Adler
+
 #ifndef _UTIL_HH_
 #define _UTIL_HH_ 
 

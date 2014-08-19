@@ -1,3 +1,5 @@
+// Copyright 2014 David Adler
+
 #ifndef _ATKIN_HH_
 #define _ATKIN_HH_
 

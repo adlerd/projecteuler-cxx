@@ -1,3 +1,5 @@
+// Copyright 2014 David Adler
+
 #include "atkin.hh"
 
 #include <cassert>

@@ -1,3 +1,5 @@
+# Copyright 2014 David Adler
+
 EXTRA_FLAGS=--std=c++11 -Wall -stdlib=libc++
 ALL_CPPFLAGS=-I./include/ -I./gmp
 ifneq "$(NO_THREADS)" "true"

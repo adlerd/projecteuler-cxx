@@ -1,3 +1,5 @@
+// Copyright 2014 David Adler
+
 #ifndef _ALGX_HH_
 #define _ALGX_HH_
 
