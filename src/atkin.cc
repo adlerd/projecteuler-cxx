@@ -269,6 +269,7 @@ done:
 		// we return from get_vec_iter below, but there used to be a
 		// bug in libstdc++ which broke this... and valgrind
 		// complains...
+		// (see "PR libstdc++/54185" for bug report & fix.)
 	    } else {
 		extension_condition->wait(lock);
 	    }
