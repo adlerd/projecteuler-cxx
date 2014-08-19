@@ -118,6 +118,7 @@ namespace {
 	return ct;
     }
     namespace euler103 {
+	/* generate possible subsets of given set size, ordered by pop ct */
 	std::vector<u16> gen_subs(u32 const size) noexcept {
 	    std::vector<std::forward_list<u16>> stacks(size-1);
 	    u32 const xsize = 1 << size;
@@ -154,7 +155,9 @@ namespace {
 	    return true;
 	}
 	/* bitcode: each instruction is a u16.
+	 * set "left sum" from subset:
 	 * MSB[0:pad][sum left:size][1:2]LSB
+	 * check subset sum >/!= "left sum":
 	 * MSB[0:pad][sum right:size][ordered:1][0:1]LSB
 	 */
 	std::vector<u16> gen_check_bitcode(u32 const size){
