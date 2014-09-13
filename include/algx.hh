@@ -39,28 +39,36 @@ public:
     void operator=(algx_state const&) = delete;
     void operator=(algx_state&&) = delete;
 
-    /* query */
+    /* query whether state is "clean"; i.e., whether we are iterating through
+     * solutions (dirty) or are able to modify the constraint stacks (clean) */
     bool is_clean() const {
 	return state.empty();
     }
 
-    /* functions modifying "clean" state */
+    /* manipulate the (conceptual) required and optional constraint stacks */
     void push_required();
     void pop_required();
     void push_optional();
     void pop_optional();
+    /* modify the top element of one of the constraint stacks by adding a key
+     * which will satisfy it */
     void add_required_entry(u32 key);
     void add_optional_entry(u32 key);
 
     /* next_solution can be called when dirty or clean, and dirty status is
-     * indicated by return */
+     * indicated by return: iff there are no further solutions, next_solution()
+     * returns false and subsequent calls to is_clean() will return true;
+     * otherwise next_solution() returns true, state is dirty, and a solution
+     * may be read by read_solution() */
     bool next_solution(){
 	if(is_clean())
 	    return search_down();
 	else
 	    return search_up();
     }
-    /* read_solution must be called when dirty */
+
+    /* read_solution must be called when dirty, and returns the current set
+     * of keys which satisfy the constraints */
     std::vector<u32> read_solution() const;
     void clean() {
 	while(!is_clean()){
