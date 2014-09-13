@@ -400,9 +400,22 @@ namespace {
 	assert(connected.all());
 	return weight;
     }
+    namespace euler108 {
+	inline u32 recipSolns(u64 n){
+	    if(n >> 32 != 0)
+		throw std::domain_error("recipSolns will overflow");
+	    return (1+divisor_ct(n*n))/2;
+	}
+    }
+    u32 problem108(){
+	using namespace euler108;
+	u32 n = 0;
+	while(recipSolns(++n) < 1000);
+	return n;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {{P(100),P(101),P(102),P(103),P(104),P(105),P(106),P(107)}};
+    {{P(100),P(101),P(102),P(103),P(104),P(105),P(106),P(107),P(108)}};
 }
