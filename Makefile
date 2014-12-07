@@ -20,7 +20,7 @@ space:= $(empty) $(empty)
 
 libsources = atkin.cc util.cc algx.cc
 setsources = set0.cc set1.cc set2.cc set3.cc set4.cc set5.cc set6.cc set7.cc \
-	     set8.cc set9.cc set10.cc
+	     set8.cc set9.cc set10.cc set11.cc
 sources = $(libsources) $(setsources) main.cc
 
 SETS = $(patsubst set%.cc,%,$(setsources))

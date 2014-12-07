@@ -400,18 +400,16 @@ namespace {
 	assert(connected.all());
 	return weight;
     }
-    namespace euler108 {
-	inline u32 recipSolns(u64 n){
-	    if(n >> 32 != 0)
-		throw std::domain_error("recipSolns will overflow");
-	    return (1+divisor_ct(n*n))/2;
-	}
-    }
-    u32 problem108(){
+    bigint problem108(){
 	using namespace euler108;
-	u32 n = 0;
-	while(recipSolns(++n) < 1000);
-	return n;
+	bigint min = smallestN(1000);
+	bigint tmp;
+	for(u64 t = 1001; t < 2000; ++t){
+	    tmp = smallestN(t);
+	    if(tmp < min)
+		std::swap(tmp, min);
+	}
+	return min;
     }
 }
 namespace euler {

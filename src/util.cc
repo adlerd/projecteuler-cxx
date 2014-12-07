@@ -252,6 +252,23 @@ u64 triangle_collapse(u8 const *end, u64 width){
     return vec.front();
 }
 
+namespace euler108 {
+    bigint smallestN(u64 target){
+	target *= 2;
+	target -= 1;
+	auto fs = factors(target);
+	std::reverse(fs.begin(), fs.end());
+	prime_iterator pi;
+	bigint ret = 1;
+	bigint tmp;
+	for(u64 f : fs){
+	    mpz_ui_pow_ui(tmp.get_mpz_t(), *pi++, f/2);
+	    ret *= tmp;
+	}
+	return ret;
+    }
+}
+
 std::array<char const *const, 1786> input_words = {{
 #include "words.include"
 }};

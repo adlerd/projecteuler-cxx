@@ -362,6 +362,10 @@ u64 high_subseq_prod(Iter first, Iter const last, u64 len){
     return high;
 }
 
+namespace euler108 {
+    bigint smallestN(u64 target);
+}
+
 extern std::array<char const *const, 1786> input_words;
 
 extern std::list<std::list<problem const*> const*> const sets;
