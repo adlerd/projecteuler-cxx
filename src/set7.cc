@@ -326,5 +326,5 @@ namespace {
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set7
-    {{P(70),P(71),P(72),P(73),P(74),P(75),P(76),P(77),P(78),P(79)}};
+    {P(70),P(71),P(72),P(73),P(74),P(75),P(76),P(77),P(78),P(79)};
 }

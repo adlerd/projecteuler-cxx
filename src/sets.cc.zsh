@@ -9,11 +9,11 @@ done
 printf 'std::list<std::list<problem const*> const*> const sets'
 
 if [[ ! -z $* ]]; then
-    printf '{{'
+    printf '{'
     for s in $*; do
 	printf '&set%s,' $s
     done
-    printf '}}'
+    printf '}'
 fi
 
 printf ';\n}\n'

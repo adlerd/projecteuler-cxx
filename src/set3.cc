@@ -200,5 +200,5 @@ bad:;
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set3
-    {{P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37),P(38),P(39)}};
+    {P(30),P(31),P(32),P(33),P(34),P(35),P(36),P(37),P(38),P(39)};
 }
