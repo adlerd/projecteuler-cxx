@@ -186,9 +186,53 @@ namespace {
 	    ++len;
 	return len;
     }
+    namespace euler116 {
+	typedef std::vector<u8> tileset;
+	typedef std::vector<u64> mem_t;
+	u64 with_tileset(mem_t& mem, tileset const& tiles, u64 len){
+	    if(len == 0)
+		return 1;
+	    if(mem[len] != 0)
+		return mem[len];
+	    u64 ret = 0;
+	    for(u8 tile : tiles)
+		if(tile <= len)
+		    ret += with_tileset(mem, tiles, len - tile);
+	    mem[len] = ret;
+	    return ret;
+	}
+    }
+    u64 problem116(){
+	using namespace euler116;
+	u64 constexpr len = 50;
+	u64 ret = 0;
+	{
+	    tileset tiles{1,2};
+	    mem_t mem(len+1);
+	    ret += with_tileset(mem, tiles, len) - 1;
+	}
+	{
+	    tileset tiles{1,3};
+	    mem_t mem(len+1);
+	    ret += with_tileset(mem, tiles, len) - 1;
+	}
+	{
+	    tileset tiles{1,4};
+	    mem_t mem(len+1);
+	    ret += with_tileset(mem, tiles, len) - 1;
+	}
+	return ret;
+    }
+    u64 problem117(){
+	using namespace euler116;
+	u64 constexpr len = 50;
+	tileset tiles{1,2,3,4};
+	mem_t mem(len+1);
+	return with_tileset(mem, tiles, len);
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set11
-    {P(110),P(111),P(112),P(113),P(114),P(115)};
+    {P(110),P(111),P(112),P(113),P(114),P(115),P(116),P(117)};
 }
