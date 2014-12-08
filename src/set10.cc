@@ -411,9 +411,35 @@ namespace {
 	}
 	return min;
     }
+    u64 problem109(){
+	u32 ct = 0;
+	// store single/double/triple as 1/2/3 in low two bits
+	// store value of region in higher bits
+	u32 constexpr mask = 0x3;
+	std::vector<u32> scores{0, 1 | (25 << 2), 2 | (25 << 2)};
+	for(u32 region = 1; region < 21; ++region)
+	    for(u32 sdt = 1; sdt < 4; ++sdt)
+		scores.push_back((region << 2) | sdt);
+	for(u32 first : scores){
+	    for(u32 second : scores){
+		if(second < first)
+		    continue;
+		for(u32 third : scores){
+		    if((third & mask) != 2)
+			continue;
+		    u32 score = (first & mask) * (first >> 2)
+			      + (second & mask) * (second >> 2)
+			      + (third & mask) * (third >> 2);
+		    if(score < 100)
+			++ct;
+		}
+	    }
+	}
+	return ct;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set10
-    {P(100),P(101),P(102),P(103),P(104),P(105),P(106),P(107),P(108)};
+    {P(100),P(101),P(102),P(103),P(104),P(105),P(106),P(107),P(108),P(109)};
 }
