@@ -152,34 +152,43 @@ namespace {
     }
     namespace euler114 {
 	typedef std::vector<u64> mem_t;
-	u64 start_red(mem_t& mem, u8 len){
-	    if(len < 3)
+	u64 start_red(mem_t& mem, u8 min_rlen, u32 len){
+	    if(len < min_rlen)
 		return 0;
 	    if(mem[len] != 0)
 		return mem[len];
 	    u64 ret = 1; // the all-red solution
-	    for(u8 rlen = 3; rlen < len; ++rlen){
+	    for(u32 rlen = min_rlen; rlen < len; ++rlen){
 		ret += 1; // a red-then-all-black solution
-		for(u8 blen = 1; blen < (len - rlen); ++blen){
-		    ret += start_red(mem, len - rlen - blen);
-		}
+		for(u32 blen = 1; blen < (len - rlen); ++blen)
+		    ret += start_red(mem, min_rlen, len - rlen - blen);
 	    }
 	    mem[len] = ret;
+	    return ret;
+	}
+	u64 fill_count(u8 min_rlen, u32 len){
+	    mem_t mem(len+1);
+	    u64 ret = 1; // the all-black solution
+	    for(u8 blen = 0; blen < len; ++blen)
+		ret += start_red(mem, min_rlen, len - blen);
 	    return ret;
 	}
     }
     u64 problem114(){
 	using namespace euler114;
-	u8 constexpr len = 50;
-	mem_t mem(len+1);
-	u64 ret = 1; // the all-black solution
-	for(u8 blen = 0; blen < len; ++blen)
-	    ret += start_red(mem, len - blen);
-	return ret;
+	return fill_count(3, 50);
+    }
+    u64 problem115(){
+	using namespace euler114;
+	u8 const min_rlen = 50;
+	u32 len = min_rlen;
+	while(fill_count(min_rlen, len) < 1000000)
+	    ++len;
+	return len;
     }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set11
-    {P(110),P(111),P(112),P(113),P(114)};
+    {P(110),P(111),P(112),P(113),P(114),P(115)};
 }
