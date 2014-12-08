@@ -269,6 +269,16 @@ namespace euler108 {
     }
 }
 
+u64 gosper(u8 n, u8 k, u64 prev){
+    u64 const a = prev & -prev; // lowest set bit of prev
+    u64 const b = a + prev; // lowest unset bit left of a
+    u64 const c = (prev^b)/(a << 2) | b; // magic
+    if(c < (1 << n))
+	return c;
+    else
+	return (1 << k) - 1;
+}
+
 std::array<char const *const, 1786> input_words = {{
 #include "words.include"
 }};

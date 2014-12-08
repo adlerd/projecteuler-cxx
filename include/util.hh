@@ -362,6 +362,9 @@ u64 high_subseq_prod(Iter first, Iter const last, u64 len){
     return high;
 }
 
+// generate all subsets of size k from a set of size n
+u64 gosper(u8 n, u8 k, u64 prev);
+
 namespace euler108 {
     bigint smallestN(u64 target);
 }
