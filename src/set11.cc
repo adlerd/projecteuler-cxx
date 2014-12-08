@@ -90,9 +90,39 @@ namespace {
 	    ret += maxrep(10, i).sum;
 	return ret;
     }
+    u64 problem112(){
+	u32 n = 0;
+	u32 d = 100;
+	while(d * 99 != n * 100){
+	    ++d;
+	    int prev_cmp = 0;
+	    digit_iterator di(d);
+	    u8 prev = *di++;
+	    while(di != digit_iterator()){
+		u8 current = *di++;
+		if(prev_cmp == 0){
+		    prev_cmp = ((int)current) - prev;
+		} else {
+		    if(current < prev){
+			if(prev_cmp > 0){
+			    ++n;
+			    break;
+			}
+		    } else if(current > prev){
+			if(prev_cmp < 0){
+			    ++n;
+			    break;
+			}
+		    }
+		}
+		prev = current;
+	    }
+	}
+	return d;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set11
-    {P(110),P(111)};
+    {P(110),P(111),P(112)};
 }
