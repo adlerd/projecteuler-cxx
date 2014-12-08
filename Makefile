@@ -74,16 +74,17 @@ bin/euler: $(subst .cc,.o,$(libsources)) main.o $(patsubst %,set%.o,$(SETS)) set
 %.hps: %.hh
 	$(CC) $(EXTRA_FLAGS) -E $(ALL_CPPFLAGS) $< -o $@
 
-gmp-5.1.3.txz:
-	curl 'https://ftp.gnu.org/gnu/gmp/gmp-5.1.3.tar.xz' > $@
+gmp-6.0.0a.txz:
+	curl 'https://ftp.gnu.org/gnu/gmp/gmp-6.0.0a.tar.xz' > $@
 
 gmp/gmpxx.h gmp/gmp.h gmp/libgmp.a gmp/libgmpxx.a: gmp
 
-gmp: gmp-5.1.3.txz
+gmp: gmp-6.0.0a.txz
 	mkdir -p gmp-build-tmp/build
 	xzcat $< | tar -x -C gmp-build-tmp
-	cd gmp-build-tmp/build && ../gmp-5.1.3/configure ABI=64 CC="$(CC)" CXX="$(CXX) -stdlib=libc++" CFLAGS="-O2" --enable-cxx --disable-shared --prefix=$(CURDIR)/gmp-build-tmp/install
+	cd gmp-build-tmp/build && ../gmp-6.0.0/configure ABI=64 CC="$(CC)" CXX="$(CXX) -stdlib=libc++" CFLAGS="-O2" --enable-cxx --disable-shared --prefix=$(CURDIR)/gmp-build-tmp/install
 	cd gmp-build-tmp/build && $(MAKE)
+	cd gmp-build-tmp/build && $(MAKE) check
 	cd gmp-build-tmp/build && $(MAKE) install
 	mkdir -p gmp
 	cd gmp-build-tmp/install && mv include/gmp.h include/gmpxx.h lib/libgmp.a lib/libgmpxx.a ../../gmp
