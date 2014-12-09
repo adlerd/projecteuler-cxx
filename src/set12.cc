@@ -49,9 +49,24 @@ namespace {
 	}
 	return total.get_den() / total.get_num();
     }
+    u32 problem124(){
+	std::vector<std::pair<u32, u32>> vec;
+	u32 constexpr limit = 100000;
+	u32 constexpr elt = 10000;
+	vec.reserve(limit);
+	for(u32 n = 1; n <= limit; ++n){
+	    u32 rad = 1;
+	    for(auto& p : ct_factors(n))
+		rad *= p.first;
+	    vec.push_back(std::make_pair(rad, n));
+	}
+	auto item = vec.begin() + (elt - 1);
+	std::nth_element(vec.begin(), item, vec.end());
+	return item->second;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121)};
+    {P(120),P(121),P(124)};
 }
