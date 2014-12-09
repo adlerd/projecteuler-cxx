@@ -1,6 +1,10 @@
 // Copyright 2014 David Adler
 
 #include "util.hh"
+#include "atkin.hh"
+#include "algx.hh"
+
+#include <forward_list>
 
 namespace {
     using namespace euler;
@@ -230,9 +234,72 @@ namespace {
 	mem_t mem(len+1);
 	return with_tileset(mem, tiles, len);
     }
+    namespace euler118 {
+	u64 part_a(){
+	    /* since our algx is built up by constraint first (i.e. each
+	     * digit), and some primes are automatically disqualified by
+	     * containing duplicates, first sort through all the primes on a
+	     * different data structure */
+	    std::vector<std::forward_list<u32>>
+		    digstacks(9, std::forward_list<u32>({0}));
+	    prime_iterator pi;
+	    u32 ct = 1;
+	    while(*pi < 10000000){
+		u32 p = *pi++;
+		digit_iterator di(p);
+		bool killed = false;
+		while(di != digit_iterator()){
+		    int n = ((int)*di++) - 1;
+		    if(n == -1 || digstacks[n].front() == ct){
+			// kill this prime
+			for(n = 0; n < 9; ++n)
+			    if(digstacks[n].front() == ct)
+				digstacks[n].pop_front();
+			killed = true;
+			break;
+		    }
+		    digstacks[n].push_front(ct);
+		}
+		if(!killed)
+		    ++ct;
+	    }
+	    algx_state state(ct-1);
+	    for(auto const& dig : digstacks){
+		state.push_required();
+		for(auto key : dig){
+		    if(key == 0)
+			break;
+		    state.add_required_entry(ct-key-1);
+		}
+	    }
+	    u64 solct = 0;
+	    while(state.next_solution())
+		++solct;
+	    return solct;
+	}
+    }
+    u64 problem118(){
+	using namespace euler118;
+	/* two parts to solution:
+	 * run Algorithm X on primes with 7 or fewer digits;
+	 * 8 and 9 will be special cases. */
+	u64 ret = part_a();
+	/* for the special cases:
+	 * check whether each permutation of the 9 digits is prime
+	 * or if the first digit is prime and the last 8 are prime */
+	std::array<u8, 9> digs{1,2,3,4,5,6,7,8,9};
+	do {
+	    if(is_prime(from_digits(digs.cbegin(), digs.cend())))
+		++ret;
+	    if(is_prime(digs.front()) &&
+		    is_prime(from_digits(digs.cbegin()+1, digs.cend())))
+		++ret;
+	} while(std::next_permutation(digs.begin(), digs.end()));
+	return ret;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set11
-    {P(110),P(111),P(112),P(113),P(114),P(115),P(116),P(117)};
+    {P(110),P(111),P(112),P(113),P(114),P(115),P(116),P(117),P(118)};
 }
