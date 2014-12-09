@@ -5,6 +5,7 @@
 #include "algx.hh"
 
 #include <forward_list>
+#include <queue>
 
 namespace {
     using namespace euler;
@@ -297,9 +298,34 @@ namespace {
 	} while(std::next_permutation(digs.begin(), digs.end()));
 	return ret;
     }
+    bigint problem119(){
+	typedef std::pair<bigint, u64> pow_base;
+	typedef std::priority_queue<pow_base, std::vector<pow_base>,
+		std::greater<pow_base>> pq_t;
+	pow_base next_new(9,3);
+	pq_t pq;
+	pq.push(std::make_pair(4, 2));
+	pow_base top;
+	u8 n = 0;
+	while(true){
+	    if(pq.top().first >= next_new.first){
+		top = next_new;
+		++next_new.second;
+		next_new.first = next_new.second * next_new.second;
+	    } else {
+		top = pq.top();
+		pq.pop();
+	    }
+	    if(digit_sum(top.first) == top.second)
+		if(++n == 30)
+		    return top.first;
+	    top.first *= top.second;
+	    pq.push(top);
+	}
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set11
-    {P(110),P(111),P(112),P(113),P(114),P(115),P(116),P(117),P(118)};
+    {P(110),P(111),P(112),P(113),P(114),P(115),P(116),P(117),P(118),P(119)};
 }
