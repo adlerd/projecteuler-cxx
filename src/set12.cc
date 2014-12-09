@@ -29,9 +29,29 @@ namespace {
 	    ret += r_max(a);
 	return ret;
     }
+    bigint problem121(){
+	typedef mpq_class bigq;
+	bigq total(0);
+	bigq chance(1);
+	u8 constexpr limit = 15;
+	for(u8 ct = 1+limit/2; ct <= limit; ++ct){
+	    u64 const start = (1 << ct) - 1;
+	    u64 pat = start;
+	    do {
+		chance = 1;
+		for(u8 round = 0; round < limit; ++round){
+		    if((pat & (1 << round)) == 0)
+			chance *= 1 + round;
+		    chance /= 2 + round;
+		}
+		total += chance;
+	    } while((pat = gosper(limit, ct, pat)) != start);
+	}
+	return total.get_den() / total.get_num();
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120)};
+    {P(120),P(121)};
 }
