@@ -1,6 +1,7 @@
 // Copyright 2014 David Adler
 
 #include "util.hh"
+#include "atkin.hh"
 
 #include <vector>
 
@@ -92,6 +93,21 @@ next_level:
 	    sum += found[i];
 	return sum;
     }
+    u32 problem123(){
+	u64 constexpr target = 10000000000;
+	prime_iterator pi;
+	u32 idx = 1;
+	while(true){
+	    u64 p = *pi;
+	    bigint a, b;
+	    mpz_ui_pow_ui(a.get_mpz_t(), p - 1, idx);
+	    mpz_ui_pow_ui(b.get_mpz_t(), p + 1, idx);
+	    if((a + b) % (p * p) > target)
+		return idx;
+	    ++idx;
+	    ++pi;
+	}
+    }
     u32 problem124(){
 	std::vector<std::pair<u32, u32>> vec;
 	u32 constexpr limit = 100000;
@@ -111,5 +127,5 @@ next_level:
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121),P(122),P(124)};
+    {P(120),P(121),P(122),P(123),P(124)};
 }
