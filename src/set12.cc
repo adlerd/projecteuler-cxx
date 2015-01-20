@@ -2,6 +2,8 @@
 
 #include "util.hh"
 
+#include <vector>
+
 namespace {
     using namespace euler;
     namespace euler120 {
@@ -49,6 +51,47 @@ namespace {
 	}
 	return total.get_den() / total.get_num();
     }
+    u32 problem122(){
+	u8 constexpr MAX = 200;
+	std::vector<u8> tree(1,1);
+	tree.reserve(1 << 26);
+	std::vector<u8> found(MAX,255);
+	found[0] = 0;
+	u8 maxfound = 1;
+	std::vector<u32> parents(1,0);// index 0 is bottom parent
+	std::vector<u32> children_remaining(1,1);
+	while(maxfound < MAX){
+	    while(true){
+		for(u8 sum_idx = 0; sum_idx < parents.size(); ++sum_idx){
+		    u16 sum = ((u16)tree[parents[0]]) + ((u16)tree[parents[sum_idx]]);
+		    sum = std::min(sum, (u16) 255);
+		    tree.push_back((u8) sum);
+		    if(sum <= MAX && found[sum-1] == 255){
+			found[sum-1] = parents.size();
+			while(maxfound < MAX && found[maxfound] != 255)
+			    ++maxfound;
+		    }
+		}
+		children_remaining[0] = 1;
+		u8 plevel = 0;
+		while(--children_remaining[plevel] == 0){
+		    children_remaining[plevel] = parents.size() - plevel;
+		    ++parents[plevel];
+		    if(++plevel == parents.size())
+			goto next_level;
+		}
+	    }
+next_level:
+	    parents.push_back(0);
+	    for(u8 i = 0; i < children_remaining.size(); ++i)
+		++children_remaining[i];
+	    children_remaining.push_back(1);
+	}
+	u32 sum = 0;
+	for(u8 i = 0; i < MAX; ++i)
+	    sum += found[i];
+	return sum;
+    }
     u32 problem124(){
 	std::vector<std::pair<u32, u32>> vec;
 	u32 constexpr limit = 100000;
@@ -68,5 +111,5 @@ namespace {
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121),P(124)};
+    {P(120),P(121),P(122),P(124)};
 }
