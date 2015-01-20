@@ -4,6 +4,7 @@
 #include "atkin.hh"
 
 #include <vector>
+#include <algorithm>
 
 namespace {
     using namespace euler;
@@ -123,9 +124,35 @@ next_level:
 	std::nth_element(vec.begin(), item, vec.end());
 	return item->second;
     }
+    u64 problem125(){
+	u64 constexpr target = 100000000;
+	u64 left = 1;
+	std::vector<u64> values;
+	while(left * left < target){
+	    u64 right = left + 1;
+	    u64 current = (left * left) + (right * right);
+	    while(current < target){
+		if(is_palindrome(std::to_string(current)))
+		    values.push_back(current);
+		++right;
+		current += right * right;
+	    }
+	    ++left;
+	}
+	left = 0;
+	u64 sum = 0;
+	std::sort(values.begin(), values.end());
+	for(u64 v : values){
+	    if(v != left){
+		left = v;
+		sum += v;
+	    }
+	}
+	return sum;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121),P(122),P(123),P(124)};
+    {P(120),P(121),P(122),P(123),P(124),P(125)};
 }
