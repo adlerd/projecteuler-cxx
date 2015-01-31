@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <cassert>
 
 namespace {
     using namespace euler;
@@ -150,9 +151,84 @@ next_level:
 	}
 	return sum;
     }
+    namespace euler126 {
+	class layer_gen;
+	typedef std::unique_ptr<layer_gen> lgp;
+	class layer_gen {
+	public:
+	    u32 value;
+	    explicit layer_gen(u32 v) : value(v) {}
+	    virtual ~layer_gen(){}
+	    virtual void generate_children(std::vector<lgp>& into) = 0;
+	};
+	class more_layers : public layer_gen {
+	    u32 const b;
+	    u32 const c;
+	    u32 n;
+	public:
+	    more_layers(u32 bb, u32 cc, u32 nn) : b(bb), c(cc), n(nn),
+	            layer_gen(4*nn*nn+bb*nn+cc){}
+	    virtual ~more_layers(){}
+	    virtual void generate_children(std::vector<lgp>& into){
+		++n;
+		value = 4*n*n+b*n+c;
+	    }
+	};
+	class first_layer : public layer_gen {
+	    u32 x;
+	    u32 const y;
+	    u32 const z;
+	public:
+	    first_layer(u32 xx, u32 yy, u32 zz) : x(xx), y(yy), z(zz),
+	            layer_gen(2*(xx*yy + xx*zz + yy*zz)) {
+		assert(x >= y && y >= z);
+	    }
+	    virtual ~first_layer(){}
+	    virtual void generate_children(std::vector<lgp>& into){
+		u32 const b = (x+y+z-3)*4;
+		into.emplace_back(new more_layers(b, value - 4 - b, 2));
+		if(x == y+1)
+		    into.emplace_back(new first_layer(x,x,z));
+		else if(x == y && x == z+1)
+		    into.emplace_back(new first_layer(x,x,x));
+		++x;
+		value = 2*(x*y + x*z + y*z);
+	    }
+	};
+	bool compare_layer_up(lgp& a, lgp& b){
+	    return a->value > b->value;
+	}
+    }
+    u32 problem126(){
+	using namespace euler126;
+	std::vector<lgp> heap;
+	heap.emplace_back(new first_layer(1,1,1));
+	u32 prev = 0;
+	u32 ct = 0;
+	while(true){
+	    std::pop_heap(heap.begin(), heap.end(), &compare_layer_up);
+	    layer_gen *p = heap.back().get();
+	    u32 current = p->value;
+	    if(current == prev) {
+		++ct;
+	    } else if(ct == 1000) {
+		return prev;
+	    } else {
+		prev = current;
+		ct = 1;
+	    }
+	    size_t s = heap.size();
+	    p->generate_children(heap);
+	    while(s <= heap.size()){
+		std::push_heap(heap.begin(), heap.begin() + s,
+			&compare_layer_up);
+		++s;
+	    }
+	}
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121),P(122),P(123),P(124),P(125)};
+    {P(120),P(121),P(122),P(123),P(124),P(125),P(126)};
 }
