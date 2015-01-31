@@ -226,9 +226,54 @@ next_level:
 	    }
 	}
     }
+    u64 problem127(){
+	u32 constexpr limit = 120000;
+	// initialize the cache of radicals
+	std::vector<u32> rad_cache(limit-1, 0);
+	for(u32 a = 1; a < limit; ++a){
+	    u32 r = 1;
+	    auto const cfs = ct_factors(a);
+	    for(auto& p : cfs)
+		r *= p.first;
+	    rad_cache.at(a-1) = r;
+	}
+	// initialize the coprime-pair generator of pairs (b,a).
+	std::vector<std::pair<u32, u32>> relprim_gen;
+	relprim_gen.emplace_back(2,1);
+	relprim_gen.emplace_back(3,1);
+	// done
+	u64 sum = 0;
+	u32 ct = 0;
+	while(!relprim_gen.empty()){
+	    auto p = relprim_gen.back();
+	    relprim_gen.pop_back();
+	    u32 const b = p.first;
+	    u32 const a = p.second;
+	    // if p | a and ~(p | b), then ~(p | a+b),
+	    // so in fact you only have to "check" relative primality between a
+	    // and b which is already done, so no gcd checking required at all!
+	    u32 const c = a + b;
+	    if(c < limit){
+		if(((u64)rad_cache[b-1]) * ((u64)rad_cache[a-1]) *
+			((u64)rad_cache[c-1]) < c){
+		    ++ct;
+		    sum += c;
+		}
+		// now reinsert children
+		// the generator is nondecreasing in both a and b
+		if(2*b-a < limit)
+		    relprim_gen.emplace_back(2*b-a, b);
+		if(2*b+a < limit)
+		    relprim_gen.emplace_back(2*b+a, b);
+		if(b+2*a < limit)
+		    relprim_gen.emplace_back(b+2*a, a);
+	    }
+	}
+	return sum;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121),P(122),P(123),P(124),P(125),P(126)};
+    {P(120),P(121),P(122),P(123),P(124),P(125),P(126),P(127)};
 }
