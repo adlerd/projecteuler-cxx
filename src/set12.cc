@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include <unordered_map>
 
 namespace {
     using namespace euler;
@@ -271,9 +272,81 @@ next_level:
 	}
 	return sum;
     }
+    namespace euler129 {
+	bool isRepunit(bigint n){
+	    if(n == 0)
+		return false;
+	    n *= 9;
+	    n += 1;
+	    if(n % 3 == 0 || n % 7 == 0)
+		return false;
+	    while(n > 0){
+		if(n == 1)
+		    return true;
+		if(n % 10 != 0)
+		    return false;
+		n /= 10;
+	    }
+	    return true;
+	}
+	bool badcofactor(){
+	    throw std::logic_error("did not find next repunit cofactor digit");
+	}
+	u32 construct_lowrepunit(u64 const n){
+	    // invariant: (cofactor * n) = R(k)+high_digits*10^k for some
+	    // cofactor < 10^k, where R(0) = 0
+	    u32 k = 0;
+	    u64 high_digits = 0; // cofactor * n  / 10^k
+	    u8 inverse_mod_10;
+	    switch(n % 10){
+		case 1: inverse_mod_10 = 1; break;
+		case 3: inverse_mod_10 = 7; break;
+		case 7: inverse_mod_10 = 3; break;
+		case 9: inverse_mod_10 = 9; break;
+		default: badcofactor();
+	    }
+	    while(true){
+		// we need high_digits + d*n = 1 mod 10
+		// so d=(1-high_digits)/n mod 10
+		u8 d = ((11 - (high_digits % 10)) * inverse_mod_10) % 10;
+		u64 next_hd = high_digits + d*n;
+		assert(next_hd % 10 == 1);
+		++k;
+		if(next_hd == 1)
+		    return k;
+		high_digits = next_hd / 10;
+	    }
+	}
+	u32 factor_lowrepunit(u64 const n, std::unordered_map<u32,u32>& pmap){
+	    u32 result = (n % 3 == 0) ? 3 : 1;
+	    result *= n;
+	    u32 lcm = 1;
+	    for(auto p : ct_factors(n)){
+		u64 const factor = p.first;
+		result /= factor;
+		u32& k = pmap[factor];
+		if(k == 0)
+		    k = construct_lowrepunit(factor);
+		lcm *= k / gcd(lcm, k);
+	    }
+	    lcm *= result / gcd(lcm, result);
+	    return lcm;
+	}
+    }
+    u64 problem129(){
+	using namespace euler129;
+	u64 constexpr target = 1000000;
+	std::unordered_map<u32,u32> pmap;
+	for(u64 tens = (target-target/40)/10*10; true; tens += 10)
+	    for(u8 ones : {1, 3, 7, 9}){
+		u32 lr = factor_lowrepunit(tens + ones, pmap);
+		if(lr > target)
+		    return tens + ones;
+	    }
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121),P(122),P(123),P(124),P(125),P(126),P(127)};
+    {P(120),P(121),P(122),P(123),P(124),P(125),P(126),P(127),P(129)};
 }
