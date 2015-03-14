@@ -1,0 +1,53 @@
+// Copyright 2014 David Adler
+
+#include "atkin.hh"
+#include "util.hh"
+
+namespace {
+    using namespace euler;
+    u32 problem130(){ 
+	using namespace euler129;
+	std::unordered_map<u32,u32> pmap;
+	prime_iterator pi;
+	u64 n = 3;
+	u64 sum = 0;
+	u8 constexpr target = 25;
+	u8 ct = 0;
+	while(true){
+	    ++pi;
+	    while(n < *pi){
+		if(0 == (n-1)%factor_lowrepunit(n, pmap)){
+		    sum += n;
+		    if(target <= ++ct)
+			return sum;
+		}
+		n += n%10 == 3 ? 4 : 2;
+	    }
+	    n += n%10 == 3 ? 4 : 2;
+	}
+    }
+    u32 problem132(){
+	using namespace euler129;
+	// given gcd(n,10)==1, n | R(k) iff A(n)|k. probably.
+	prime_iterator pi;
+	++pi; // skip 2/3
+	++pi; // skip 3/5
+	u32 sum = 0;
+	u64 constexpr k = 1000000000;
+	u8 constexpr target = 40;
+	u8 ct = 0;
+	while(true){
+	    u32 prime = *++pi;
+	    if(k % construct_lowrepunit(prime) == 0){
+		sum += prime;
+		if(target <= ++ct)
+		    return sum;
+	    }
+	}
+    }
+}
+namespace euler {
+#define P(x) new_problem(x, &problem ## x)
+    std::list<problem const*> set13
+    {P(130),P(132)};
+}

@@ -6,6 +6,7 @@
 #include <string>
 #include <queue>
 #include <list>
+#include <unordered_map>
 #include <utility>
 #include <stdint.h>
 #include <array>
@@ -367,6 +368,10 @@ u64 gosper(u8 n, u8 k, u64 prev);
 
 namespace euler108 {
     bigint smallestN(u64 target);
+}
+namespace euler129 {
+    u32 construct_lowrepunit(u64 const n);
+    u32 factor_lowrepunit(u64 const n, std::unordered_map<u32,u32>& pmap);
 }
 
 extern std::array<char const *const, 1786> input_words;
