@@ -45,9 +45,29 @@ namespace {
 	    }
 	}
     }
+    u64 problem133(){
+	using namespace euler129;
+	// given gcd(n,10)==1, n | R(k) iff A(n)|k
+	// then we want to find n with A(n) having factors other than 2,5
+	prime_iterator pi;
+	++pi; // skip 2/3
+	++pi; // skip 3/5
+	u64 sum = 10; // 2+3+5
+	u64 constexpr limit = 100000;
+	while(true){
+	    u32 prime = *++pi;
+	    if(prime > limit)
+		return sum;
+	    u32 a_n = construct_lowrepunit(prime);
+	    while(a_n % 5 == 0)
+		a_n /= 5;
+	    if((a_n & (a_n - 1)) != 0)
+		sum += prime;
+	}
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set13
-    {P(130),P(132)};
+    {P(130),P(132),P(133)};
 }
