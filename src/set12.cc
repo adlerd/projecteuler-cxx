@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cassert>
 #include <unordered_map>
+#include <queue>
 
 namespace {
     using namespace euler;
@@ -272,6 +273,67 @@ next_level:
 	}
 	return sum;
     }
+    namespace euler128 {
+	typedef std::pair<u64, std::shared_ptr<bool>> entry;
+	typedef std::priority_queue<entry, std::vector<entry>, std::greater<entry>> pq;
+    }
+    u64 problem128() {
+	using namespace euler128;
+	u32 const target = 2000;
+	// the general idea here is three cooperative coroutines, of which two
+	// are represented by priority queues and the last by a primes
+	// iterator.
+	// the first coroutine is ordered by the base value
+	// which is either 3n^2+3n+2 or 3n^2+9n+7 for n>0.
+	// the coroutine advances when the head's ptr is unique
+	u32 passed_entries = 1; // skip "1"
+	pq sequence;
+	// the second coroutine is ordered by the difference to be checked
+	// which is 6n+7, 12n+17, 6n+11, or 12n+5
+	// the coroutine advances when the prime exceeds its head
+	pq to_check;
+	// the final coroutine is checking if each prime is of the form 6n+5
+	// in which case entries are added to the queues
+	prime_iterator pi;
+	while(true){
+	    u64 const prime = *pi++;
+	    // second coroutine
+	    while(!to_check.empty() && prime > to_check.top().first){
+		*to_check.top().second = false;
+		to_check.pop();
+	    }
+	    while(!to_check.empty() && prime == to_check.top().first)
+		to_check.pop();
+	    // first coroutine
+	    while(!sequence.empty()){
+		if(*sequence.top().second){
+		    if(sequence.top().second.unique()){
+			if(++passed_entries == target)
+			    return sequence.top().first;
+		    } else {
+			break;
+		    }
+		}
+		// i.e., get here if
+		// !*sequence.top().second ||
+		//     (sequence.top().second.unique() &&
+		//         passed_entries < target)
+		sequence.pop();
+	    }
+	    // third coroutine
+	    if(prime % 6 == 5){
+		u64 const n = prime / 6;
+		std::shared_ptr<bool> alpha(new bool(true));
+		std::shared_ptr<bool> beta(new bool(true));
+		to_check.emplace(prime+2, alpha);
+		to_check.emplace(12*n+17, alpha);
+		to_check.emplace(prime+6, beta);
+		to_check.emplace(12*n+5, beta);
+		sequence.emplace(3*n*(n+1)+2, std::move(alpha));
+		sequence.emplace(3*n*(n+3)+7, std::move(beta));
+	    }
+	}
+    }
     namespace euler129 {
 	bool isRepunit(bigint n){
 	    if(n == 0)
@@ -348,5 +410,5 @@ next_level:
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set12
-    {P(120),P(121),P(122),P(123),P(124),P(125),P(126),P(127),P(129)};
+    {P(120),P(121),P(122),P(123),P(124),P(125),P(126),P(127),P(128),P(129)};
 }
