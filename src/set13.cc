@@ -92,9 +92,36 @@ namespace {
 		sum += prime;
 	}
     }
+    u64 problem134(){
+	u32 constexpr target = 1000000;
+	prime_iterator pi(6);
+	u32 prev_prime;
+	u32 prime = 5;
+	u64 sum = 0;
+	while(prime < target){
+	    prev_prime = prime;
+	    prime = *pi++;
+	    u64 digits = prev_prime;
+	    u64 working = prime;
+	    u64 ten = 1;
+	    while(digits > 0){
+		if(working % 2 != digits % 2)
+		    working += prime;
+		while(working % 10 != digits % 10)
+		    working += 2*prime;
+		digits /= 10;
+		working /= 10;
+		ten *= 10;
+	    }
+	    working *= ten;
+	    working += prev_prime;
+	    sum += working;
+	}
+	return sum;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set13
-    {P(130),P(131),P(132),P(133)};
+    {P(130),P(131),P(132),P(133),P(134)};
 }
