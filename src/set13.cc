@@ -26,6 +26,33 @@ namespace {
 	    n += n%10 == 3 ? 4 : 2;
 	}
     }
+    u32 problem131(){
+	// a bit of hand-waving and/or math shows that the primes in question
+	// are just the prime differences of adjacent cubes
+	u32 constexpr target = 1000000;
+	u32 prevCube = 1;
+	u32 cube = 8;
+	u32 src = 2;
+	u32 diff = 7;
+	u32 ct = 0;
+	prime_iterator pi;
+	while(true){
+	    while(*pi < diff)
+		++pi;
+	    if(*pi > target)
+		return ct;
+	    if(*pi == diff){
+		++ct;
+		++pi;
+	    }
+	    while(diff < *pi){
+		prevCube = cube;
+		++src;
+		cube = src*src*src;
+		diff = cube - prevCube;
+	    }
+	}
+    }
     u32 problem132(){
 	using namespace euler129;
 	// given gcd(n,10)==1, n | R(k) iff A(n)|k. probably.
@@ -69,5 +96,5 @@ namespace {
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set13
-    {P(130),P(132),P(133)};
+    {P(130),P(131),P(132),P(133)};
 }
