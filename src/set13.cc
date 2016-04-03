@@ -137,10 +137,30 @@ namespace {
 	}
 	return ret;
     }
+    u32 problem136(){
+	u64 constexpr limit = 50000000;
+	std::vector<u8> ct(limit);
+	for(u64 a = 1; a * 4 < limit * 3; ++a){
+	    for(u64 k = (a-1)/3+1; ; ++k){
+		u64 n = (3*k-a)*(a+k);
+		if(n >= limit)
+		    break;
+		if(ct[n] > 1)
+		    continue;
+		++ct[n];
+	    }
+	}
+	u32 ret = 0;
+	for(u8 c : ct){
+	    if(c == 1)
+		++ret;
+	}
+	return ret;
+    }
 
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set13
-    {P(130),P(131),P(132),P(133),P(134),P(135)};
+    {P(130),P(131),P(132),P(133),P(134),P(135),P(136)};
 }
