@@ -119,9 +119,28 @@ namespace {
 	}
 	return sum;
     }
+    u32 problem135(){
+	u64 constexpr limit = 1000000;
+	std::vector<u8> ct(limit);
+	for(u64 a = 1; a * 4 < limit * 3; ++a){
+	    for(u64 k = (a-1)/3+1; ; ++k){
+		u64 n = (3*k-a)*(a+k);
+		if(n >= limit)
+		    break;
+		++ct[n];
+	    }
+	}
+	u32 ret = 0;
+	for(u8 c : ct){
+	    if(c == 10)
+		++ret;
+	}
+	return ret;
+    }
+
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set13
-    {P(130),P(131),P(132),P(133),P(134)};
+    {P(130),P(131),P(132),P(133),P(134),P(135)};
 }
