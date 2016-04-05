@@ -176,50 +176,45 @@ u64 totient(u64 n){
     return tot;
 }
 
-pythag_iterator::pythag_iterator() : pq(triplet_ref_comp{stor},
-	std::vector<u32>{}) {
-    stor.emplace_back(3,4,5,0);
+pythag_iterator::pythag_iterator(bool _nonprim, order o) :
+    nonprim(_nonprim), pq(triplet_ref_comp{stor,select_comp(o)},
+	    std::vector<u64>{}) {
+    stor.emplace_back(3,4,5,1);
     pq.push(0);
 }
-inline bool pythag_iterator::is_prim(u32 ref) const {
-    return stor[ref].prim_ref == ref;
+inline bool pythag_iterator::is_prim(size_t ref) const {
+    return !nonprim || stor[ref].mult == 1;
 }
 void pythag_iterator::advance() {
     // mats is 3ct 3 by 3 matrices
-    static const std::array<i32,27> mats = {{1,-2,2,2,-1,2,2,-2,3,
+    static const std::array<i64,27> mats = {{1,-2,2,2,-1,2,2,-2,3,
 	1,2,2,2,1,2,2,2,3, -1,2,2,-2,1,2,-2,2,3}};
-    u32 base_r = pq.top();
+    size_t base_r = pq.top();
+    triplet_data base = stor[base_r];
+    pq.pop(); // have to pop first
     if(is_prim(base_r)){
-	triplet base = stor[base_r].t;
-	pq.pop(); // have to pop first
 	auto matsi = mats.cbegin();
 	for(u32 i = 0; i < 3; ++i){
 	    triplet build;
 	    for(u32 j = 0; j < 3; ++j){
-		i32 v = 0;
+		i64 v = 0;
 		for(u32 k = 0; k < 3; ++k)
-		    v += ((i32) base[k]) * *matsi++;
-		build[j] = (u32) v;
+		    v += ((i64) base.t[k]) * *matsi++;
+		build[j] = (u64) v;
 	    }
 	    if(build[0] > build[1])
 		std::swap(build[0],build[1]);
-	    u32 ref = stor.size();
-	    stor.emplace_back(build,ref);
+	    size_t ref = stor.size();
+	    stor.emplace_back(build,1);
 	    pq.push(ref);
 	}
+    }
+    if(nonprim){
 	for(u32 i = 0; i < 3; ++i)
-	    base[i] += base[i];
-	u32 ref = stor.size();
-	stor.emplace_back(base,base_r); // we can't reuse a primitive
-	pq.push(ref);
-    } else {
-	pq.pop();
-	// can update stor in place, since nothing refers to non-primitive
-	triplet& upd = stor[base_r].t;
-	triplet const& prim = stor[stor[base_r].prim_ref].t;
-	for(u32 i = 0; i < 3; ++i)
-	    upd[i] += prim[i];
-	pq.push(base_r); // same underlying number, different ordering
+	    base.t[i] += base.t[i]/base.mult;
+	++base.mult;
+	stor[base_r] = base;
+	pq.push(base_r);
     }
 }
 

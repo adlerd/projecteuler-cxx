@@ -215,29 +215,49 @@ problem const *new_problem(u64 n, T (*fun)()) {
 
 class pythag_iterator {
 public:
-    typedef std::array<u32,3> triplet;
+    enum order {
+	lex, perim
+    };
+    typedef std::array<u64,3> triplet;
 private:
     struct triplet_data {
 	triplet t;
-	u32 prim_ref;
-	triplet_data(triplet const& tt, u32 pr) : t(tt), prim_ref(pr) {}
-	triplet_data(u32 a, u32 b, u32 c, u32 pr)
-	    : t{{a,b,c}}, prim_ref(pr) {}
+	u64 mult;
+	triplet_data(triplet const& tt, u64 m) : t(tt), mult(m) {}
+	triplet_data(u64 a, u64 b, u64 c, u64 m)
+	    : t{{a,b,c}}, mult(m) {}
     };
     typedef std::vector<triplet_data> stor_t;
+    typedef bool (*trip_comp)(triplet const&, triplet const&);
     struct triplet_ref_comp {
 	stor_t const& stor;
-	bool operator()(u32 b, u32 a) const { // intentionally switched a,b
-	    return std::lexicographical_compare(stor[a].t.cbegin(),
-		    stor[a].t.cend(), stor[b].t.cbegin(), stor[b].t.cend());
+	trip_comp comp;
+	bool operator()(size_t a, size_t b) const {
+	    return (*comp)(stor[b].t, stor[a].t);
 	}
     };
+    static bool lex_comp(triplet const& aa, triplet const& bb){
+	return std::lexicographical_compare(aa.cbegin(), aa.cend(),
+		bb.cbegin(), bb.cend());
+    }
+    static bool perim_comp(triplet const& aa, triplet const& bb){
+	return (aa[0]+aa[1]+aa[2]) < (bb[0]+bb[1]+bb[2]);
+    }
+    static trip_comp select_comp(order o){
+	switch(o){
+	case perim:
+	    return &perim_comp;
+	default:
+	    return &lex_comp;
+	}
+    }
     stor_t stor;
-    std::priority_queue<u32,std::vector<u32>,triplet_ref_comp const> pq;
+    std::priority_queue<size_t,std::vector<size_t>,triplet_ref_comp const> pq;
+    bool const nonprim;
     void advance();
-    bool is_prim(u32 ref) const;
+    bool is_prim(size_t ref) const;
 public:
-    pythag_iterator();
+    explicit pythag_iterator(bool _nonprim = true, order ord = lex);
     pythag_iterator& operator++(){
 	advance();
 	return *this;

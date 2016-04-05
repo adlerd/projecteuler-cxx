@@ -209,9 +209,25 @@ namespace {
 	}
 	return sum;
     }
+    u32 problem139(){
+	u32 ct = 0;
+	u32 constexpr limit = 100000000;
+	pythag_iterator pi(false, pythag_iterator::perim);
+	while(true){
+	    auto trip = *pi;
+	    ++pi;
+	    u64 perim = trip[0] + trip[1] + trip[2];
+	    if(perim >= limit)
+		return ct;
+	    if(trip[2] % (trip[1] - trip[0]) == 0){
+		ct += limit / perim;
+		// number of instances of this primitive below limit
+	    }
+	}
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set13
-    {P(130),P(131),P(132),P(133),P(134),P(135),P(136),P(137),P(138)};
+    {P(130),P(131),P(132),P(133),P(134),P(135),P(136),P(137),P(138),P(139)};
 }
