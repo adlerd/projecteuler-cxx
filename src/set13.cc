@@ -177,9 +177,41 @@ namespace {
 	}
 	return a*b;
     }
+    u64 problem138(){
+	// According to P. Shiu's The Shapes and Sizes of Pythagorean
+	// Triangles, given a right triangle with smallest angle theta,
+	// convergents m/n of tan(theta)+sec(theta) give parameters m and n.
+	// We would like to find Pythagorean approximations to the right
+	// triangle with legs 1 and 2 units. The smallest angle is opposite the
+	// shorter leg, so tan(theta)=1/2 while sec(theta)=sqrt(5)/2. The sum
+	// of these is the golden ratio, so convergents are ratios of
+	// successive fibonacci terms, giving m and n directly.
+	// We have to reduce to primitive terms, and, per Shiu, the result is
+	// 'in order'.
+	// Inspection shows that not all results are valid, so we filter.
+	u64 m = 1;
+	u64 n = 1;
+	u8 ct = 0;
+	u64 sum = 0;
+	while(ct < 12){
+	    n += m; std::swap(n,m);
+	    u64 b = m*m-n*n; // actually half the base
+	    u64 h = 2*m*n;
+	    u64 l = m*m+n*n;
+	    u64 g = gcd(gcd(b,h),l);
+	    b = 2*(b/g);
+	    h = h/g;
+	    l = l/g;
+	    if(b == h+1 || b+1 == h){
+		sum += l;
+		++ct;
+	    }
+	}
+	return sum;
+    }
 }
 namespace euler {
 #define P(x) new_problem(x, &problem ## x)
     std::list<problem const*> set13
-    {P(130),P(131),P(132),P(133),P(134),P(135),P(136),P(137)};
+    {P(130),P(131),P(132),P(133),P(134),P(135),P(136),P(137),P(138)};
 }
