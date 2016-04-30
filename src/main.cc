@@ -177,8 +177,7 @@ problem_harness *select_problem(){
     while(problem_queue.empty()){
 	if(die_flag)
 	    return nullptr;
-	if(problem_queue.empty())
-	    problem_condition.wait(lock);
+	problem_condition.wait(lock);
     }
     problem_harness *const p = problem_queue.front();
     problem_queue.pop();
